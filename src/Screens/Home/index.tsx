@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Button } from 'react-native';
 
 export interface HomeScreenProps {}
 
 export default () => {
   return (
     <View>
-      <Text>Home Sweet Home!!</Text>
+      <Button
+        title="New Game"
+        onPress={async () => {
+          console.log('start a new game');
+        }}
+      />
     </View>
   );
 };
