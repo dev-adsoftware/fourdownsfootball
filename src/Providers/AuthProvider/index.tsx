@@ -93,6 +93,7 @@ const useAuth = () => {
     dispatch({ type: 'validate' });
     // Do something here to validate after some time
     setTimeout(async () => {
+      console.log('in login timeout');
       if (username === 'kyle' && password === 'test') {
         dispatch({
           type: 'complete',

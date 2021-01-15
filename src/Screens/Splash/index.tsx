@@ -5,6 +5,7 @@ import { View, Text } from 'react-native';
 // import { AppLoadingScreenProps } from '../AppLoading';
 import { useAuth } from '../../Providers/AuthProvider';
 import { useTheme } from '../../Providers/ThemeProvider';
+import { useEnv } from '../../Providers/EnvProvider';
 
 // export interface SplashScreenProps { }
 
@@ -12,19 +13,25 @@ import { useTheme } from '../../Providers/ThemeProvider';
 export default () => {
   const { init: authInit } = useAuth();
   const theme = useTheme();
+  const { environment } = useEnv();
+
+  const [isSplashing, setIsSplashing] = React.useState(false);
 
   React.useEffect(() => {
-    async function init() {
-      await authInit();
+    if (!isSplashing) {
+      setIsSplashing(true);
+      setTimeout(async () => {
+        console.log('in splash timeout');
+        await authInit();
+      }, 2000);
     }
-    setTimeout(() => {
-      init();
-    }, 2000);
-  }, [authInit]);
+  }, [authInit, isSplashing]);
 
   return (
     <View>
-      <Text style={{ ...theme.typography.heading1 }}>Splash!</Text>
+      <Text style={{ color: theme.colors.secondary }}>
+        Splash! {environment}
+      </Text>
     </View>
   );
 };
