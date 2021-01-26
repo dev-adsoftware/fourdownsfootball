@@ -10,6 +10,27 @@ import Home from './Screens/Home';
 import Login from './Screens/Login';
 import theme from './theme.json';
 import env from './env.json';
+// @ts-ignore
+import { withAuthenticator } from 'aws-amplify-react-native';
+
+import Amplify from 'aws-amplify';
+
+Amplify.configure({
+  Auth: {
+    // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
+    identityPoolId: 'us-east-1:caf1a4d0-89c7-4709-b014-c73a815b417b',
+
+    // REQUIRED - Amazon Cognito Region
+    region: 'us-east-1',
+
+    userPoolId: 'us-east-1_BPfA6yVGe',
+
+    userPoolWebClientId: '7p57v7b3li65ccvp3pkv8vqon6',
+  },
+  Analytics: {
+    disabled: true,
+  },
+});
 
 const Stack = createStackNavigator();
 
@@ -35,7 +56,7 @@ const AppWithAuthContext = () => {
   );
 };
 
-export default () => {
+const App = () => {
   return (
     <>
       <EnvProvider initialEnv={env}>
@@ -48,3 +69,5 @@ export default () => {
     </>
   );
 };
+
+export default withAuthenticator(App);
