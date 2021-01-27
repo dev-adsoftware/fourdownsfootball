@@ -2,8 +2,8 @@
 import React from 'react';
 // import { NavigationContainer } from '@react-navigation/native';
 // import { createStackNavigator } from '@react-navigation/stack';
-import { ThemeProvider } from './Providers/ThemeProvider';
-import { EnvProvider } from './Providers/EnvProvider';
+import { ThemeProvider } from './providers/theme';
+import { EnvProvider } from './providers/env';
 // import Home from './Screens/Home';
 import theme from './theme.json';
 import env from './env.json';
@@ -11,8 +11,8 @@ import env from './env.json';
 // import { Authenticator } from 'aws-amplify-react-native';
 
 import Amplify from 'aws-amplify';
-import { AuthProvider } from './Providers/AuthProvider';
-import Home from './Screens/Home';
+import { AuthProvider } from './providers/auth';
+import Home from './screens/home';
 
 Amplify.configure({
   Auth: {

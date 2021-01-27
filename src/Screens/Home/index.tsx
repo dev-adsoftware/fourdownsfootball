@@ -1,7 +1,8 @@
 import { API } from 'aws-amplify';
 import React from 'react';
 import { View, Button } from 'react-native';
-import { useAuth } from '../../Providers/AuthProvider';
+import { UserTimesIcon } from '../../components/icons';
+import { useAuth } from '../../providers/auth';
 
 export interface HomeScreenProps {}
 
@@ -14,6 +15,7 @@ export default () => {
   });
   return (
     <View>
+      <UserTimesIcon color="red" size="2x" />
       <Button
         title="New Game"
         onPress={async () => {
