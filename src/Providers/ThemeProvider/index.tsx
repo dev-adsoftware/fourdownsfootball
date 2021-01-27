@@ -1,12 +1,12 @@
 import React from 'react';
 
-export type Theme = {
+export interface Theme {
   colors: {
     primary: string;
     secondary: string;
     background: string;
   };
-};
+}
 
 const ThemeContext = React.createContext<Theme | undefined>(undefined);
 
