@@ -4,7 +4,6 @@ import React from 'react';
 // import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider } from './providers/theme';
 import { EnvProvider } from './providers/env';
-// import Home from './Screens/Home';
 import theme from './theme.json';
 import env from './env.json';
 // @ts-ignore
@@ -43,11 +42,6 @@ const App = () => {
         <ThemeProvider initialTheme={theme}>
           <AuthProvider>
             <Home />
-            {/* <NavigationContainer>
-              <Stack.Navigator>
-                <Stack.Screen name="Home" component={Home} />
-              </Stack.Navigator>
-            </NavigationContainer> */}
           </AuthProvider>
         </ThemeProvider>
       </EnvProvider>

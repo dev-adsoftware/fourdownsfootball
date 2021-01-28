@@ -1,7 +1,9 @@
 {
   "colors": {
-    "primary": "red",
+    "primary": "green",
     "secondary": "blue",
-    "background": "gray"
+    "background": "gray",
+    "surface": "gray",
+    "error": "red"
   }
 }

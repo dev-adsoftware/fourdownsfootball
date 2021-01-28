@@ -7,6 +7,11 @@ const AuthContext = React.createContext<Auth | undefined>(undefined);
 
 interface Auth {
   user: { username: string };
+  setUser: React.Dispatch<
+    React.SetStateAction<{
+      username: string;
+    }>
+  >;
 }
 
 type AuthProviderProps = {
@@ -19,9 +24,13 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   React.useEffect(() => {
     const init = async () => {
-      const cognitoUser: CognitoUser = (await AWSAuth.currentAuthenticatedUser()) as CognitoUser;
-      setUser({ username: cognitoUser.getUsername() });
-      console.log(user);
+      try {
+        const cognitoUser: CognitoUser = (await AWSAuth.currentAuthenticatedUser()) as CognitoUser;
+        setUser({ username: cognitoUser.getUsername() });
+        console.log(user);
+      } catch (e) {
+        console.log(e);
+      }
       setIsLoading(false);
     };
 
@@ -31,7 +40,9 @@ function AuthProvider({ children }: AuthProviderProps) {
   }, [isLoading, user]);
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, setUser }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
