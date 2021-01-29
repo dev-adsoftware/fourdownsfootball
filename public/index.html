@@ -1,18 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<head>
+  <meta charSet="utf-8" />
+  <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="theme-color" content="#000000">
-        <title>React App</title>
-    </head>
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
 
-    <body>
-        <noscript>
-            You need to enable JavaScript to run this app.
-        </noscript>
-        <div id="root"></div>
-    </body>
+  <title>App</title>
 
-</html>
+  <style>
+    html, body, #root {
+      height: 100%;
+    }
+
+    #root {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="app.bundle.js"></script>
+</body>

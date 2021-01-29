@@ -1,17 +1,22 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Auth } from 'aws-amplify';
-import { useAuth } from '../../providers/auth';
-import { PrimaryButton, SecondaryButton } from '../../components/buttons';
-import { Input } from '../../components/inputs';
+import { Button } from 'react-native-paper';
+// import { Auth } from 'aws-amplify';
+// import { useAuth } from '../../providers/auth';
 
 export default () => {
-  const auth = useAuth();
+  // const auth = useAuth();
 
   return (
     <>
       <View style={styles.container}>
-        <Input />
+        <Button
+          onPress={() => {
+            console.log('press');
+          }}>
+          sign in
+        </Button>
+        {/* <Input />
         <PrimaryButton
           text="Sign in"
           onPress={async () => {
@@ -33,7 +38,7 @@ export default () => {
               console.error(e);
             }
           }}
-        />
+        /> */}
       </View>
     </>
   );

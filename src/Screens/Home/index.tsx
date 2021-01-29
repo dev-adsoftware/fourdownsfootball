@@ -8,8 +8,8 @@ import { View, Text } from 'react-native';
 // import { UserTimesIcon } from '../../components/icons';
 import { useAuth } from '../../providers/auth';
 import { Auth } from 'aws-amplify';
-import { PrimaryButton } from '../../components/buttons';
 import SignIn from '../signin';
+import { Button } from 'react-native-paper';
 
 const Stack = createStackNavigator();
 
@@ -23,8 +23,7 @@ function Test({ navigation }: HomeScreenProps) {
     navigation.setOptions({
       headerRight: () => (
         <View>
-          <PrimaryButton
-            text="Log out"
+          <Button
             onPress={async () => {
               try {
                 await Auth.signOut();
@@ -32,8 +31,9 @@ function Test({ navigation }: HomeScreenProps) {
                 console.error(e);
               }
               auth.setUser({ username: 'empty' });
-            }}
-          />
+            }}>
+            Sign Out
+          </Button>
         </View>
       ),
     });

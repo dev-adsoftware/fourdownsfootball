@@ -6,7 +6,7 @@
       "es6"
     ],
     "allowJs": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "noEmit": true,
     "isolatedModules": true,
     "strict": true,
