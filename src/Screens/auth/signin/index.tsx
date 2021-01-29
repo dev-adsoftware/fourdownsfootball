@@ -2,9 +2,15 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
-import { useAuth } from '../../providers/auth';
+import { useAuth } from '../../../providers/auth';
+/* eslint-disable-next-line */
+import { StackNavigationProp } from '@react-navigation/stack';
 
-export default () => {
+interface AuthSignInScreenProps {
+  navigation: StackNavigationProp<{ SignUp: undefined }>;
+}
+
+export default ({ navigation }: AuthSignInScreenProps) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
@@ -17,12 +23,16 @@ export default () => {
         <TextInput
           label="Username"
           mode="flat"
+          autoCapitalize="none"
+          returnKeyType="next"
           value={username}
           onChangeText={(text: string) => setUsername(text)}
         />
         <TextInput
           label="Password"
           mode="flat"
+          autoCapitalize="none"
+          returnKeyType="done"
           value={password}
           onChangeText={(text: string) => setPassword(text)}
           secureTextEntry
@@ -30,6 +40,13 @@ export default () => {
         <HelperText type="error" visible={error.length > 0}>
           Error: {error}
         </HelperText>
+        <Button
+          mode="text"
+          onPress={async () => {
+            navigation.navigate('SignUp');
+          }}>
+          Sign up
+        </Button>
         <Button
           mode="contained"
           onPress={async () => {

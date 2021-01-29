@@ -6,8 +6,8 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useAuth } from '../../providers/auth';
 import { Auth } from 'aws-amplify';
-import SignIn from '../signin';
 import { Button } from 'react-native-paper';
+import AuthMain from '../auth/main';
 
 const Stack = createStackNavigator();
 
@@ -68,7 +68,7 @@ export default (/*{ navigation }: HomeScreenProps*/) => {
     <>
       {auth.user.username === 'empty' ? (
         <>
-          <SignIn />
+          <AuthMain />
         </>
       ) : (
         <>
