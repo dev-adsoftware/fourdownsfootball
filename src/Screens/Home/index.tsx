@@ -2,10 +2,8 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-// import { API } from 'aws-amplify';
 import React from 'react';
 import { View, Text } from 'react-native';
-// import { UserTimesIcon } from '../../components/icons';
 import { useAuth } from '../../providers/auth';
 import { Auth } from 'aws-amplify';
 import SignIn from '../signin';
