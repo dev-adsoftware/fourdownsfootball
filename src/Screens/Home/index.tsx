@@ -3,10 +3,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { useAuth } from '../../providers/auth';
 import { Auth } from 'aws-amplify';
-import { Button } from 'react-native-paper';
+// import { Button } from 'react-native-paper';
 import AuthMain from '../auth/main';
 
 const Stack = createStackNavigator();
@@ -22,6 +22,7 @@ function Test({ navigation }: HomeScreenProps) {
       headerRight: () => (
         <View>
           <Button
+            title="Sign Out"
             onPress={async () => {
               try {
                 await Auth.signOut();
@@ -29,9 +30,10 @@ function Test({ navigation }: HomeScreenProps) {
                 console.error(e);
               }
               auth.setUser({ username: 'empty' });
-            }}>
-            Sign Out
-          </Button>
+            }}
+          />
+          {/* Sign Out
+          </Button> */}
         </View>
       ),
     });

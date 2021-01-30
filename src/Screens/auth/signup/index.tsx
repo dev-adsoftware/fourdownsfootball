@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput } from 'react-native-paper';
+import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
 import { useAuth } from '../../../providers/auth';
 /* eslint-disable-next-line */
 import { StackNavigationProp } from '@react-navigation/stack';
 
 interface AuthSignUpScreenProps {
-  navigation: StackNavigationProp<{ SignIn: undefined }>;
+  navigation: StackNavigationProp<{ 'Sign In': undefined }>;
 }
 
 export default ({ navigation }: AuthSignUpScreenProps) => {
@@ -16,11 +16,19 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
   const [error, setError] = React.useState('');
 
   const auth = useAuth();
+  const theme = useTheme();
+
+  const styles = StyleSheet.create({
+    input: {
+      width: 340,
+    },
+  });
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={theme.container}>
         <TextInput
+          style={styles.input}
           label="Username"
           mode="flat"
           autoCapitalize="none"
@@ -29,6 +37,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           onChangeText={(text: string) => setUsername(text)}
         />
         <TextInput
+          style={styles.input}
           label="Password"
           mode="flat"
           autoCapitalize="none"
@@ -44,12 +53,13 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           mode="contained"
           onPress={async () => {
             if (username.length === 0 || password.length === 0) {
+              console.log('me');
               setError('Username and password are required.');
             } else {
               try {
                 await Auth.signIn(username, password);
                 auth.setUser({ username: username });
-                navigation.reset({ index: 0, routes: [{ name: 'SignIn' }] });
+                navigation.reset({ index: 0, routes: [{ name: 'Sign In' }] });
               } catch (e) {
                 console.error(e);
                 setError(e.message);
@@ -58,39 +68,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           }}>
           Sign Up
         </Button>
-        {/* <Input />
-        <PrimaryButton
-          text="Sign in"
-          onPress={async () => {
-            try {
-              await Auth.signIn('kgorges', 'Fourdowns!3058');
-              auth.setUser({ username: 'kgorges' });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        />
-        <SecondaryButton
-          text="Sign up"
-          onPress={async () => {
-            try {
-              await Auth.signIn('kgorges', 'Fourdowns!3058');
-              auth.setUser({ username: 'kgorges' });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        /> */}
       </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-});

@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput } from 'react-native-paper';
+import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
 import { useAuth } from '../../../providers/auth';
 /* eslint-disable-next-line */
 import { StackNavigationProp } from '@react-navigation/stack';
 
 interface AuthSignInScreenProps {
-  navigation: StackNavigationProp<{ SignUp: undefined }>;
+  navigation: StackNavigationProp<{ 'Sign Up': undefined }>;
 }
 
 export default ({ navigation }: AuthSignInScreenProps) => {
@@ -16,19 +16,30 @@ export default ({ navigation }: AuthSignInScreenProps) => {
   const [error, setError] = React.useState('');
 
   const auth = useAuth();
+  const theme = useTheme();
+
+  const styles = StyleSheet.create({
+    input: {
+      width: 340,
+    },
+  });
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={theme.container}>
+        <View style={theme.form.row}>
+          <TextInput
+            style={styles.input}
+            label="Username"
+            mode="flat"
+            autoCapitalize="none"
+            returnKeyType="next"
+            value={username}
+            onChangeText={(text: string) => setUsername(text)}
+          />
+        </View>
         <TextInput
-          label="Username"
-          mode="flat"
-          autoCapitalize="none"
-          returnKeyType="next"
-          value={username}
-          onChangeText={(text: string) => setUsername(text)}
-        />
-        <TextInput
+          style={styles.input}
           label="Password"
           mode="flat"
           autoCapitalize="none"
@@ -43,7 +54,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
         <Button
           mode="text"
           onPress={async () => {
-            navigation.navigate('SignUp');
+            navigation.navigate('Sign Up');
           }}>
           Sign up
         </Button>
@@ -52,6 +63,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           onPress={async () => {
             if (username.length === 0 || password.length === 0) {
               setError('Username and password are required.');
+              console.log('bad');
             } else {
               try {
                 await Auth.signIn(username, password);
@@ -64,39 +76,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           }}>
           Sign In
         </Button>
-        {/* <Input />
-        <PrimaryButton
-          text="Sign in"
-          onPress={async () => {
-            try {
-              await Auth.signIn('kgorges', 'Fourdowns!3058');
-              auth.setUser({ username: 'kgorges' });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        />
-        <SecondaryButton
-          text="Sign up"
-          onPress={async () => {
-            try {
-              await Auth.signIn('kgorges', 'Fourdowns!3058');
-              auth.setUser({ username: 'kgorges' });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        /> */}
       </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-});
