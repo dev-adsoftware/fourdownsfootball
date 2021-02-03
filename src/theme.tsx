@@ -13,7 +13,8 @@ declare global {
     interface Theme {
       container: StyleProp<ViewStyle>;
       form: {
-        row: StyleProp<ViewStyle>;
+        rowCenter: StyleProp<ViewStyle>;
+        rowRight: StyleProp<ViewStyle>;
       };
     }
   }
@@ -23,6 +24,12 @@ export const CombinedDefaultTheme = merge(
   NavigationDefaultTheme,
   PaperDefaultTheme,
 );
+
+const formRowDefaults: StyleProp<ViewStyle> = {
+  marginVertical: 10,
+  width: '100%',
+  flexDirection: 'row',
+};
 
 const theme: ReactNativePaper.Theme = {
   ...CombinedDefaultTheme,
@@ -34,8 +41,15 @@ const theme: ReactNativePaper.Theme = {
     justifyContent: 'center',
   },
   form: {
-    row: {
-      marginVertical: 10,
+    rowCenter: {
+      ...formRowDefaults,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    rowRight: {
+      ...formRowDefaults,
+      alignItems: 'center',
+      justifyContent: 'flex-end',
     },
   },
 };

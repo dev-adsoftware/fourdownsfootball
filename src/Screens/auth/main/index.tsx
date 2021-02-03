@@ -5,8 +5,19 @@ import { useTheme } from 'react-native-paper';
 
 import SignIn from '../signin';
 import SignUp from '../signup';
+import Confirm from '../confirm';
+import Forgot from '../forgot';
+import ResetPassword from '../reset-password';
 
-const Stack = createStackNavigator();
+export type AuthStackParamList = {
+  'Sign In': undefined;
+  'Sign Up': undefined;
+  'Forgot Password': undefined;
+  Confirm: { username: string };
+  'Reset Password': { username: string };
+};
+
+const Stack = createStackNavigator<AuthStackParamList>();
 
 export default () => {
   const theme = useTheme();
@@ -16,6 +27,9 @@ export default () => {
         <Stack.Navigator>
           <Stack.Screen name="Sign In" component={SignIn} />
           <Stack.Screen name="Sign Up" component={SignUp} />
+          <Stack.Screen name="Confirm" component={Confirm} />
+          <Stack.Screen name="Forgot Password" component={Forgot} />
+          <Stack.Screen name="Reset Password" component={ResetPassword} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

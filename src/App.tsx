@@ -8,7 +8,7 @@ import env from './env.json';
 
 import Amplify from 'aws-amplify';
 import { AuthProvider } from './providers/auth';
-import Home from './screens/home';
+import Home from './screens/home/main';
 
 Amplify.configure({
   Auth: {

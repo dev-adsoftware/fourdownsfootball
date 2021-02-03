@@ -6,6 +6,7 @@ import { CognitoUser } from 'amazon-cognito-identity-js';
 const AuthContext = React.createContext<Auth | undefined>(undefined);
 
 interface Auth {
+  isLoading: boolean;
   user: { username: string };
   setUser: React.Dispatch<
     React.SetStateAction<{
@@ -40,7 +41,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   }, [isLoading, user]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ isLoading, user, setUser }}>
       {children}
     </AuthContext.Provider>
   );

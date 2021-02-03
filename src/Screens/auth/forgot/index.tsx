@@ -1,27 +1,18 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-  useTheme,
-} from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
-import { useAuth } from '../../../providers/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../main';
 
-interface AuthSignInScreenProps {
-  navigation: StackNavigationProp<AuthStackParamList, 'Sign In'>;
+interface AuthForgotScreenProps {
+  navigation: StackNavigationProp<AuthStackParamList, 'Forgot Password'>;
 }
 
-export default ({ navigation }: AuthSignInScreenProps) => {
+export default ({ navigation }: AuthForgotScreenProps) => {
   const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
 
-  const auth = useAuth();
   const theme = useTheme();
 
   const styles = StyleSheet.create({
@@ -58,24 +49,6 @@ export default ({ navigation }: AuthSignInScreenProps) => {
               onChangeText={(text: string) => setUsername(text)}
             />
           </View>
-          <View style={theme.form.rowCenter}>
-            <TextInput
-              style={styles.input}
-              label="Password"
-              mode="flat"
-              autoCapitalize="none"
-              returnKeyType="done"
-              value={password}
-              onChangeText={(text: string) => setPassword(text)}
-              secureTextEntry
-            />
-          </View>
-          <View style={theme.form.rowRight}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Forgot Password')}>
-              <Text style={styles.forgot}>Forgot Password?</Text>
-            </TouchableOpacity>
-          </View>
           {error.length > 0 ? (
             <>
               <View style={theme.form.rowCenter}>
@@ -89,26 +62,19 @@ export default ({ navigation }: AuthSignInScreenProps) => {
             <Button
               mode="contained"
               onPress={async () => {
-                if (username.length === 0 || password.length === 0) {
-                  setError('Username and password are required.');
-                  console.log('bad');
+                if (username.length === 0) {
+                  setError('Username is required.');
                 } else {
                   try {
-                    await Auth.signIn(username, password);
-                    auth.setUser({ username: username });
+                    await Auth.forgotPassword(username);
+                    navigation.navigate('Reset Password', { username });
                   } catch (e) {
                     setError(e.message);
                   }
                 }
               }}>
-              Sign In
+              Send Password Recovery Code
             </Button>
-          </View>
-          <View style={theme.form.rowCenter}>
-            <Text>Don’t have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
-              <Text style={styles.link}>Sign up</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>

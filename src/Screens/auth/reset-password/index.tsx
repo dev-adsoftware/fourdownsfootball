@@ -2,17 +2,21 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { useAuth } from '../../../providers/auth';
 import { AuthStackParamList } from '../main';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-interface AuthSignUpScreenProps {
-  navigation: StackNavigationProp<AuthStackParamList, 'Sign Up'>;
+interface AuthResetPasswordScreenProps {
+  route: RouteProp<AuthStackParamList, 'Reset Password'>;
+  navigation: StackNavigationProp<AuthStackParamList, 'Reset Password'>;
 }
 
-export default ({ navigation }: AuthSignUpScreenProps) => {
-  const [username, setUsername] = React.useState('');
+export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
+  const { username } = route.params;
+
+  const [code, setCode] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [email, setEmail] = React.useState('');
   const [error, setError] = React.useState('');
 
   const theme = useTheme();
@@ -24,11 +28,17 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
     input: {
       width: '100%',
     },
+    forgotPassword: {
+      alignItems: 'flex-end',
+    },
+    forgot: {
+      color: theme.colors.accent,
+    },
+    link: {
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+    },
   });
-
-  const emailValidator = (email: string): boolean => {
-    return /\S+@\S+\.\S+/.test(email);
-  };
 
   return (
     <>
@@ -37,12 +47,12 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           <View style={theme.form.rowCenter}>
             <TextInput
               style={styles.input}
-              label="Username"
+              label="Confirmation Code"
               mode="flat"
               autoCapitalize="none"
               returnKeyType="next"
-              value={username}
-              onChangeText={(text: string) => setUsername(text)}
+              value={code}
+              onChangeText={(text: string) => setCode(text)}
             />
           </View>
           <View style={theme.form.rowCenter}>
@@ -55,20 +65,6 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
               value={password}
               onChangeText={(text: string) => setPassword(text)}
               secureTextEntry
-            />
-          </View>
-          <View style={theme.form.rowCenter}>
-            <TextInput
-              style={styles.input}
-              label="E-Mail Address"
-              mode="flat"
-              autoCapitalize="none"
-              returnKeyType="done"
-              autoCompleteType="email"
-              textContentType="emailAddress"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={(text: string) => setEmail(text)}
             />
           </View>
           {error.length > 0 ? (
@@ -84,28 +80,18 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
             <Button
               mode="contained"
               onPress={async () => {
-                if (username.length === 0) {
-                  setError('Username is required.');
-                } else if (password.length === 0) {
-                  setError('Password is required.');
-                } else if (email.length === 0) {
-                  setError('E-mail address is required.');
-                } else if (!emailValidator(email)) {
-                  setError('E-mail address must be valid.');
+                if (password.length === 0 || code.length === 0) {
+                  setError('Confirmation code and password are required.');
                 } else {
                   try {
-                    await Auth.signUp({
-                      username,
-                      password,
-                      attributes: { email },
-                    });
-                    navigation.navigate('Confirm', { username });
+                    await Auth.forgotPasswordSubmit(username, code, password);
+                    navigation.navigate('Sign In');
                   } catch (e) {
                     setError(e.message);
                   }
                 }
               }}>
-              Sign Up
+              Reset Password
             </Button>
           </View>
         </View>
