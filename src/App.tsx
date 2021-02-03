@@ -1,14 +1,24 @@
 // import 'react-native-gesture-handler';
 import React from 'react';
 import { Platform } from 'react-native';
+import Amplify from 'aws-amplify';
+
+// UI Components and themes
 import { Provider as PaperProvider } from 'react-native-paper';
 import theme from './theme';
+
+// Providers
 import { EnvProvider } from './providers/env';
+import { AuthProvider } from './providers/auth';
+
+// Helpers
+import { init as IconInit } from './helpers/icons';
+
+// Environment
 import env from './env.json';
 
-import Amplify from 'aws-amplify';
-import { AuthProvider } from './providers/auth';
-import Home from './screens/home/main';
+// Screens
+import HomeMain from './screens/home/main';
 
 Amplify.configure({
   Auth: {
@@ -34,6 +44,8 @@ Amplify.configure({
 
 const App = () => {
   console.log(Platform.OS);
+  IconInit();
+
   return (
     <>
       <EnvProvider initialEnv={env}>
@@ -48,7 +60,7 @@ const App = () => {
                 `}</style>
             ) : null} */}
           <AuthProvider>
-            <Home />
+            <HomeMain />
           </AuthProvider>
           {/* </React.Fragment> */}
         </PaperProvider>

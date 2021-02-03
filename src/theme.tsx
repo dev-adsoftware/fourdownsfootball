@@ -33,7 +33,6 @@ const formRowDefaults: StyleProp<ViewStyle> = {
 
 const theme: ReactNativePaper.Theme = {
   ...CombinedDefaultTheme,
-
   // Specify custom properties
   container: {
     flex: 1,
