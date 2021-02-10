@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { useTheme } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Dashboard from '../../dashboard/navigator';
-import Teams from '../../teams/main';
-import Leagues from '../../leagues/main';
-import Ladders from '../../ladders/main';
+import DashboardNavigator from '../dashboard/navigator';
+import TeamsNavigator from '../teams/navigator';
+import LeaguesNavigator from '../leagues/navigator';
+import LaddersNavigator from '../ladders/navigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +22,7 @@ export default () => {
           }}>
           <Tab.Screen
             name="Dashboard"
-            component={Dashboard}
+            component={DashboardNavigator}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <FontAwesomeIcon icon="home" color={color} size={size} />
@@ -31,7 +31,7 @@ export default () => {
           />
           <Tab.Screen
             name="Teams"
-            component={Teams}
+            component={TeamsNavigator}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <FontAwesomeIcon
@@ -44,7 +44,7 @@ export default () => {
           />
           <Tab.Screen
             name="Leagues"
-            component={Leagues}
+            component={LeaguesNavigator}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <FontAwesomeIcon icon="columns" color={color} size={size} />
@@ -53,7 +53,7 @@ export default () => {
           />
           <Tab.Screen
             name="Ladders"
-            component={Ladders}
+            component={LaddersNavigator}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <FontAwesomeIcon icon="list" color={color} size={size} />

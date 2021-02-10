@@ -1,26 +1,20 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-  useTheme,
-} from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
 import { useAuth } from '../../../providers/auth';
+/* eslint-disable-next-line */
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../main';
 
-interface AuthSignInScreenProps {
-  navigation: StackNavigationProp<AuthStackParamList, 'Sign In'>;
+interface AuthSignUpScreenProps {
+  navigation: StackNavigationProp<{ 'Sign In': undefined }>;
 }
 
-export default ({ navigation }: AuthSignInScreenProps) => {
+export default ({ navigation }: AuthSignUpScreenProps) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [error, setError] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
 
   const auth = useAuth();
   const theme = useTheme();
@@ -32,17 +26,11 @@ export default ({ navigation }: AuthSignInScreenProps) => {
     input: {
       width: '100%',
     },
-    forgotPassword: {
-      alignItems: 'flex-end',
-    },
-    forgot: {
-      color: theme.colors.accent,
-    },
-    link: {
-      fontWeight: 'bold',
-      color: theme.colors.primary,
-    },
   });
+
+  const emailValidator = (email: string): boolean => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
   return (
     <>
@@ -71,11 +59,19 @@ export default ({ navigation }: AuthSignInScreenProps) => {
               secureTextEntry
             />
           </View>
-          <View style={theme.form.rowRight}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Forgot Password')}>
-              <Text style={styles.forgot}>Forgot Password?</Text>
-            </TouchableOpacity>
+          <View style={theme.form.rowCenter}>
+            <TextInput
+              style={styles.input}
+              label="E-Mail Address"
+              mode="flat"
+              autoCapitalize="none"
+              returnKeyType="done"
+              autoCompleteType="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(text: string) => setEmail(text)}
+            />
           </View>
           {error.length > 0 ? (
             <>
@@ -89,30 +85,34 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           <View style={theme.form.rowCenter}>
             <Button
               mode="contained"
-              loading={loading}
               onPress={async () => {
-                if (username.length === 0 || password.length === 0) {
-                  setError('Username and password are required.');
-                  console.log('bad');
+                if (username.length === 0) {
+                  setError('Username is required.');
+                } else if (password.length === 0) {
+                  setError('Password are required.');
+                } else if (email.length === 0) {
+                  setError('E-mail address is required.');
+                } else if (!emailValidator(email)) {
+                  setError('E-mail address must be valid.');
                 } else {
                   try {
-                    setLoading(true);
-                    await Auth.signIn(username, password);
-                    setLoading(false);
+                    await Auth.signUp({
+                      username,
+                      password,
+                      attributes: { email },
+                    });
                     auth.setUser({ username: username });
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Sign In' }],
+                    });
                   } catch (e) {
                     setError(e.message);
                   }
                 }
               }}>
-              Sign In
+              Sign Up
             </Button>
-          </View>
-          <View style={theme.form.rowCenter}>
-            <Text>Don’t have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
-              <Text style={styles.link}>Sign up</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>

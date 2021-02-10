@@ -1,6 +1,5 @@
 // import 'react-native-gesture-handler';
 import React from 'react';
-import { Platform } from 'react-native';
 import Amplify from 'aws-amplify';
 
 // UI Components and themes
@@ -40,29 +39,16 @@ Amplify.configure({
   },
 });
 
-// const Stack = createStackNavigator();
-
 const App = () => {
-  console.log(Platform.OS);
   IconInit();
 
   return (
     <>
       <EnvProvider initialEnv={env}>
         <PaperProvider theme={theme}>
-          {/* <React.Fragment> */}
-          {/* {Platform.OS === 'web' ? (
-              <style type="text/css">{`
-                  @font-face {
-                    font-family: 'MaterialCommunityIcons';
-                    src: url(${require('react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
-                  }
-                `}</style>
-            ) : null} */}
           <AuthProvider>
             <HomeMain />
           </AuthProvider>
-          {/* </React.Fragment> */}
         </PaperProvider>
       </EnvProvider>
     </>

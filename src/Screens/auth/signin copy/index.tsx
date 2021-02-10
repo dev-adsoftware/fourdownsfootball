@@ -10,17 +10,23 @@ import {
 import { Auth } from 'aws-amplify';
 import { useAuth } from '../../../providers/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../main';
 
 interface AuthSignInScreenProps {
-  navigation: StackNavigationProp<AuthStackParamList, 'Sign In'>;
+  navigation: StackNavigationProp<
+    {
+      'Sign In': undefined;
+      'Sign Up': undefined;
+      'Forgot Password': undefined;
+      Register: undefined;
+    },
+    'Sign In'
+  >;
 }
 
 export default ({ navigation }: AuthSignInScreenProps) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
 
   const auth = useAuth();
   const theme = useTheme();
@@ -89,16 +95,13 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           <View style={theme.form.rowCenter}>
             <Button
               mode="contained"
-              loading={loading}
               onPress={async () => {
                 if (username.length === 0 || password.length === 0) {
                   setError('Username and password are required.');
                   console.log('bad');
                 } else {
                   try {
-                    setLoading(true);
                     await Auth.signIn(username, password);
-                    setLoading(false);
                     auth.setUser({ username: username });
                   } catch (e) {
                     setError(e.message);

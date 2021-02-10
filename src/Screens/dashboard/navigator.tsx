@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Toolbar from '../../home/toolbar';
-import DashboardMain from '../main';
+import Toolbar from '../home/toolbar';
+import DashboardMain from './main';
 
 type DashboardStackParamList = {
   Dashboard: undefined;
@@ -14,7 +14,6 @@ export default () => {
     <>
       <Stack.Navigator
         screenOptions={{
-          headerTitle: '',
           headerRight: Toolbar,
         }}>
         <Stack.Screen name="Dashboard" component={DashboardMain} />

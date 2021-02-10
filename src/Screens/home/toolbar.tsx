@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { TouchableOpacity, View } from 'react-native';
 import { Menu, useTheme } from 'react-native-paper';
-import { useAuth } from '../../../providers/auth';
+import { useAuth } from '../../providers/auth';
 
 export default () => {
   const theme = useTheme();
