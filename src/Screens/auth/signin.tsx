@@ -1,16 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-  useTheme,
-} from 'react-native-paper';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
-import { useAuth } from '../../../providers/auth';
+import { useAuth } from '../../providers/auth';
+import { useTheme } from '../../providers/theme';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../main';
+import { AuthStackParamList } from './main';
 
 interface AuthSignInScreenProps {
   navigation: StackNavigationProp<AuthStackParamList, 'Sign In'>;
@@ -46,9 +41,9 @@ export default ({ navigation }: AuthSignInScreenProps) => {
 
   return (
     <>
-      <View style={theme.container}>
+      <View style={theme.layout.container}>
         <View style={styles.form}>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Username"
@@ -59,7 +54,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
               onChangeText={(text: string) => setUsername(text)}
             />
           </View>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Password"
@@ -71,7 +66,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
               secureTextEntry
             />
           </View>
-          <View style={theme.form.rowRight}>
+          <View style={[theme.layout.form.row, theme.layout.right]}>
             <TouchableOpacity
               onPress={() => navigation.navigate('Forgot Password')}>
               <Text style={styles.forgot}>Forgot Password?</Text>
@@ -79,14 +74,14 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           </View>
           {error.length > 0 ? (
             <>
-              <View style={theme.form.rowCenter}>
+              <View style={[theme.layout.form.row, theme.layout.center]}>
                 <HelperText type="error">Error: {error}</HelperText>
               </View>
             </>
           ) : (
             <></>
           )}
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <Button
               mode="contained"
               loading={loading}
@@ -108,7 +103,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
               Sign In
             </Button>
           </View>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <Text>Don’t have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
               <Text style={styles.link}>Sign up</Text>

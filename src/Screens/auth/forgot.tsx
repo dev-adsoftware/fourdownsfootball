@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
+import { Button, HelperText, TextInput } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../main';
+import { AuthStackParamList } from './main';
+import { useTheme } from '../../providers/theme';
 
 interface AuthForgotScreenProps {
   navigation: StackNavigationProp<AuthStackParamList, 'Forgot Password'>;
@@ -36,9 +37,9 @@ export default ({ navigation }: AuthForgotScreenProps) => {
 
   return (
     <>
-      <View style={theme.container}>
+      <View style={theme.layout.container}>
         <View style={styles.form}>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Username"
@@ -51,14 +52,14 @@ export default ({ navigation }: AuthForgotScreenProps) => {
           </View>
           {error.length > 0 ? (
             <>
-              <View style={theme.form.rowCenter}>
+              <View style={[theme.layout.form.row, theme.layout.center]}>
                 <HelperText type="error">Error: {error}</HelperText>
               </View>
             </>
           ) : (
             <></>
           )}
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <Button
               mode="contained"
               onPress={async () => {

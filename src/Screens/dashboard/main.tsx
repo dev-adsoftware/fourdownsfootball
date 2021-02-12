@@ -1,12 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Paragraph, useTheme } from 'react-native-paper';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useTheme } from '../../providers/theme';
+import Current from './current';
+import History from './history';
+
+const Tab = createMaterialTopTabNavigator();
 
 export default () => {
   const theme = useTheme();
   return (
-    <View style={theme.container}>
-      <Paragraph>This is your dashboard.</Paragraph>
-    </View>
+    <Tab.Navigator>
+      <Tab.Screen name="Current" component={Current} />
+      <Tab.Screen name="History" component={History} />
+    </Tab.Navigator>
   );
 };

@@ -6,8 +6,9 @@ import {
   faColumns,
   faList,
   faCog,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 
 export function init() {
-  library.add(fab, faHome, faFootballBall, faColumns, faList, faCog);
+  library.add(fab, faHome, faFootballBall, faColumns, faList, faCog, faPlus);
 }

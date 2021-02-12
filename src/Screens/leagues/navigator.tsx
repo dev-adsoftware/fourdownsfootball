@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Toolbar from '../home/toolbar';
-import LeaguesMain from '../leagues/main';
+import Toolbar from './toolbar';
+import LeaguesMain from './main';
 
 type LeaguesStackParamList = {
   Leagues: undefined;
@@ -14,7 +14,13 @@ export default () => {
     <>
       <Stack.Navigator
         screenOptions={{
-          headerRight: Toolbar,
+          headerRight: () => {
+            return (
+              <>
+                <Toolbar />
+              </>
+            );
+          },
         }}>
         <Stack.Screen name="Leagues" component={LeaguesMain} />
       </Stack.Navigator>

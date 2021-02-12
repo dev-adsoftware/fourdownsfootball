@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Toolbar from '../home/toolbar';
-import LaddersMain from '../ladders/main';
+import Toolbar from './toolbar';
+import LaddersMain from './main';
 
 type LaddersStackParamList = {
   Ladders: undefined;
@@ -14,7 +14,13 @@ export default () => {
     <>
       <Stack.Navigator
         screenOptions={{
-          headerRight: Toolbar,
+          headerRight: () => {
+            return (
+              <>
+                <Toolbar />
+              </>
+            );
+          },
         }}>
         <Stack.Screen name="Ladders" component={LaddersMain} />
       </Stack.Navigator>

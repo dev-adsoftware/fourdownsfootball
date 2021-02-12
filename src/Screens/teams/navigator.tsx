@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Toolbar from '../home/toolbar';
-import TeamsMain from '../teams/main';
+import Toolbar from './toolbar';
+import TeamsMain from './main';
 
 type TeamsStackParamList = {
   Teams: undefined;
@@ -14,7 +14,13 @@ export default () => {
     <>
       <Stack.Navigator
         screenOptions={{
-          headerRight: Toolbar,
+          headerRight: () => {
+            return (
+              <>
+                <Toolbar />
+              </>
+            );
+          },
         }}>
         <Stack.Screen name="Teams" component={TeamsMain} />
       </Stack.Navigator>

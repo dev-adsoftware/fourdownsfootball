@@ -4,10 +4,10 @@ import Amplify from 'aws-amplify';
 
 // UI Components and themes
 import { Provider as PaperProvider } from 'react-native-paper';
-import theme from './theme';
 
 // Providers
 import { EnvProvider } from './providers/env';
+import { Theme, ThemeProvider } from './providers/theme';
 import { AuthProvider } from './providers/auth';
 
 // Helpers
@@ -39,17 +39,21 @@ Amplify.configure({
   },
 });
 
+const theme = new Theme();
+
 const App = () => {
   IconInit();
 
   return (
     <>
       <EnvProvider initialEnv={env}>
-        <PaperProvider theme={theme}>
-          <AuthProvider>
-            <HomeMain />
-          </AuthProvider>
-        </PaperProvider>
+        <ThemeProvider initialTheme={theme}>
+          <PaperProvider theme={theme.mapToPaper()}>
+            <AuthProvider>
+              <HomeMain />
+            </AuthProvider>
+          </PaperProvider>
+        </ThemeProvider>
       </EnvProvider>
     </>
   );

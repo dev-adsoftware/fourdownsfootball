@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { useTheme } from 'react-native-paper';
+import { useTheme } from '../../providers/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import DashboardNavigator from '../dashboard/navigator';
 import TeamsNavigator from '../teams/navigator';
@@ -15,7 +15,7 @@ export default () => {
 
   return (
     <>
-      <NavigationContainer theme={theme}>
+      <NavigationContainer theme={theme.mapToNavigation()}>
         <Tab.Navigator
           tabBarOptions={{
             showLabel: false,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
+import { Button, HelperText, TextInput } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
-import { useAuth } from '../../../providers/auth';
-import { AuthStackParamList } from '../main';
+import { useTheme } from '../../providers/theme';
+import { AuthStackParamList } from './main';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -42,9 +42,9 @@ export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
 
   return (
     <>
-      <View style={theme.container}>
+      <View style={theme.layout.container}>
         <View style={styles.form}>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Confirmation Code"
@@ -55,7 +55,7 @@ export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
               onChangeText={(text: string) => setCode(text)}
             />
           </View>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Password"
@@ -69,14 +69,14 @@ export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
           </View>
           {error.length > 0 ? (
             <>
-              <View style={theme.form.rowCenter}>
+              <View style={[theme.layout.form.row, theme.layout.center]}>
                 <HelperText type="error">Error: {error}</HelperText>
               </View>
             </>
           ) : (
             <></>
           )}
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <Button
               mode="contained"
               onPress={async () => {

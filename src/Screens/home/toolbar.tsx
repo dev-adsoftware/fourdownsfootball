@@ -1,10 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { TouchableOpacity, View } from 'react-native';
-import { Menu, useTheme } from 'react-native-paper';
+import { Menu } from 'react-native-paper';
 import { useAuth } from '../../providers/auth';
+import { useTheme } from '../../providers/theme';
 
-export default () => {
+export default ({ children }: { children?: React.ReactNode }) => {
   const theme = useTheme();
   const auth = useAuth();
 
@@ -13,12 +14,18 @@ export default () => {
   const closeMenu = () => setVisible(false);
 
   return (
-    <View style={{ marginRight: 20 }}>
+    <View style={{ marginRight: 20, flexDirection: 'row' }}>
+      {/* <TouchableOpacity
+        style={{ paddingHorizontal: 8 }}
+        onPress={() => console.log('new game')}>
+        <FontAwesomeIcon icon="plus" color={theme.colors.primary} />
+      </TouchableOpacity> */}
+      {children}
       <Menu
         visible={visible}
         onDismiss={closeMenu}
         anchor={
-          <TouchableOpacity onPress={openMenu}>
+          <TouchableOpacity style={{ paddingHorizontal: 8 }} onPress={openMenu}>
             <FontAwesomeIcon icon="cog" color={theme.colors.primary} />
           </TouchableOpacity>
         }>

@@ -6,10 +6,8 @@ import { useTheme } from '../../providers/theme';
 export default () => {
   const theme = useTheme();
   return (
-    <>
-      <View style={theme.layout.container}>
-        <Paragraph>Here is a ladder</Paragraph>
-      </View>
-    </>
+    <View style={theme.layout.container}>
+      <Paragraph>Games in progress</Paragraph>
+    </View>
   );
 };

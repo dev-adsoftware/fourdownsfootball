@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput, useTheme } from 'react-native-paper';
+import { Button, HelperText, TextInput } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../main';
+import { AuthStackParamList } from './main';
+import { useTheme } from '../../providers/theme';
 
 interface AuthSignUpScreenProps {
   navigation: StackNavigationProp<AuthStackParamList, 'Sign Up'>;
@@ -32,9 +33,9 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
 
   return (
     <>
-      <View style={theme.container}>
+      <View style={theme.layout.container}>
         <View style={styles.form}>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Username"
@@ -45,7 +46,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
               onChangeText={(text: string) => setUsername(text)}
             />
           </View>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="Password"
@@ -57,7 +58,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
               secureTextEntry
             />
           </View>
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
               label="E-Mail Address"
@@ -73,14 +74,14 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           </View>
           {error.length > 0 ? (
             <>
-              <View style={theme.form.rowCenter}>
+              <View style={[theme.layout.form.row, theme.layout.center]}>
                 <HelperText type="error">Error: {error}</HelperText>
               </View>
             </>
           ) : (
             <></>
           )}
-          <View style={theme.form.rowCenter}>
+          <View style={[theme.layout.form.row, theme.layout.center]}>
             <Button
               mode="contained"
               onPress={async () => {

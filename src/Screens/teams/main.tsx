@@ -1,12 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Paragraph, useTheme } from 'react-native-paper';
+import { Paragraph } from 'react-native-paper';
+import { useTheme } from '../../providers/theme';
 
 export default () => {
   const theme = useTheme();
   return (
     <>
-      <View style={theme.container}>
+      <View style={theme.layout.container}>
         <Paragraph>Here is a team</Paragraph>
       </View>
     </>
