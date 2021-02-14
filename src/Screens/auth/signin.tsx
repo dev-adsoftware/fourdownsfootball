@@ -97,6 +97,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
                     auth.setUser({ username: username });
                   } catch (e) {
                     setError(e.message);
+                    setLoading(false);
                   }
                 }
               }}>
