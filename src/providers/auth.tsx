@@ -1,5 +1,5 @@
 import React from 'react';
-import { Auth as AWSAuth } from 'aws-amplify';
+import { Auth as AWSAuth } from '@aws-amplify/auth';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import { CognitoUser } from 'amazon-cognito-identity-js';
 

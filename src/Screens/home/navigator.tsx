@@ -7,11 +7,17 @@ import DashboardNavigator from '../dashboard/navigator';
 import TeamsNavigator from '../teams/navigator';
 import LeaguesNavigator from '../leagues/navigator';
 import LaddersNavigator from '../ladders/navigator';
+import { useNotification } from '../../providers/notification';
 
 const Tab = createBottomTabNavigator();
 
 export default () => {
   const theme = useTheme();
+  const notification = useNotification();
+
+  React.useEffect(() => {
+    notification.configure();
+  });
 
   return (
     <>

@@ -4,6 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
+import Auth from '@aws-amplify/auth';
 
 export default ({ children }: { children?: React.ReactNode }) => {
   const theme = useTheme();
@@ -31,8 +32,9 @@ export default ({ children }: { children?: React.ReactNode }) => {
         }>
         <Menu.Item
           title="Sign out"
-          onPress={() => {
+          onPress={async () => {
             closeMenu();
+            await Auth.signOut();
             auth.setUser({ username: 'empty' });
           }}
         />

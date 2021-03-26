@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
-import { Auth } from 'aws-amplify';
+import { Auth } from '@aws-amplify/auth';
 import { useTheme } from '../../providers/theme';
 import { AuthStackParamList } from './main';
 import { RouteProp } from '@react-navigation/native';

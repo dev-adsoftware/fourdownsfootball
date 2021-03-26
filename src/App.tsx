@@ -1,6 +1,6 @@
 // import 'react-native-gesture-handler';
 import React from 'react';
-import Amplify from 'aws-amplify';
+import Amplify from '@aws-amplify/core';
 
 // UI Components and themes
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -9,6 +9,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { EnvProvider } from './providers/env';
 import { Theme, ThemeProvider } from './providers/theme';
 import { AuthProvider } from './providers/auth';
+import { NotificationProvider } from './providers/notification';
 
 // Helpers
 import { init as IconInit } from './helpers/icons';
@@ -50,7 +51,9 @@ const App = () => {
         <ThemeProvider initialTheme={theme}>
           <PaperProvider theme={theme.mapToPaper()}>
             <AuthProvider>
-              <HomeMain />
+              <NotificationProvider>
+                <HomeMain />
+              </NotificationProvider>
             </AuthProvider>
           </PaperProvider>
         </ThemeProvider>

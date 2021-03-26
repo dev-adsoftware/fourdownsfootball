@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-import { Auth } from 'aws-amplify';
+import { Auth } from '@aws-amplify/auth';
 import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
 import { StackNavigationProp } from '@react-navigation/stack';
