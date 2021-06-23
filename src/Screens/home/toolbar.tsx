@@ -5,6 +5,7 @@ import { Menu } from 'react-native-paper';
 import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
 import Auth from '@aws-amplify/auth';
+import { OwnerSummaryView } from '@dev-adsoftware/fourdownsfootball-dtos';
 
 export default ({ children }: { children?: React.ReactNode }) => {
   const theme = useTheme();
@@ -35,7 +36,7 @@ export default ({ children }: { children?: React.ReactNode }) => {
           onPress={async () => {
             closeMenu();
             await Auth.signOut();
-            auth.setUser({ username: 'empty' });
+            auth.setOwner(new OwnerSummaryView());
           }}
         />
       </Menu>

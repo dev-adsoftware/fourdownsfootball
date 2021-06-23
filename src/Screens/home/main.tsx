@@ -13,7 +13,7 @@ export default () => {
         <>
           <Splash />
         </>
-      ) : auth.user.username === 'empty' ? (
+      ) : auth.owner.id === undefined ? (
         <>
           <AuthMain />
         </>

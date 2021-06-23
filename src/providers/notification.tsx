@@ -16,26 +16,26 @@ type NotificationProviderProps = {
 
 function NotificationProvider({ children }: NotificationProviderProps) {
   const configure = () => {
-    PushNotification.configure({
-      onRegister: (tokenData) => {
-        const { token } = tokenData;
-        console.log(`Received notification token: ${token}`);
-      },
-      onNotification: (notification) => {
-        console.log('onNotification:', notification);
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
-      },
-      onRegistrationError: function (err) {
-        console.error(err.message, err);
-      },
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-      popInitialNotification: true,
-      requestPermissions: true,
-    });
+    // PushNotification.configure({
+    //   onRegister: (tokenData) => {
+    //     const { token } = tokenData;
+    //     console.log(`Received notification token: ${token}`);
+    //   },
+    //   onNotification: (notification) => {
+    //     console.log('onNotification:', notification);
+    //     notification.finish(PushNotificationIOS.FetchResult.NoData);
+    //   },
+    //   onRegistrationError: function (err) {
+    //     console.error(err.message, err);
+    //   },
+    //   permissions: {
+    //     alert: true,
+    //     badge: true,
+    //     sound: true,
+    //   },
+    //   popInitialNotification: true,
+    //   requestPermissions: true,
+    // });
   };
 
   return (

@@ -38,6 +38,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Username"
               mode="flat"
               autoCapitalize="none"
@@ -49,6 +50,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Password"
               mode="flat"
               autoCapitalize="none"
@@ -61,6 +63,7 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="E-Mail Address"
               mode="flat"
               autoCapitalize="none"

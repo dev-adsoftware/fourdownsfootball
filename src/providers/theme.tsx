@@ -4,7 +4,7 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle, TextStyle } from 'react-native';
 
 type Font = {
   fontFamily: string;
@@ -59,7 +59,7 @@ export class Theme {
     thin: Font;
   } = {
     regular: { fontFamily: 'Roboto-Regular', fontWeight: 'normal' },
-    bold: { fontFamily: 'Roboto-Bold', fontWeight: 'normal' },
+    bold: { fontFamily: 'Roboto-Bold', fontWeight: 'bold' },
     medium: { fontFamily: 'Roboto-Medium', fontWeight: 'normal' },
     light: { fontFamily: 'Roboto-Light', fontWeight: 'normal' },
     thin: { fontFamily: 'Roboto-Thin', fontWeight: 'normal' },
@@ -69,6 +69,13 @@ export class Theme {
     form: { row: StyleProp<ViewStyle> };
     center: StyleProp<ViewStyle>;
     right: StyleProp<ViewStyle>;
+    flatList: {
+      container: StyleProp<ViewStyle>;
+      item: StyleProp<ViewStyle>;
+      itemLeft: StyleProp<TextStyle>;
+      itemRight: StyleProp<TextStyle>;
+      separator: StyleProp<ViewStyle>;
+    };
   } = {
     container: {
       flex: 1,
@@ -80,6 +87,31 @@ export class Theme {
     },
     center: { alignItems: 'center', justifyContent: 'center' },
     right: { alignItems: 'center', justifyContent: 'flex-end' },
+    flatList: {
+      container: {
+        width: '100%',
+        paddingLeft: 5,
+      },
+      item: {
+        flex: 1,
+        flexDirection: 'row',
+        padding: 5,
+      },
+      itemLeft: {
+        flex: 5,
+        padding: 5,
+        ...this.fonts.bold,
+      },
+      itemRight: {
+        flex: 1,
+        textAlign: 'right',
+        padding: 5,
+      },
+      separator: {
+        height: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      },
+    },
   };
 
   public mapToPaper(): typeof PaperDefaultTheme {

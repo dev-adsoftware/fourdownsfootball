@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-get-random-values';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { Auth } from '@aws-amplify/auth';
@@ -6,6 +7,8 @@ import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from './main';
+import { OwnerApi } from '../../apis/owner.api';
+import { OwnerAttributes } from '@dev-adsoftware/fourdownsfootball-dtos';
 
 interface AuthSignInScreenProps {
   navigation: StackNavigationProp<AuthStackParamList, 'Sign In'>;
@@ -39,6 +42,8 @@ export default ({ navigation }: AuthSignInScreenProps) => {
     },
   });
 
+  const ownerApi = new OwnerApi();
+
   return (
     <>
       <View style={theme.layout.container}>
@@ -47,6 +52,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
             <TextInput
               style={styles.input}
               label="Username"
+              textAlign="left"
               mode="flat"
               autoCapitalize="none"
               returnKeyType="next"
@@ -57,6 +63,7 @@ export default ({ navigation }: AuthSignInScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Password"
               mode="flat"
               autoCapitalize="none"
@@ -93,8 +100,19 @@ export default ({ navigation }: AuthSignInScreenProps) => {
                   try {
                     setLoading(true);
                     await Auth.signIn(username, password);
-                    setLoading(false);
-                    auth.setUser({ username: username });
+                    try {
+                      const owner = await ownerApi.get(username);
+                      auth.setOwner(owner);
+                    } catch (e) {
+                      if (e.response.status === 404) {
+                        console.log('owner dne, creating new one');
+                        auth.setOwner(
+                          await ownerApi.create(
+                            new OwnerAttributes().init({ username }),
+                          ),
+                        );
+                      }
+                    }
                   } catch (e) {
                     setError(e.message);
                     setLoading(false);

@@ -4,7 +4,7 @@ import React from 'react';
 import { useTheme } from '../../providers/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import DashboardNavigator from '../dashboard/navigator';
-import TeamsNavigator from '../teams/navigator';
+import TeamsRoot from '../teams/root';
 import LeaguesNavigator from '../leagues/navigator';
 import LaddersNavigator from '../ladders/navigator';
 import { useNotification } from '../../providers/notification';
@@ -24,7 +24,7 @@ export default () => {
       <NavigationContainer theme={theme.mapToNavigation()}>
         <Tab.Navigator
           tabBarOptions={{
-            showLabel: false,
+            showLabel: true,
           }}>
           <Tab.Screen
             name="Dashboard"
@@ -37,7 +37,7 @@ export default () => {
           />
           <Tab.Screen
             name="Teams"
-            component={TeamsNavigator}
+            component={TeamsRoot}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <FontAwesomeIcon

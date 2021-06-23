@@ -1,15 +1,32 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Paragraph } from 'react-native-paper';
-import { useTheme } from '../../providers/theme';
+import { createStackNavigator } from '@react-navigation/stack';
+import Toolbar from './toolbar';
+import TeamsList from './list';
+import TeamsDetail from './detail';
+
+export type TeamsStackParamList = {
+  Teams: { ownerId: string };
+  Detail: { ownerId: string };
+};
+
+const Stack = createStackNavigator<TeamsStackParamList>();
 
 export default () => {
-  const theme = useTheme();
   return (
     <>
-      <View style={theme.layout.container}>
-        <Paragraph>Here is a team</Paragraph>
-      </View>
+      <Stack.Navigator
+        screenOptions={{
+          headerRight: () => {
+            return (
+              <>
+                <Toolbar />
+              </>
+            );
+          },
+        }}>
+        <Stack.Screen name="Teams" component={TeamsList} />
+        <Stack.Screen name="Detail" component={TeamsDetail} />
+      </Stack.Navigator>
     </>
   );
 };

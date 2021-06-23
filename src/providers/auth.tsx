@@ -2,17 +2,15 @@ import React from 'react';
 import { Auth as AWSAuth } from '@aws-amplify/auth';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import { CognitoUser } from 'amazon-cognito-identity-js';
+import { OwnerSummaryView } from '@dev-adsoftware/fourdownsfootball-dtos';
+import { OwnerApi } from '../apis/owner.api';
 
 const AuthContext = React.createContext<Auth | undefined>(undefined);
 
 interface Auth {
   isLoading: boolean;
-  user: { username: string };
-  setUser: React.Dispatch<
-    React.SetStateAction<{
-      username: string;
-    }>
-  >;
+  owner: OwnerSummaryView;
+  setOwner: React.Dispatch<React.SetStateAction<OwnerSummaryView>>;
 }
 
 type AuthProviderProps = {
@@ -21,14 +19,15 @@ type AuthProviderProps = {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [user, setUser] = React.useState({ username: 'empty' });
+  const [owner, setOwner] = React.useState(new OwnerSummaryView());
 
   React.useEffect(() => {
     const init = async () => {
       try {
         const cognitoUser: CognitoUser = (await AWSAuth.currentAuthenticatedUser()) as CognitoUser;
-        setUser({ username: cognitoUser.getUsername() });
-        console.log(user);
+        const owner = await new OwnerApi().get(cognitoUser.getUsername());
+        setOwner(owner);
+        console.log(owner);
       } catch (e) {
         console.log(e);
       }
@@ -38,10 +37,10 @@ function AuthProvider({ children }: AuthProviderProps) {
     if (isLoading) {
       init();
     }
-  }, [isLoading, user]);
+  }, [isLoading, owner]);
 
   return (
-    <AuthContext.Provider value={{ isLoading, user, setUser }}>
+    <AuthContext.Provider value={{ isLoading, owner, setOwner }}>
       {children}
     </AuthContext.Provider>
   );
