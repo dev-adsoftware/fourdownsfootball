@@ -27,8 +27,8 @@ export default ({ navigation }: AuthSignUpScreenProps) => {
     },
   });
 
-  const emailValidator = (email: string): boolean => {
-    return /\S+@\S+\.\S+/.test(email);
+  const emailValidator = (emailToValidate: string): boolean => {
+    return /\S+@\S+\.\S+/.test(emailToValidate);
   };
 
   return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Auth as AWSAuth } from '@aws-amplify/auth';
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { OwnerSummaryView } from '@dev-adsoftware/fourdownsfootball-dtos';
 import { OwnerApi } from '../apis/owner.api';
@@ -24,20 +23,20 @@ function AuthProvider({ children }: AuthProviderProps) {
   React.useEffect(() => {
     const init = async () => {
       try {
-        const cognitoUser: CognitoUser = (await AWSAuth.currentAuthenticatedUser()) as CognitoUser;
-        const owner = await new OwnerApi().get(cognitoUser.getUsername());
-        setOwner(owner);
-        console.log(owner);
+        const cognitoUser: CognitoUser =
+          (await AWSAuth.currentAuthenticatedUser()) as CognitoUser;
+        const authenticatedOwner = await new OwnerApi().get(
+          cognitoUser.getUsername(),
+        );
+        setOwner(authenticatedOwner);
       } catch (e) {
         console.log(e);
       }
       setIsLoading(false);
     };
 
-    if (isLoading) {
-      init();
-    }
-  }, [isLoading, owner]);
+    init();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isLoading, owner, setOwner }}>

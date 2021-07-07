@@ -47,6 +47,7 @@ export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Confirmation Code"
               mode="flat"
               autoCapitalize="none"
@@ -58,6 +59,7 @@ export default ({ route, navigation }: AuthResetPasswordScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Password"
               mode="flat"
               autoCapitalize="none"

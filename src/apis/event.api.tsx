@@ -1,4 +1,3 @@
-import React from 'react';
 import { Aggregate } from '@dev-adsoftware/fourdownsfootball-dtos';
 import { API } from '@aws-amplify/api';
 import { AggregateFactory } from '@dev-adsoftware/fourdownsfootball-dtos';
@@ -11,7 +10,7 @@ export class EventApi {
     sequence?: string,
   ): Promise<Aggregate> {
     try {
-      const response = await API.post('fourdowns', `/events`, {
+      const response = await API.post('fourdowns', '/events', {
         body: new AggregateFactory().create(
           JSON.stringify({
             aggregate,

@@ -4,7 +4,7 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native';
-import { StyleProp, View, ViewStyle, TextStyle } from 'react-native';
+import { StyleProp, ViewStyle, TextStyle } from 'react-native';
 
 type Font = {
   fontFamily: string;
@@ -69,6 +69,9 @@ export class Theme {
     form: { row: StyleProp<ViewStyle> };
     center: StyleProp<ViewStyle>;
     right: StyleProp<ViewStyle>;
+    toolbar: {
+      button: StyleProp<ViewStyle>;
+    };
     flatList: {
       container: StyleProp<ViewStyle>;
       item: StyleProp<ViewStyle>;
@@ -87,6 +90,9 @@ export class Theme {
     },
     center: { alignItems: 'center', justifyContent: 'center' },
     right: { alignItems: 'center', justifyContent: 'flex-end' },
+    toolbar: {
+      button: { paddingHorizontal: 8 },
+    },
     flatList: {
       container: {
         width: '100%',

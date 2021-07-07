@@ -1,4 +1,3 @@
-import React from 'react';
 import { Api } from './base.api';
 import {
   TeamSummaryView,
@@ -47,4 +46,8 @@ export class TeamApi extends Api {
     );
     return result;
   }
+
+  public citySortFn = (a: TeamSummaryView, b: TeamSummaryView): number => {
+    return a.attributes.city > b.attributes.city ? 1 : -1;
+  };
 }

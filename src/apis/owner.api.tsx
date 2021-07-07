@@ -1,4 +1,3 @@
-import React from 'react';
 import { Api } from './base.api';
 import {
   OwnerSummaryView,

@@ -1,9 +1,12 @@
 import React from 'react';
-import { FlatList, View, StyleSheet, Text } from 'react-native';
+import { FlatList, View, StyleSheet, Text, RefreshControl } from 'react-native';
 import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
 import { TeamSummaryView } from '@dev-adsoftware/fourdownsfootball-dtos';
 import { TeamApi } from '../../apis/team.api';
+import { useData } from '../../providers/data';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 type TeamSummaryProps = {
   city: string;
@@ -14,68 +17,73 @@ type TeamSummaryProps = {
 };
 
 export default () => {
-  const [teams, setTeams] = React.useState([] as TeamSummaryView[]);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const auth = useAuth();
   const theme = useTheme();
+  const data = useData();
+  const navigation = useNavigation();
 
   const styles = StyleSheet.create({});
 
-  React.useEffect(() => {
-    const getTeams = async () => {
-      const teamsFetched = await new TeamApi().list(auth.owner.id);
-      console.log(teamsFetched);
-      setTeams(
-        teamsFetched.items.sort(
-          (a: TeamSummaryView, b: TeamSummaryView): number => {
-            return a.attributes.city > b.attributes.city ? 1 : -1;
-          },
-        ),
-      );
-    };
+  const teamApi = new TeamApi();
 
-    getTeams();
-  }, []);
-
-  const TeamSummary = ({
-    city,
-    state,
-    country,
-    abbreviation,
-    nickname,
-  }: TeamSummaryProps) => {
+  // const TeamSummary = ({
+  //   city,
+  //   state,
+  //   country,
+  //   abbreviation,
+  //   nickname,
+  // }: TeamSummaryProps) => {
+  const TeamSummary = ({ team }: { team: TeamSummaryView }) => {
+    console.log(team);
     return (
       <>
-        <View style={theme.layout.flatList.item}>
-          <Text style={theme.layout.flatList.itemLeft}>
-            {city} {nickname}
-          </Text>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Detail', { team });
+          }}>
+          <View style={theme.layout.flatList.item}>
+            <Text style={theme.layout.flatList.itemLeft}>
+              {team.attributes.city} {team.attributes.nickname}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </>
     );
   };
 
   const renderTeam = ({ item }: { item: TeamSummaryView }) => (
     <TeamSummary
-      city={item.attributes.city}
-      state={item.attributes.state}
-      country={item.attributes.country}
-      abbreviation={item.attributes.abbreviation}
-      nickname={item.attributes.nickname}
+      team={item}
+      // city={item.attributes.city}
+      // state={item.attributes.state}
+      // country={item.attributes.country}
+      // abbreviation={item.attributes.abbreviation}
+      // nickname={item.attributes.nickname}
     />
   );
 
   const itemSeparator = () => <View style={theme.layout.flatList.separator} />;
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await data.teams.refresh();
+    setRefreshing(false);
+  };
 
   return (
     <>
       <View style={theme.layout.container}>
         <FlatList
           style={theme.layout.flatList.container}
-          data={teams}
+          data={data.teams.data.sort(teamApi.citySortFn)}
           renderItem={renderTeam}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={itemSeparator}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
     </>

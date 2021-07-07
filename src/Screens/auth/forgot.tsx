@@ -42,6 +42,7 @@ export default ({ navigation }: AuthForgotScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Username"
               mode="flat"
               autoCapitalize="none"

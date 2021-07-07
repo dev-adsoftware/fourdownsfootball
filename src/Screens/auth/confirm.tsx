@@ -35,6 +35,7 @@ export default ({ route, navigation }: AuthConfirmScreenProps) => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <TextInput
               style={styles.input}
+              textAlign="left"
               label="Confirmation code"
               mode="flat"
               autoCapitalize="none"

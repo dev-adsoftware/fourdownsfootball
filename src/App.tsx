@@ -18,7 +18,7 @@ import { init as IconInit } from './helpers/icons';
 import env from './env.json';
 
 // Screens
-import HomeMain from './screens/home/main';
+import Main from './screens/main/root';
 
 Amplify.configure({
   Auth: {
@@ -52,7 +52,7 @@ const App = () => {
           <PaperProvider theme={theme.mapToPaper()}>
             <AuthProvider>
               <NotificationProvider>
-                <HomeMain />
+                <Main />
               </NotificationProvider>
             </AuthProvider>
           </PaperProvider>

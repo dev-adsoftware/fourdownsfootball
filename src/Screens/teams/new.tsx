@@ -6,6 +6,7 @@ import { useAuth } from '../../providers/auth';
 import { useTheme } from '../../providers/theme';
 import { TeamApi } from '../../apis/team.api';
 import { TeamAttributes } from '@dev-adsoftware/fourdownsfootball-dtos';
+import { useData } from '../../providers/data';
 
 export default () => {
   const [city, setCity] = React.useState('');
@@ -16,10 +17,14 @@ export default () => {
   const [pluralNickname, setPluralNickname] = React.useState('');
   const [shortNickname, setShortNickname] = React.useState('');
   const [error, setError] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const auth = useAuth();
   const theme = useTheme();
+  const data = useData();
   const navigation = useNavigation();
+
+  const teamApi = new TeamApi();
 
   const styles = StyleSheet.create({
     form: {
@@ -110,6 +115,7 @@ export default () => {
           <View style={[theme.layout.form.row, theme.layout.center]}>
             <Button
               mode="contained"
+              loading={loading}
               onPress={async () => {
                 if (city.length === 0) {
                   setError('City is required.');
@@ -123,7 +129,8 @@ export default () => {
                   setError('Nickname is required.');
                 } else {
                   try {
-                    await new TeamApi().create(
+                    setLoading(true);
+                    await teamApi.create(
                       auth.owner.id,
                       new TeamAttributes().init({
                         city,
@@ -135,9 +142,11 @@ export default () => {
                         shortNickname,
                       }),
                     );
+                    await data.teams.refresh();
                     navigation.navigate('Main');
                   } catch (e) {
                     setError(e.message);
+                    setLoading(false);
                   }
                 }
               }}>

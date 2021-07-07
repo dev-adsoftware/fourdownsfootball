@@ -1,4 +1,3 @@
-import React from 'react';
 import { API } from '@aws-amplify/api';
 import { EventApi } from './event.api';
 

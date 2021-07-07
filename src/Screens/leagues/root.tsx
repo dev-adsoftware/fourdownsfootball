@@ -1,14 +1,13 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import TeamsMain from './main';
-import TeamsNew from './new';
+import LeaguesMain from './main';
 
-export type TeamsRootStackParamList = {
-  Main: {};
-  New: {};
+export type LeaguesRootStackParamList = {
+  Main: { ownerId: string };
+  // New: { ownerId: string };
 };
 
-const Stack = createStackNavigator<TeamsRootStackParamList>();
+const Stack = createStackNavigator<LeaguesRootStackParamList>();
 
 export default () => {
   return (
@@ -16,10 +15,9 @@ export default () => {
       <Stack.Navigator mode="modal">
         <Stack.Screen
           name="Main"
-          component={TeamsMain}
+          component={LeaguesMain}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="New" component={TeamsNew} />
       </Stack.Navigator>
     </>
   );
