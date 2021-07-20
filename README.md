@@ -1,0 +1,79 @@
+# Notes
+
+## Ladder
+
+- Create team
+  - Use tokens to generate players?
+    - Minimum roster size 40?
+    - Maximum roster size 50?
+    - Maximum number of tokens per player?
+    - Maximum number of tokens per attribute?
+    - Several autogen options to get started
+      - Balanced offense/defense
+      - More offense
+        - Balanced run/pass
+        - More run
+        - More pass
+      - More defense
+        - Balanced run/pass
+        - More aggressive (pass rush, turnover attributes)
+- Players are purchased and sold on market (auction like hattrick)
+  - Enforce minimum time on roster before resale
+- Maximum X games per week based on type of ladder (i.e. time per game)
+- How to select matchups:
+  - Automatic within a range
+  - Specify a range
+  - Specific challenges (with rules to auto-reject, expire challenges, withdraw when another request is accepted, etc.)
+- Tokens earned for each game played regardless of win/loss, opponent rating, etc.
+  - May be related to marketing budget
+  - May be related to player personalities (i.e. prestige)
+  - Not related to opponent in any way
+  - Not related to win/loss
+- Experience earned for each game played per player by position by # of plays
+  - Awarded directly following conclusion of game
+- Token use:
+  - Increase player abilities
+  - Increase team abilities (team scouting, player scouting, training, marketing)
+  - Save for purchase of new players
+- Ability declines upon player aging (3 months of play = 1 year of aging?)
+- Injuries?
+- Stats?
+
+### How To Implement Ladder (league and ladder will by synonymous)
+
+- Add attributes to player:
+  - Salary
+  - Term
+  - leagueId
+- Create player.modified event for player and team aggregates
+- Create player index to query by leagueId
+- Add attributes to team:
+  - leagueId
+- Create league summary view
+  - id
+  - category (Ladder/League)
+  - attributes
+    - name
+    - maxGamesPerWeek
+    - weeksPerYear
+    - gameType (timed, untimed)
+    - maxGameTime
+- Create league.created event
+- Create league teams view
+  - team assignments similar to player assignments to teams
+- Create team.assigned event for league
+- Create team
+  - Start with no roster and 1000 tokens
+    - TODO: Added team type to team attributes (ladder) and ladder id (which ladder)
+    - TODO: Create ladder service to create ladder (ladder id, name, game play attributes)
+    - TODO: Add token attributes to team attributes
+    - TODO: tokens.earned, tokens.spent events - generates player-player.modified events (which generates a second team update with new player sequence - team-player.modified events)
+  - On roster screen, + sign to create a new player
+    - TODO: player.created event from app - tokens.spent event from app
+      - must wait for several team events to propagate (player.assigned, tokens.spent)
+      - create player - wait for player to be assigned
+      - spend tokens - wait for tokens to reflect update
+    - TODO: Owner assigns tokens to increase player attributes
+      - modify player - wait for player sequence to be updated on team assignment
+      - spend tokens - wait for tokens to reflect update
+      - should it be allowed to reclaim tokens until final updates are made (i.e. keep all updates in the app until 'Complete' at which point all events are fired?) - yes

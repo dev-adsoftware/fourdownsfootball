@@ -16,6 +16,7 @@ import { init as IconInit } from './helpers/icons';
 
 // Environment
 import env from './env.json';
+console.log(`API: ${env.apiEndpoint}`);
 
 // Screens
 import Main from './screens/main/root';

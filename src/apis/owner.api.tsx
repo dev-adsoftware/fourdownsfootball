@@ -4,6 +4,7 @@ import {
   OwnerAttributes,
 } from '@dev-adsoftware/fourdownsfootball-dtos';
 import { noop } from 'lodash';
+import delay from 'delay';
 
 export class OwnerApi extends Api {
   public async create(attributes: OwnerAttributes): Promise<OwnerSummaryView> {
@@ -25,6 +26,7 @@ export class OwnerApi extends Api {
         owner = await this.get(result.id);
       } catch (e) {
         noop(e);
+        await delay(100);
       }
     } while (!owner);
     return owner;

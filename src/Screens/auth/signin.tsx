@@ -111,6 +111,9 @@ export default ({ navigation }: AuthSignInScreenProps) => {
                             new OwnerAttributes().init({ username }),
                           ),
                         );
+                      } else {
+                        setError(e.message);
+                        setLoading(false);
                       }
                     }
                   } catch (e) {

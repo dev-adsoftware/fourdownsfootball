@@ -2,9 +2,12 @@ import { Api } from './base.api';
 import {
   TeamSummaryView,
   TeamAttributes,
+  TeamRosterView,
 } from '@dev-adsoftware/fourdownsfootball-dtos';
 import { noop } from 'lodash';
 import { v4 } from 'uuid';
+import { PlayerApi } from './player.api';
+import delay from 'delay';
 
 export class TeamApi extends Api {
   public async create(
@@ -30,8 +33,11 @@ export class TeamApi extends Api {
         team = await this.get(result.id);
       } catch (e) {
         noop(e);
+        await delay(100);
       }
     } while (!team);
+
+    await new PlayerApi().createRandom(team.id);
     return team;
   }
 
@@ -42,8 +48,14 @@ export class TeamApi extends Api {
 
   public async list(ownerId: string): Promise<{ items: TeamSummaryView[] }> {
     const result = await this.apiGet<{ items: TeamSummaryView[] }>(
-      `teams/owner/${ownerId}`,
+      `owners/${ownerId}/teams`,
     );
+    return result;
+  }
+
+  public async getRoster(teamId: string): Promise<TeamRosterView> {
+    const result = await this.apiGet<TeamRosterView>(`teams/${teamId}/roster`);
+    console.log(result);
     return result;
   }
 
