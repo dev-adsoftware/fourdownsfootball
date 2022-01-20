@@ -1,23 +1,24 @@
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {NationSelectInput} from '../../components/teams/nation-select-input';
-import {Nation} from '../../services/nations';
+import {StateSelectInput} from '../../components/teams/state-select-input';
+import {State} from '../../services/states';
 import {CreateTeamStackParamList} from '../../stacks/teams-tab/create';
 
 type Properties = {
-  route: RouteProp<CreateTeamStackParamList, 'Select Nation'>;
+  route: RouteProp<CreateTeamStackParamList, 'Select State'>;
   navigation: NativeStackNavigationProp<CreateTeamStackParamList>;
 };
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   return (
-    <NationSelectInput
-      selectedNation={route.params.selectedNation}
-      onPressOption={(nation: Nation) => {
+    <StateSelectInput
+      nationId={route.params.nationId}
+      selectedState={route.params.selectedState}
+      onPressOption={(state: State) => {
         navigation.navigate({
           name: 'Create Team',
-          params: {nation},
+          params: {state},
           merge: true,
         });
       }}
@@ -25,4 +26,4 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
   );
 };
 
-export {Component as SelectNationScreen};
+export {Component as SelectStateScreen};

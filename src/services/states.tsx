@@ -2,19 +2,30 @@ import {API} from 'aws-amplify';
 
 export interface State {
   id: string;
-  ownerId: string;
-  nickname: string;
+  nationId: string;
+  name: string;
+  abbr: string;
 }
 
 class Service {
   constructor() {}
 
   private mapApiToState(input: any): State {
-    return {id: input.id, ownerId: input.ownerId, nickname: input.nickname};
+    return {
+      id: input.id,
+      nationId: input.nationId,
+      name: input.name,
+      abbr: input.abbr,
+    };
   }
 
   private mapStateToApi(input: State): any {
-    return {id: input.id, ownerId: input.ownerId, nickname: input.nickname};
+    return {
+      id: input.id,
+      nationId: input.nationId,
+      name: input.name,
+      abbr: input.abbr,
+    };
   }
 
   public async get(id: string): Promise<State> {

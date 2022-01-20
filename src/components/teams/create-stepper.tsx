@@ -12,24 +12,22 @@ import {SectionListSectionSeparator} from '../core/section-list/sectionlist-sect
 // import {useTheme} from '../../providers/theme';
 import {Nation} from '../../services/nations';
 import {Stepper} from '../stepper';
+import {State} from '../../services/states';
 
 type Properties = {
   nation?: Nation;
+  state?: State;
   onPressSelectNation: (selectedNation?: Nation) => void;
+  onPressSelectState: (nationId: string, selectedState?: State) => void;
 };
 
-const Component: React.FC<Properties> = ({nation, onPressSelectNation}) => {
+const Component: React.FC<Properties> = ({
+  nation,
+  state,
+  onPressSelectNation,
+  onPressSelectState,
+}) => {
   const [activeStep, setActiveStep] = React.useState('location');
-  const [state, setState] = React.useState<string>();
-  // const [nations, setNations] = React.useState<Nation[]>([]);
-
-  // const fetchNations = React.useCallback(async () => {
-  //   setNations((await new NationsService().list()).items);
-  // }, []);
-
-  // React.useEffect(() => {
-  //   fetchNations();
-  // }, [fetchNations]);
 
   const onPrev = () => {
     if (activeStep === 'verify') {
@@ -166,24 +164,32 @@ const Component: React.FC<Properties> = ({nation, onPressSelectNation}) => {
                   </View>
                 </Pressable>
                 <SectionListItemSeparator />
-                <View style={[styles.itemRow]}>
-                  <Text
-                    style={[
-                      styles.itemGrid,
-                      !nation ? styles.itemGridDisabled : {},
-                    ]}>
-                    State
-                  </Text>
-                  <View style={[styles.itemGridRight]}>
-                    <View style={[styles.itemSelectContainer]}>
-                      <Text style={[styles.itemSelectText]}>Required</Text>
-                      <FontAwesome5Icon
-                        name="chevron-right"
-                        color={theme.colors.secondaryText}
-                      />
+                <Pressable
+                  disabled={!nation}
+                  onPress={() => {
+                    onPressSelectState(nation?.id as string, state);
+                  }}>
+                  <View style={[styles.itemRow]}>
+                    <Text
+                      style={[
+                        styles.itemGrid,
+                        !nation ? styles.itemGridDisabled : {},
+                      ]}>
+                      State
+                    </Text>
+                    <View style={[styles.itemGridRight]}>
+                      <View style={[styles.itemSelectContainer]}>
+                        <Text style={[styles.itemSelectText]}>
+                          {state?.name || 'Required'}
+                        </Text>
+                        <FontAwesome5Icon
+                          name="chevron-right"
+                          color={theme.colors.secondaryText}
+                        />
+                      </View>
                     </View>
                   </View>
-                </View>
+                </Pressable>
                 <SectionListItemSeparator />
                 <View style={[styles.itemRow]}>
                   <Text
@@ -305,53 +311,7 @@ const Component: React.FC<Properties> = ({nation, onPressSelectNation}) => {
         onNext={() => {
           onNext();
         }}
-        // showFooter={false}
       />
-
-      {/* {activeStep === 'Location' ? (
-        <>
-          <SectionList
-            style={[styles.listContainer]}
-            sections={sections}
-            keyExtractor={(item, index) => item.heading + index}
-            renderItem={renderItem}
-            renderSectionHeader={({section: {title}}) => (
-              <Text style={styles.listSectionHeader}>{title}</Text>
-            )}
-            ItemSeparatorComponent={SectionListItemSeparator}
-            SectionSeparatorComponent={SectionListSectionSeparator}
-            ListFooterComponent={() => (
-              <View style={[styles.listFooter]}>
-                <Button
-                  text="NEXT"
-                  onPress={() => {
-                    setLocationStepState('complete');
-                    setBrandingStepState('active');
-                    setActiveStep('Branding');
-                  }}
-                />
-              </View>
-            )}
-          />
-        </>
-      ) : (
-        <></>
-      )}
-      {activeStep === 'Branding' ? (
-        <>
-          <Text>branding</Text>
-          <View style={[styles.listFooter]}>
-            <Button
-              text="NEXT"
-              onPress={() => {
-                setActiveStep('Location');
-              }}
-            />
-          </View>
-        </>
-      ) : (
-        <></>
-      )} */}
     </>
   );
 };

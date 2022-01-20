@@ -2,42 +2,54 @@ import React from 'react';
 import {SectionList, StyleSheet, Text, Pressable, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useTheme} from '../../providers/theme';
-import {Nation, NationsService} from '../../services/nations';
+import {State, StatesService} from '../../services/states';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {SectionListSectionSeparator} from '../core/section-list/sectionlist-section-separator';
 
 type Properties = {
-  selectedNation?: Nation;
-  onPressOption: (nation: Nation) => void;
+  nationId: string;
+  selectedState?: State;
+  onPressOption: (state: State) => void;
 };
 
 export type Option = {
-  nation: Nation;
+  state: State;
 };
 
-const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
+const Component: React.FC<Properties> = ({
+  nationId,
+  selectedState,
+  onPressOption,
+}) => {
   const [sections, setSections] = React.useState<
     {title: string; data: Option[]}[]
   >([]);
-  const [newlySelectedNation, setNewlySelectedNation] = React.useState<
-    Nation | undefined
-  >(selectedNation);
+  const [newlySelectedState, setNewlySelectedState] = React.useState<
+    State | undefined
+  >(selectedState);
 
-  const fetchNations = React.useCallback(async () => {
-    const nations = (await new NationsService().list()).items;
+  const fetchStates = React.useCallback(async () => {
+    const states = (await new StatesService().listByNation(nationId)).items;
     setSections([
       {
-        title: 'COUNTRIES',
-        data: nations.map((nation: Nation) => {
-          return {nation};
+        title: 'STATES',
+        data: states.map((state: State) => {
+          return {
+            state: {
+              id: state.id,
+              name: state.name,
+              abbr: state.abbr,
+              nationId: state.nationId,
+            },
+          };
         }),
       },
     ]);
-  }, []);
+  }, [nationId]);
 
   React.useEffect(() => {
-    fetchNations();
-  }, [fetchNations]);
+    fetchStates();
+  }, [fetchStates]);
 
   const theme = useTheme();
 
@@ -45,6 +57,7 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
     listContainer: {
       width: '100%',
       backgroundColor: theme.colors.background,
+      // borderTopWidth: 3,
       borderTopWidth: 1,
       borderTopColor: theme.colors.separator,
     },
@@ -89,21 +102,21 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
     item,
   }: {
     item: {
-      nation: Nation;
+      state: State;
       selected?: boolean;
     };
   }) => {
     return (
       <Pressable
         onPress={() => {
-          setNewlySelectedNation(item.nation);
-          setTimeout(() => onPressOption(item.nation), 200);
+          setNewlySelectedState(item.state);
+          setTimeout(() => onPressOption(item.state), 200);
         }}
         style={[styles.itemRow]}>
-        <Text style={[styles.itemGrid]}>{item.nation.name}</Text>
+        <Text style={[styles.itemGrid]}>{item.state.name}</Text>
         <View style={[styles.itemGrid, styles.itemGridRight]}>
           <View style={[styles.itemSelectContainer]}>
-            {item.nation.id === newlySelectedNation?.id ? (
+            {item.state.id === newlySelectedState?.id ? (
               <FontAwesome5Icon
                 name="check"
                 size={12}
@@ -122,7 +135,7 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
     <SectionList
       style={[styles.listContainer]}
       sections={sections}
-      keyExtractor={item => item.nation.id}
+      keyExtractor={item => item.state.id}
       renderItem={renderItem}
       renderSectionHeader={({section: {title}}) => (
         <Text style={[styles.listSectionHeader]}>{title}</Text>
@@ -133,4 +146,4 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
   );
 };
 
-export {Component as NationSelectInput};
+export {Component as StateSelectInput};
