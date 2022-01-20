@@ -54,7 +54,6 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
       try {
         const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
         const fetchedOwner = await getOrCreateOwner(username, attributes.email);
-        console.log(fetchedOwner);
         setOwner(fetchedOwner);
         setIsAuthenticated(true);
       } catch (e) {
@@ -69,7 +68,6 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
   const signIn = async (username: string, password: string) => {
     const user = await AWSAuth.signIn(username, password);
     const fetchedOwner = await getOrCreateOwner(user.username, username);
-    console.log(fetchedOwner);
     setOwner(fetchedOwner);
     setIsAuthenticated(true);
   };

@@ -14,12 +14,15 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import {AuthProvider, useAuth} from './src/providers/auth';
 import {EnvProvider} from './src/providers/env';
-import {Theme, ThemeProvider, useTheme} from './src/providers/theme';
+import {ThemeProvider, useTheme} from './src/providers/theme';
 import env from './env.json';
 import {SplashScreen} from './src/screens/splash';
 import {MainTabStack} from './src/stacks/main-tab';
 import {AuthStack} from './src/stacks/auth';
 import {DataProvider} from './src/providers/data';
+import {useColorScheme} from 'react-native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {SettingsStack} from './src/stacks/settings';
 
 Amplify.configure({
   Auth: {
@@ -42,27 +45,48 @@ Amplify.configure({
   },
 });
 
+export type AppStackParamList = {
+  MainTabs: undefined;
+  Settings: undefined;
+};
+
+const Stack = createNativeStackNavigator<AppStackParamList>();
+
 const Main = () => {
   const auth = useAuth();
+  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   return auth.isLoading ? (
     <SplashScreen />
   ) : (
     <DataProvider>
-      <NavigationContainer theme={theme.mapToNavigation()}>
-        {!auth.isAuthenticated ? <AuthStack /> : <MainTabStack />}
+      <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+        {!auth.isAuthenticated ? (
+          <AuthStack />
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabStack}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsStack}
+              options={{presentation: 'modal', headerShown: false}}
+            />
+          </Stack.Navigator>
+        )}
       </NavigationContainer>
     </DataProvider>
   );
 };
 
 const App = () => {
-  const theme = new Theme();
-
   return (
     <EnvProvider initialEnv={env}>
-      <ThemeProvider initialTheme={theme}>
+      <ThemeProvider>
         <AuthProvider>
           <Main />
         </AuthProvider>

@@ -3,88 +3,63 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native';
-
-type Font = {
-  fontFamily: string;
-  fontWeight?:
-    | 'normal'
-    | 'bold'
-    | '100'
-    | '200'
-    | '300'
-    | '400'
-    | '500'
-    | '600'
-    | '700'
-    | '800'
-    | '900';
-};
-
-export const colorPalette = {
-  'Dark Olive Green': '#606c38',
-  'Kombu Green': '#283618',
-  Cornsilk: '#fefae0',
-  Fawn: '#dda15e',
-  'Liver Dogs': '#bc6c25',
-};
+import {ColorSchemeName, PlatformColor, useColorScheme} from 'react-native';
+import {resolveColorSync} from '@klarna/platform-colors';
 
 export class Theme {
-  public dark: boolean = false;
+  public colorScheme: ColorSchemeName;
   public colors: {
-    primary: string;
     background: string;
-    surface: string;
-    accent: string;
-    error: string;
+    secondaryBackground: string;
+    fill: string;
+    separator: string;
     text: string;
-    disabled: string;
-    placeholder: string;
-    backdrop: string;
-    card: string;
-    border: string;
-    notification: string;
-  } = {
-    primary: colorPalette['Dark Olive Green'],
-    background: 'white',
-    surface: 'white',
-    accent: colorPalette['Liver Dogs'],
-    error: 'red',
-    text: 'white',
-    disabled: 'gray',
-    placeholder: 'gray',
-    backdrop: 'rgba(0, 0, 0, 0.2)',
-    card: colorPalette['Dark Olive Green'],
-    border: 'black',
-    notification: 'red',
-  };
-  public fonts: {
-    regular: Font;
-    bold: Font;
-    medium: Font;
-    light: Font;
-    thin: Font;
-  } = {
-    regular: {fontFamily: 'System', fontWeight: '400'},
-    bold: {fontFamily: 'System', fontWeight: '700'},
-    medium: {fontFamily: 'System', fontWeight: '500'},
-    light: {fontFamily: 'System', fontWeight: '200'},
-    thin: {fontFamily: 'System', fontWeight: '100'},
+    secondaryText: string;
+    placeholderText: string;
+    link: string;
+    error: string;
+    blue: string;
+    green: string;
+    white: string;
   };
 
-  public mapToNavigation(): typeof NavigationDefaultTheme {
+  constructor(colorScheme: ColorSchemeName) {
+    this.colorScheme = colorScheme;
+    this.colors = {
+      background: resolveColorSync(PlatformColor('systemBackground')),
+      secondaryBackground: resolveColorSync(
+        PlatformColor('secondarySystemBackground'),
+      ),
+      fill: resolveColorSync(PlatformColor('systemFill')),
+      separator: resolveColorSync(PlatformColor('separator')),
+      text: resolveColorSync(PlatformColor('label')),
+      secondaryText: resolveColorSync(PlatformColor('secondaryLabel')),
+      placeholderText: resolveColorSync(PlatformColor('placeholderText')),
+      link: resolveColorSync(PlatformColor('link')),
+      error: resolveColorSync(PlatformColor('systemRed')),
+      blue: resolveColorSync(PlatformColor('systemBlue')),
+      green: resolveColorSync(PlatformColor('systemGreen')),
+      white: 'white',
+    };
+    // console.log(this.colors);
+  }
+
+  public mapToNavigation(
+    colorScheme: ColorSchemeName,
+  ): typeof NavigationDefaultTheme {
     return {
       ...NavigationDefaultTheme,
-      dark: this.dark,
+      dark: colorScheme === 'dark',
       colors: {
-        ...(this.dark
+        ...(colorScheme === 'dark'
           ? NavigationDarkTheme.colors
           : NavigationDefaultTheme.colors),
-        primary: this.colors.primary,
+        // primary: 'red',
         background: this.colors.background,
-        card: this.colors.card,
-        text: this.colors.text,
-        border: this.colors.border,
-        notification: this.colors.notification,
+        // card: 'red',
+        // text: 'red',
+        // border: this.colors.border,
+        // notification: this.colors.notification,
       },
     };
   }
@@ -97,11 +72,14 @@ type Properties = {
   initialTheme?: Theme;
 };
 
-const ThemeProvider: React.FC<Properties> = ({
-  children,
-  initialTheme = new Theme(),
-}) => {
-  const [theme] = React.useState(initialTheme);
+const ThemeProvider: React.FC<Properties> = ({children}) => {
+  const colorScheme = useColorScheme();
+  const [theme, setTheme] = React.useState<Theme>(new Theme(colorScheme));
+
+  React.useEffect(() => {
+    setTheme(new Theme(colorScheme));
+  }, [colorScheme]);
+
   return (
     <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
   );
