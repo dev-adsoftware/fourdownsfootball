@@ -12,7 +12,8 @@ const Component: React.FC<Properties> = ({children}) => {
     inputBox: {
       borderWidth: 1,
       borderColor: theme.colors.separator,
-      padding: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
       borderRadius: 10,
       backgroundColor: theme.colors.fill,
     },

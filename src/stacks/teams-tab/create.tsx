@@ -28,7 +28,11 @@ const CreateTeamStack: React.FC<Properties> = ({}) => {
         headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="Create Team" component={CreateTeamsScreen} />
-      <Stack.Screen name="Select Nation" component={SelectNationScreen} />
+      <Stack.Screen
+        name="Select Nation"
+        component={SelectNationScreen}
+        options={{title: 'Select Country'}}
+      />
       <Stack.Screen name="Select State" component={SelectStateScreen} />
     </Stack.Navigator>
   );

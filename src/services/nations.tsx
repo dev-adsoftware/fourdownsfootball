@@ -4,17 +4,28 @@ export interface Nation {
   id: string;
   name: string;
   abbr: string;
+  flagEmojiUnicode: string;
 }
 
 class Service {
   constructor() {}
 
   private mapApiToNation(input: any): Nation {
-    return {id: input.id, name: input.name, abbr: input.abbr};
+    return {
+      id: input.id,
+      name: input.name,
+      abbr: input.abbr,
+      flagEmojiUnicode: input.flagEmojiUnicode,
+    };
   }
 
   private mapNationToApi(input: Nation): any {
-    return {id: input.id, name: input.name, abbr: input.abbr};
+    return {
+      id: input.id,
+      name: input.name,
+      abbr: input.abbr,
+      flagEmojiUnicode: input.flagEmojiUnicode,
+    };
   }
 
   public async get(id: string): Promise<Nation> {

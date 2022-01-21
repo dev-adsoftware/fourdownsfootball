@@ -1,10 +1,18 @@
 import React from 'react';
-import {SectionList, StyleSheet, Text, Pressable, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  ActivityIndicator,
+  TextInput,
+  FlatList,
+} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useTheme} from '../../providers/theme';
 import {State, StatesService} from '../../services/states';
+import {TextInputBox} from '../core/input/text-input-box';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
-import {SectionListSectionSeparator} from '../core/section-list/sectionlist-section-separator';
 
 type Properties = {
   nationId: string;
@@ -21,31 +29,49 @@ const Component: React.FC<Properties> = ({
   selectedState,
   onPressOption,
 }) => {
-  const [sections, setSections] = React.useState<
-    {title: string; data: Option[]}[]
-  >([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [searchText, setSearchText] = React.useState('');
+  const [filter, setFilter] = React.useState('');
+
+  const [items, setItems] = React.useState<Option[]>([]);
+  const [filteredItems, setFilteredItems] = React.useState<Option[]>([]);
+
   const [newlySelectedState, setNewlySelectedState] = React.useState<
     State | undefined
   >(selectedState);
 
   const fetchStates = React.useCallback(async () => {
-    const states = (await new StatesService().listByNation(nationId)).items;
-    setSections([
-      {
-        title: 'STATES',
-        data: states.map((state: State) => {
-          return {
-            state: {
-              id: state.id,
-              name: state.name,
-              abbr: state.abbr,
-              nationId: state.nationId,
-            },
-          };
-        }),
-      },
-    ]);
+    setIsLoading(true);
+    const states = (
+      await new StatesService().listByNation(nationId)
+    ).items.sort((a: State, b: State) => {
+      return a.name > b.name ? 1 : -1;
+    });
+    setItems(
+      states.map((state: State) => {
+        return {
+          state: {
+            id: state.id,
+            name: state.name,
+            abbr: state.abbr,
+            nationId: state.nationId,
+          },
+        };
+      }),
+    );
+    setIsLoading(false);
   }, [nationId]);
+
+  React.useEffect(() => {
+    setFilteredItems(
+      items.filter((item: Option) => {
+        return (
+          filter.length < 3 ||
+          item.state.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
+        );
+      }),
+    );
+  }, [items, filter]);
 
   React.useEffect(() => {
     fetchStates();
@@ -61,6 +87,13 @@ const Component: React.FC<Properties> = ({
       borderTopWidth: 1,
       borderTopColor: theme.colors.separator,
     },
+    loadingContainer: {
+      marginTop: 20,
+    },
+    footerPadding: {
+      height: 100,
+      backgroundColor: theme.colors.background,
+    },
     itemRow: {
       backgroundColor: theme.colors.background,
       paddingLeft: 10,
@@ -70,12 +103,14 @@ const Component: React.FC<Properties> = ({
       marginRight: 0,
     },
     itemGrid: {
-      flex: 1,
+      flex: 5,
       color: theme.colors.text,
+      // backgroundColor: 'green',
     },
     itemGridRight: {
       alignItems: 'flex-end',
       marginRight: 15,
+      flex: 1,
     },
     itemSelectContainer: {
       flexDirection: 'row',
@@ -90,11 +125,17 @@ const Component: React.FC<Properties> = ({
       color: theme.colors.secondaryText,
       fontSize: 12,
       paddingLeft: 10,
-      marginTop: 0,
+      marginTop: -1,
       marginBottom: 0,
       paddingTop: 10,
       paddingBottom: 3,
       textAlignVertical: 'bottom',
+    },
+    searchBarContainer: {
+      padding: 5,
+    },
+    textInput: {
+      color: theme.colors.text,
     },
   });
 
@@ -131,17 +172,37 @@ const Component: React.FC<Properties> = ({
     );
   };
 
-  return (
-    <SectionList
+  return isLoading ? (
+    <ActivityIndicator style={[styles.loadingContainer]} />
+  ) : (
+    <FlatList
       style={[styles.listContainer]}
-      sections={sections}
+      data={filteredItems}
+      extraData={filter}
       keyExtractor={item => item.state.id}
       renderItem={renderItem}
-      renderSectionHeader={({section: {title}}) => (
-        <Text style={[styles.listSectionHeader]}>{title}</Text>
-      )}
+      ListHeaderComponent={
+        <View style={[styles.searchBarContainer]}>
+          <TextInputBox>
+            <TextInput
+              style={[styles.textInput]}
+              textAlign="left"
+              autoCapitalize="none"
+              autoCorrect={false}
+              selectTextOnFocus
+              returnKeyType="search"
+              placeholder={'Search Countries'}
+              value={searchText}
+              onChangeText={setSearchText}
+              onSubmitEditing={({nativeEvent}) => {
+                setFilter(nativeEvent.text);
+              }}
+            />
+          </TextInputBox>
+        </View>
+      }
       ItemSeparatorComponent={SectionListItemSeparator}
-      SectionSeparatorComponent={SectionListSectionSeparator}
+      ListFooterComponent={<View style={[styles.footerPadding]} />}
     />
   );
 };
