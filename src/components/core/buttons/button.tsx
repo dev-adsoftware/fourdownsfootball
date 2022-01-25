@@ -34,7 +34,9 @@ const Component: React.FC<Properties> = ({
 }) => {
   const theme = useTheme();
   const styles = StyleSheet.create({
-    container: {flexDirection: 'row', alignItems: 'center'},
+    container: {
+      flexDirection: 'row',
+    },
     button: {
       backgroundColor: disabled
         ? theme.colors.fill
@@ -57,11 +59,14 @@ const Component: React.FC<Properties> = ({
         ? theme.colors.white
         : activeColor || theme.colors.blue,
       fontWeight: '500',
+      marginTop: 1,
     },
 
-    leftIconContainer: {marginRight: 10},
-    rightIconContainer: {marginLeft: 10},
+    leftIconContainer: {marginRight: 10, marginTop: -1},
+    rightIconContainer: {marginLeft: 10, marginTop: -1},
     emptyIconContainer: {height: 20},
+    activityIndicator: {marginTop: compact ? 3 : 0},
+    activityIndicatorText: {marginTop: compact ? 2 : 0},
   });
 
   return (
@@ -75,10 +80,18 @@ const Component: React.FC<Properties> = ({
       disabled={disabled}
       onPress={onPress}>
       {isLoading ? (
-        <ActivityIndicator
-          color={filled ? theme.colors.white : activeColor || theme.colors.blue}
-          size={17}
-        />
+        <View style={[styles.container]}>
+          <ActivityIndicator
+            style={[styles.leftIconContainer, styles.activityIndicator]}
+            color={
+              filled ? theme.colors.white : activeColor || theme.colors.blue
+            }
+            size={compact ? 10 : 17}
+          />
+          <Text style={[styles.text, styles.activityIndicatorText]}>
+            {text}
+          </Text>
+        </View>
       ) : (
         <View style={[styles.container]}>
           {iconLeft ? (

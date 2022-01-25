@@ -27,7 +27,7 @@ const TempScreen: React.FC<Properties> = ({navigation}) => {
       <View style={[styles.container]}>
         <Text style={[styles.text]}>
           {/* text {JSON.parse(`["${unicode}"]`)[0]} */}
-          text {EmojiDecoder.decode('U+1F1EC U+1F1E7')}
+          text {EmojiDecoder.decode('CA')}
         </Text>
         <Button
           text="Settings"

@@ -191,7 +191,7 @@ const Component: React.FC<Properties> = ({
               autoCorrect={false}
               selectTextOnFocus
               returnKeyType="search"
-              placeholder={'Search Countries'}
+              placeholder={'Search States'}
               value={searchText}
               onChangeText={setSearchText}
               onSubmitEditing={({nativeEvent}) => {

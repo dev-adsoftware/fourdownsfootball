@@ -17,6 +17,8 @@ export type CarouselItem = {
 
 type Properties = {
   items: CarouselItem[];
+  showDisabledButtons?: boolean;
+  disableNext?: boolean;
   showFooter?: boolean;
   showStaticFooter?: boolean;
   lastButton?: React.ReactNode;
@@ -26,6 +28,8 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({
   items,
+  showDisabledButtons = true,
+  disableNext = false,
   showFooter = true,
   showStaticFooter = false,
   lastButton,
@@ -36,7 +40,7 @@ const Component: React.FC<Properties> = ({
   const [dataWithPlaceholders, setDataWithPlaceholders] = React.useState<
     CarouselItem[]
   >([]);
-  const [isNextDisabled, setIsNextDisabled] = React.useState(false);
+  const [isNextDisabled, setIsNextDisabled] = React.useState(disableNext);
   const [isPrevDisabled, setIsPrevDisabled] = React.useState(true);
 
   const currentIndex = React.useRef<number>(1);
@@ -132,6 +136,9 @@ const Component: React.FC<Properties> = ({
       flexDirection: 'row',
       alignItems: 'center',
     },
+    emptyButtonContainer: {
+      width: 1,
+    },
   });
 
   return (
@@ -152,16 +159,22 @@ const Component: React.FC<Properties> = ({
                 </Animated.View>
                 {showFooter ? (
                   <View style={styles.footer}>
-                    <Button
-                      text="Prev"
-                      compact
-                      filled={false}
-                      disabled={isPrevDisabled}
-                      iconLeft="caret-left"
-                      onPress={handleOnPrev}
-                    />
+                    {isPrevDisabled && !showDisabledButtons ? (
+                      <View style={[styles.emptyButtonContainer]} />
+                    ) : (
+                      <Button
+                        text="Prev"
+                        compact
+                        filled={false}
+                        disabled={isPrevDisabled}
+                        iconLeft="caret-left"
+                        onPress={handleOnPrev}
+                      />
+                    )}
                     {lastButton && isNextDisabled ? (
                       lastButton
+                    ) : isNextDisabled && !showDisabledButtons ? (
+                      <View style={[styles.emptyButtonContainer]} />
                     ) : (
                       <Button
                         text="Next"

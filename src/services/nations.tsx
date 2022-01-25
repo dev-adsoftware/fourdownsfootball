@@ -4,7 +4,6 @@ export interface Nation {
   id: string;
   name: string;
   abbr: string;
-  flagEmojiUnicode: string;
 }
 
 class Service {
@@ -15,7 +14,6 @@ class Service {
       id: input.id,
       name: input.name,
       abbr: input.abbr,
-      flagEmojiUnicode: input.flagEmojiUnicode,
     };
   }
 
@@ -24,7 +22,6 @@ class Service {
       id: input.id,
       name: input.name,
       abbr: input.abbr,
-      flagEmojiUnicode: input.flagEmojiUnicode,
     };
   }
 

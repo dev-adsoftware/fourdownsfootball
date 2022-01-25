@@ -19,7 +19,17 @@ export class Theme {
     link: string;
     error: string;
     blue: string;
+    brown: string;
     green: string;
+    indigo: string;
+    orange: string;
+    pink: string;
+    purple: string;
+    red: string;
+    teal: string;
+    yellow: string;
+    gray: string;
+    black: string;
     white: string;
   };
 
@@ -38,7 +48,17 @@ export class Theme {
       link: resolveColorSync(PlatformColor('link')),
       error: resolveColorSync(PlatformColor('systemRed')),
       blue: resolveColorSync(PlatformColor('systemBlue')),
+      brown: resolveColorSync(PlatformColor('systemBrown')),
       green: resolveColorSync(PlatformColor('systemGreen')),
+      indigo: resolveColorSync(PlatformColor('systemIndigo')),
+      orange: resolveColorSync(PlatformColor('systemOrange')),
+      pink: resolveColorSync(PlatformColor('systemPink')),
+      purple: resolveColorSync(PlatformColor('systemPurple')),
+      red: resolveColorSync(PlatformColor('systemRed')),
+      teal: resolveColorSync(PlatformColor('systemTeal')),
+      yellow: resolveColorSync(PlatformColor('systemYellow')),
+      gray: resolveColorSync(PlatformColor('systemGray')),
+      black: 'black',
       white: 'white',
     };
     // console.log(this.colors);

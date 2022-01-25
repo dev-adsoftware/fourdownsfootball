@@ -22,13 +22,14 @@ class EmojiDecoder {
     };
 
     const unicode = input
-      .split(' ')
+      .split('')
       .map((code: string) => {
-        return toUTF16(code.replace('U+', '0x'));
+        return toUTF16(String(code.charCodeAt(0) + 127397));
       })
       .join('');
 
     return JSON.parse(`["${unicode}"]`)[0];
+    // return unicode;
   }
 }
 

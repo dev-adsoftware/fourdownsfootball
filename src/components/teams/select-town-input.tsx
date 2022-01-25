@@ -10,21 +10,25 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useTheme} from '../../providers/theme';
-import {Nation, NationsService} from '../../services/nations';
-import {EmojiDecoder} from '../../utilities/emoji-decoder';
+import {Town, TownsService} from '../../services/towns';
 import {TextInputBox} from '../core/input/text-input-box';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
 type Properties = {
-  selectedNation?: Nation;
-  onPressOption: (nation: Nation) => void;
+  stateId: string;
+  selectedTown?: Town;
+  onPressOption: (town: Town) => void;
 };
 
 export type Option = {
-  nation: Nation;
+  town: Town;
 };
 
-const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
+const Component: React.FC<Properties> = ({
+  stateId,
+  selectedTown,
+  onPressOption,
+}) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchText, setSearchText] = React.useState('');
   const [filter, setFilter] = React.useState('');
@@ -32,35 +36,49 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
   const [items, setItems] = React.useState<Option[]>([]);
   const [filteredItems, setFilteredItems] = React.useState<Option[]>([]);
 
-  const [newlySelectedNation, setNewlySelectedNation] = React.useState<
-    Nation | undefined
-  >(selectedNation);
+  const [newlySelectedTown, setNewlySelectedTown] = React.useState<
+    Town | undefined
+  >(selectedTown);
 
-  const fetchNations = React.useCallback(async () => {
+  const fetchTowns = React.useCallback(async () => {
     setIsLoading(true);
-    const nations = (await new NationsService().list()).items;
+    const towns = (await new TownsService().listByState(stateId)).items.sort(
+      (a: Town, b: Town) => {
+        return a.name > b.name ? 1 : -1;
+      },
+    );
     setItems(
-      nations.map((nation: Nation) => {
-        return {nation};
+      towns.map((town: Town) => {
+        return {
+          town: {
+            id: town.id,
+            name: town.name,
+            latitude: town.latitude,
+            longitude: town.longitude,
+            population: town.population,
+            timezone: town.timezone,
+            stateId: town.stateId,
+          },
+        };
       }),
     );
     setIsLoading(false);
-  }, []);
+  }, [stateId]);
 
   React.useEffect(() => {
     setFilteredItems(
       items.filter((item: Option) => {
         return (
           filter.length < 3 ||
-          item.nation.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
+          item.town.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
         );
       }),
     );
   }, [items, filter]);
 
   React.useEffect(() => {
-    fetchNations();
-  }, [fetchNations]);
+    fetchTowns();
+  }, [fetchTowns]);
 
   const theme = useTheme();
 
@@ -68,6 +86,7 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
     listContainer: {
       width: '100%',
       backgroundColor: theme.colors.background,
+      // borderTopWidth: 3,
       borderTopWidth: 1,
       borderTopColor: theme.colors.separator,
     },
@@ -87,12 +106,14 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
       marginRight: 0,
     },
     itemGrid: {
-      flex: 1,
+      flex: 5,
       color: theme.colors.text,
+      // backgroundColor: 'green',
     },
     itemGridRight: {
       alignItems: 'flex-end',
       marginRight: 15,
+      flex: 1,
     },
     itemSelectContainer: {
       flexDirection: 'row',
@@ -107,7 +128,7 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
       color: theme.colors.secondaryText,
       fontSize: 12,
       paddingLeft: 10,
-      marginTop: 0,
+      marginTop: -1,
       marginBottom: 0,
       paddingTop: 10,
       paddingBottom: 3,
@@ -125,25 +146,21 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
     item,
   }: {
     item: {
-      nation: Nation;
+      town: Town;
       selected?: boolean;
     };
   }) => {
     return (
       <Pressable
         onPress={() => {
-          setNewlySelectedNation(item.nation);
-          setTimeout(() => onPressOption(item.nation), 200);
+          setNewlySelectedTown(item.town);
+          setTimeout(() => onPressOption(item.town), 200);
         }}
         style={[styles.itemRow]}>
-        <Text style={[styles.itemGrid]}>
-          {EmojiDecoder.decode(item.nation.abbr)}
-          {'  '}
-          {item.nation.name}
-        </Text>
+        <Text style={[styles.itemGrid]}>{item.town.name}</Text>
         <View style={[styles.itemGrid, styles.itemGridRight]}>
           <View style={[styles.itemSelectContainer]}>
-            {item.nation.id === newlySelectedNation?.id ? (
+            {item.town.id === newlySelectedTown?.id ? (
               <FontAwesome5Icon
                 name="check"
                 size={12}
@@ -165,9 +182,8 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
       style={[styles.listContainer]}
       data={filteredItems}
       extraData={filter}
-      keyExtractor={item => item.nation.id}
+      keyExtractor={item => item.town.id}
       renderItem={renderItem}
-      ItemSeparatorComponent={SectionListItemSeparator}
       ListHeaderComponent={
         <View style={[styles.searchBarContainer]}>
           <TextInputBox>
@@ -178,7 +194,7 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
               autoCorrect={false}
               selectTextOnFocus
               returnKeyType="search"
-              placeholder={'Search Countries'}
+              placeholder={'Search Cities'}
               value={searchText}
               onChangeText={setSearchText}
               onSubmitEditing={({nativeEvent}) => {
@@ -188,9 +204,10 @@ const Component: React.FC<Properties> = ({selectedNation, onPressOption}) => {
           </TextInputBox>
         </View>
       }
+      ItemSeparatorComponent={SectionListItemSeparator}
       ListFooterComponent={<View style={[styles.footerPadding]} />}
     />
   );
 };
 
-export {Component as NationSelectInput};
+export {Component as TownSelectInput};

@@ -2,19 +2,39 @@ import {API} from 'aws-amplify';
 
 export interface Town {
   id: string;
-  ownerId: string;
-  nickname: string;
+  stateId: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  population: number;
+  timezone: string;
 }
 
 class Service {
   constructor() {}
 
   private mapApiToTown(input: any): Town {
-    return {id: input.id, ownerId: input.ownerId, nickname: input.nickname};
+    return {
+      id: input.id,
+      stateId: input.stateId,
+      name: input.name,
+      latitude: input.latitude,
+      longitude: input.longitude,
+      population: input.population,
+      timezone: input.timezone,
+    };
   }
 
   private mapTownToApi(input: Town): any {
-    return {id: input.id, ownerId: input.ownerId, nickname: input.nickname};
+    return {
+      id: input.id,
+      stateId: input.stateId,
+      name: input.name,
+      latitude: input.latitude,
+      longitude: input.longitude,
+      population: input.population,
+      timezone: input.timezone,
+    };
   }
 
   public async get(id: string): Promise<Town> {
@@ -26,12 +46,12 @@ class Service {
     }
   }
 
-  public async listByNation(
-    nationId: string,
+  public async listByState(
+    stateId: string,
     queryStringParameters?: Record<string, unknown>,
   ): Promise<{items: Town[]}> {
     try {
-      const result = await API.get('fourdowns', `/states/${nationId}/towns`, {
+      const result = await API.get('fourdowns', `/states/${stateId}/towns`, {
         queryStringParameters,
       });
       return {
