@@ -1,7 +1,9 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {Validator} from '../../globals/validator';
 import {useAuth} from '../../providers/auth';
+import {AuthStackParamList} from '../../stacks/auth';
 import {Button} from '../core/buttons/button';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
@@ -10,10 +12,10 @@ import {ErrorSnackbar} from '../core/snackbar/error';
 
 type Properties = {
   username: string;
-  onPressResetPassword: () => void;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
-const Component: React.FC<Properties> = ({username, onPressResetPassword}) => {
+const Component: React.FC<Properties> = ({username, navigation}) => {
   const [code, setCode] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [password2, setPassword2] = React.useState('');
@@ -89,7 +91,7 @@ const Component: React.FC<Properties> = ({username, onPressResetPassword}) => {
                 try {
                   setIsProcessing(true);
                   await auth.resetPassword(username, password, code);
-                  onPressResetPassword();
+                  navigation.navigate('Sign In');
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);

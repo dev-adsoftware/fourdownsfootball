@@ -4,17 +4,11 @@ import {ForgotPasswordForm} from '../../components/auth/forgot-password-form';
 import {AuthStackParamList} from '../../stacks/auth';
 
 type Properties = {
-  navigation: NativeStackNavigationProp<AuthStackParamList, 'Forgot Password'>;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 const Screen: React.FC<Properties> = ({navigation}) => {
-  return (
-    <ForgotPasswordForm
-      onSendPasswordRecoveryCode={(username: string) => {
-        navigation.navigate('Reset Password', {username});
-      }}
-    />
-  );
+  return <ForgotPasswordForm navigation={navigation} />;
 };
 
 export {Screen as ForgotPasswordScreen};

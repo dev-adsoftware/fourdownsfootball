@@ -4,16 +4,11 @@ import {SigninForm} from '../../components/auth/signin-form';
 import {AuthStackParamList} from '../../stacks/auth';
 
 type Properties = {
-  navigation: NativeStackNavigationProp<AuthStackParamList, 'Sign In'>;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 const Screen: React.FC<Properties> = ({navigation}) => {
-  return (
-    <SigninForm
-      onPressForgotPassword={() => navigation.navigate('Forgot Password')}
-      onPressSignUp={() => navigation.navigate('Sign Up')}
-    />
-  );
+  return <SigninForm navigation={navigation} />;
 };
 
 export {Screen as SignInScreen};

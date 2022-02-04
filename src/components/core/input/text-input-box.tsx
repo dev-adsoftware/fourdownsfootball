@@ -15,7 +15,7 @@ const Component: React.FC<Properties> = ({children}) => {
       paddingHorizontal: 10,
       paddingVertical: 7,
       borderRadius: 10,
-      backgroundColor: theme.colors.fill,
+      backgroundColor: theme.colors.secondaryBackground,
     },
   });
   return <View style={[styles.inputBox]}>{children}</View>;

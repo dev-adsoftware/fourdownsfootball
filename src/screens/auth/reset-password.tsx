@@ -6,16 +6,14 @@ import {AuthStackParamList} from '../../stacks/auth';
 
 type Properties = {
   route: RouteProp<AuthStackParamList, 'Reset Password'>;
-  navigation: NativeStackNavigationProp<AuthStackParamList, 'Reset Password'>;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 const Screen: React.FC<Properties> = ({route, navigation}) => {
   return (
     <ResetPasswordForm
       username={route.params.username}
-      onPressResetPassword={() => {
-        navigation.navigate('Sign In');
-      }}
+      navigation={navigation}
     />
   );
 };

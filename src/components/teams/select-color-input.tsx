@@ -1,8 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text, Pressable, View, FlatList} from 'react-native';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {StyleSheet, View, FlatList} from 'react-native';
 import {useTheme} from '../../providers/theme';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
+import {SelectOption} from '../core/select/option';
 
 type Properties = {
   allowNone?: boolean;
@@ -52,7 +52,6 @@ const Component: React.FC<Properties> = ({
     listContainer: {
       width: '100%',
       backgroundColor: theme.colors.background,
-      // borderTopWidth: 3,
       borderTopWidth: 1,
       borderTopColor: theme.colors.separator,
     },
@@ -63,14 +62,6 @@ const Component: React.FC<Properties> = ({
       height: 100,
       backgroundColor: theme.colors.background,
     },
-    itemRow: {
-      backgroundColor: theme.colors.background,
-      paddingLeft: 10,
-      paddingVertical: 10,
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginRight: 0,
-    },
     itemSwatchGrid: {
       flex: 1,
       borderWidth: 1,
@@ -78,24 +69,6 @@ const Component: React.FC<Properties> = ({
       height: 10,
       borderColor: theme.colors.separator,
       marginRight: 10,
-    },
-    itemGrid: {
-      flex: 14,
-      color: theme.colors.text,
-      // backgroundColor: 'green',
-    },
-    itemGridRight: {
-      alignItems: 'flex-end',
-      marginRight: 15,
-      flex: 1,
-    },
-    itemSelectContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    itemSelectText: {
-      marginRight: 20,
-      color: theme.colors.secondaryText,
     },
   });
 
@@ -108,30 +81,19 @@ const Component: React.FC<Properties> = ({
     };
   }) => {
     return (
-      <Pressable
-        onPress={() => {
+      <SelectOption
+        label={item.color.name}
+        labelIconComponent={
+          <View
+            style={[styles.itemSwatchGrid, {backgroundColor: item.color.value}]}
+          />
+        }
+        onSelect={() => {
           setNewlySelectedColor(item.color);
           setTimeout(() => onPressOption(item.color), 200);
         }}
-        style={[styles.itemRow]}>
-        <View
-          style={[styles.itemSwatchGrid, {backgroundColor: item.color.value}]}
-        />
-        <Text style={[styles.itemGrid]}>{item.color.name}</Text>
-        <View style={[styles.itemGrid, styles.itemGridRight]}>
-          <View style={[styles.itemSelectContainer]}>
-            {item.color.name === newlySelectedColor?.name ? (
-              <FontAwesome5Icon
-                name="check"
-                size={12}
-                color={theme.colors.secondaryText}
-              />
-            ) : (
-              <></>
-            )}
-          </View>
-        </View>
-      </Pressable>
+        isSelected={item.color.name === newlySelectedColor?.name}
+      />
     );
   };
 

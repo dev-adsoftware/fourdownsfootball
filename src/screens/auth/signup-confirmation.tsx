@@ -6,17 +6,14 @@ import {SignupConfirmationForm} from '../../components/auth/signup-confirmation-
 
 type Properties = {
   route: RouteProp<AuthStackParamList, 'Sign Up Confirmation'>;
-  navigation: NativeStackNavigationProp<
-    AuthStackParamList,
-    'Sign Up Confirmation'
-  >;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 const Screen: React.FC<Properties> = ({route, navigation}) => {
   return (
     <SignupConfirmationForm
       username={route.params.username}
-      onPressConfirm={() => navigation.navigate('Sign In')}
+      navigation={navigation}
     />
   );
 };

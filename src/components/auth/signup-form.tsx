@@ -9,12 +9,14 @@ import {ErrorSnackbar} from '../core/snackbar/error';
 import {TextInputColorStyle} from '../../styles/text-input-color';
 import {useTheme} from '../../providers/theme';
 import {Button} from '../core/buttons/button';
+import {AuthStackParamList} from '../../stacks/auth';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type Properties = {
-  onPressSignUp: (username: string) => void;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
-const Component: React.FC<Properties> = ({onPressSignUp}) => {
+const Component: React.FC<Properties> = ({navigation}) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [password2, setPassword2] = React.useState('');
@@ -102,7 +104,7 @@ const Component: React.FC<Properties> = ({onPressSignUp}) => {
                 try {
                   setIsProcessing(true);
                   await auth.signUp({username, password});
-                  onPressSignUp(username);
+                  navigation.navigate('Sign Up Confirmation', {username});
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);

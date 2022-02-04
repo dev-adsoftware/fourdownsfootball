@@ -48,10 +48,10 @@ class Service {
     try {
       const result = await API.post('fourdowns', '/owners', {
         body: {
-          ...this.mapOwnerToApi(body),
           sequence: '0',
           lastUpdateDate: new Date().toISOString(),
           lastUpdatedBy: 'system',
+          ...this.mapOwnerToApi(body),
         },
       });
       return this.mapApiToOwner(result);

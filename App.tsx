@@ -1,17 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import Amplify from 'aws-amplify';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-
 import {AuthProvider, useAuth} from './src/providers/auth';
 import {EnvProvider} from './src/providers/env';
 import {ThemeProvider, useTheme} from './src/providers/theme';
@@ -21,8 +10,6 @@ import {MainTabStack} from './src/stacks/main-tab';
 import {AuthStack} from './src/stacks/auth';
 import {DataProvider} from './src/providers/data';
 import {useColorScheme} from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SettingsStack} from './src/stacks/settings';
 
 Amplify.configure({
   Auth: {
@@ -50,8 +37,6 @@ export type AppStackParamList = {
   Settings: undefined;
 };
 
-const Stack = createNativeStackNavigator<AppStackParamList>();
-
 const Main = () => {
   const auth = useAuth();
   const colorScheme = useColorScheme();
@@ -62,22 +47,7 @@ const Main = () => {
   ) : (
     <DataProvider>
       <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-        {!auth.isAuthenticated ? (
-          <AuthStack />
-        ) : (
-          <Stack.Navigator>
-            <Stack.Screen
-              name="MainTabs"
-              component={MainTabStack}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Settings"
-              component={SettingsStack}
-              options={{presentation: 'modal', headerShown: false}}
-            />
-          </Stack.Navigator>
-        )}
+        {!auth.isAuthenticated ? <AuthStack /> : <MainTabStack />}
       </NavigationContainer>
     </DataProvider>
   );

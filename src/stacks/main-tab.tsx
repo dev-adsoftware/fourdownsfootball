@@ -1,19 +1,21 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {TempScreen} from '../screens/temp';
-import {HomeStack} from './home-tab/home';
-import {TeamsStack} from './teams-tab/teams';
+import {LeaguesStack} from './leagues';
+import {TeamsStack} from './teams';
 import {useTheme} from '../providers/theme';
+import {GamesStack} from './games-tab/games';
+import {MoreStack} from './more';
+import {NotificationsStack} from './notifications';
 
 type Properties = {};
 
 export type MainTabParamList = {
-  'Home Tab': undefined;
-  'Teams Tab': undefined;
-  'Games Tab': undefined;
-  'Notifications Tab': undefined;
-  'More Tab': undefined;
+  'Leagues Stack': undefined;
+  'Teams Stack': undefined;
+  'Games Stack': undefined;
+  'Notifications Stack': undefined;
+  'More Stack': undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -31,17 +33,7 @@ const MainTabStack: React.FC<Properties> = ({}) => {
         tabBarInactiveTintColor: theme.colors.placeholderText,
       }}>
       <Tab.Screen
-        name="Home Tab"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <FontAwesome5 name="home" color={color} size={size} />
-          ),
-          tabBarLabel: 'Home',
-        }}
-      />
-      <Tab.Screen
-        name="Teams Tab"
+        name="Teams Stack"
         component={TeamsStack}
         options={{
           tabBarIcon: ({color, size}) => (
@@ -51,8 +43,18 @@ const MainTabStack: React.FC<Properties> = ({}) => {
         }}
       />
       <Tab.Screen
-        name="Games Tab"
-        component={TempScreen}
+        name="Leagues Stack"
+        component={LeaguesStack}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <FontAwesome5 name="list" color={color} size={size} />
+          ),
+          tabBarLabel: 'Leagues',
+        }}
+      />
+      <Tab.Screen
+        name="Games Stack"
+        component={GamesStack}
         options={{
           tabBarIcon: ({color, size}) => (
             <FontAwesome5 name="football-ball" color={color} size={size} />
@@ -61,8 +63,8 @@ const MainTabStack: React.FC<Properties> = ({}) => {
         }}
       />
       <Tab.Screen
-        name="Notifications Tab"
-        component={TempScreen}
+        name="Notifications Stack"
+        component={NotificationsStack}
         options={{
           tabBarIcon: ({color, size}) => (
             <FontAwesome5 name="bell" color={color} size={size} solid />
@@ -71,8 +73,8 @@ const MainTabStack: React.FC<Properties> = ({}) => {
         }}
       />
       <Tab.Screen
-        name="More Tab"
-        component={TempScreen}
+        name="More Stack"
+        component={MoreStack}
         options={{
           tabBarIcon: ({color, size}) => (
             <FontAwesome5 name="ellipsis-h" color={color} size={size} />

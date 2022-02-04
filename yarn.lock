@@ -3482,6 +3482,11 @@
   resolved "https://pkgs.dev.azure.com/KochAg/_packaging/KochAg/npm/registry/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha1-IPGClPeX8iCbX2XI47XI6CYdEnw=
 
+"@types/uuid@^8.3.4":
+  version "8.3.4"
+  resolved "https://pkgs.dev.azure.com/KochAg/_packaging/KochAg/npm/registry/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
+  integrity sha1-vYakNhffBZR4fTi3NfVcgFvs8bw=
+
 "@types/validate.js@^0.11.0":
   version "0.11.0"
   resolved "https://pkgs.dev.azure.com/KochAg/_packaging/KochAg/npm/registry/@types/validate.js/-/validate.js-0.11.0.tgz#121a83aecfdb848f46a4c796644e0da7cb1633c8"
@@ -8282,6 +8287,11 @@ react-native-tab-view@^3.1.1:
   version "3.1.1"
   resolved "https://pkgs.dev.azure.com/KochAg/_packaging/KochAg/npm/registry/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz#1f8d7a835ab4f5b1b1407ec8dddc1053b53fa3c6"
   integrity sha1-H416g1q09bGxQH7I3dwQU7U/o8Y=
+
+react-native-uuid@^2.0.1:
+  version "2.0.1"
+  resolved "https://pkgs.dev.azure.com/KochAg/_packaging/KochAg/npm/registry/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
+  integrity sha1-7U4t+xaD7dtmln613KFA3+Gr3bk=
 
 react-native-vector-icons@^9.0.0:
   version "9.0.0"

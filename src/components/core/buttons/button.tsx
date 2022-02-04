@@ -39,7 +39,7 @@ const Component: React.FC<Properties> = ({
     },
     button: {
       backgroundColor: disabled
-        ? theme.colors.fill
+        ? theme.colors.secondaryBackground
         : filled
         ? activeColor || theme.colors.blue
         : theme.colors.background,

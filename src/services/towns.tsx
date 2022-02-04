@@ -69,10 +69,10 @@ class Service {
     try {
       const result = await API.post('fourdowns', '/towns', {
         body: {
-          ...this.mapTownToApi(body),
           sequence: '0',
           lastUpdateDate: new Date().toISOString(),
           lastUpdatedBy: 'system',
+          ...this.mapTownToApi(body),
         },
       });
       return this.mapApiToTown(result);

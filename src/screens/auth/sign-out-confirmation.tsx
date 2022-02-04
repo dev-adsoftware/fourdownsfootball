@@ -1,21 +1,11 @@
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {ConfirmActionForm} from '../../components/core/forms/confirm-action-form';
 import {useAuth} from '../../providers/auth';
-import {SettingsStackParamList} from '../../stacks/settings';
 
-type Properties = {
-  navigation: NativeStackNavigationProp<SettingsStackParamList>;
-};
+type Properties = {};
 
-const Screen: React.FC<Properties> = ({navigation}) => {
+const Screen: React.FC<Properties> = ({}) => {
   const auth = useAuth();
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <></>,
-    });
-  }, [navigation]);
 
   return (
     <ConfirmActionForm

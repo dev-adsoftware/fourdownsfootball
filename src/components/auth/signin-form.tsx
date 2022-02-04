@@ -10,16 +10,14 @@ import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {useTheme} from '../../providers/theme';
 import {TextInputColorStyle} from '../../styles/text-input-color';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList} from '../../stacks/auth';
 
 type Properties = {
-  onPressForgotPassword: () => void;
-  onPressSignUp: () => void;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
-const Component: React.FC<Properties> = ({
-  onPressForgotPassword,
-  onPressSignUp,
-}) => {
+const Component: React.FC<Properties> = ({navigation}) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
@@ -106,13 +104,17 @@ const Component: React.FC<Properties> = ({
               <FormRow>
                 <View style={[styles.forgotBox]}>
                   <LinkButton
-                    onPress={onPressForgotPassword}
+                    onPress={() => navigation.navigate('Forgot Password')}
                     text="Forgot Password?"
                   />
                 </View>
               </FormRow>
               <FormRow>
-                <Button text="Sign Up" filled={false} onPress={onPressSignUp} />
+                <Button
+                  text="Sign Up"
+                  filled={false}
+                  onPress={() => navigation.navigate('Sign Up')}
+                />
               </FormRow>
             </>
           )}

@@ -60,10 +60,10 @@ class Service {
     try {
       const result = await API.post('fourdowns', '/states', {
         body: {
-          ...this.mapStateToApi(body),
           sequence: '0',
           lastUpdateDate: new Date().toISOString(),
           lastUpdatedBy: 'system',
+          ...this.mapStateToApi(body),
         },
       });
       return this.mapApiToState(result);

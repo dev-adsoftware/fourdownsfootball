@@ -2,7 +2,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {TeamsList} from '../../components/teams/list';
 import {NewToolbar} from '../../components/toolbars/new';
-import {TeamsStackParamList} from '../../stacks/teams-tab/teams';
+import {Team} from '../../services/teams';
+import {TeamsStackParamList} from '../../stacks/teams';
 
 type Properties = {
   navigation: NativeStackNavigationProp<TeamsStackParamList>;
@@ -13,7 +14,7 @@ const TeamsScreen: React.FC<Properties> = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <NewToolbar onNew={() => navigation.navigate('Create Team Stack')} />
+          <NewToolbar onNew={() => navigation.navigate('Team Request', {})} />
         );
       },
     });
@@ -21,11 +22,11 @@ const TeamsScreen: React.FC<Properties> = ({navigation}) => {
 
   return (
     <TeamsList
-      onPressTeam={(teamId: string) => {
-        navigation.navigate('Team Detail', {teamId});
+      onPressTeam={(team: Team) => {
+        navigation.navigate('Team Detail Stack', {team});
       }}
       onPressCreateTeam={() => {
-        navigation.navigate('Create Team Stack');
+        navigation.navigate('Team Request', {});
       }}
     />
   );

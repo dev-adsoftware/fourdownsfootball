@@ -3,23 +3,23 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import React from 'react';
-import {AppStackParamList} from '../../../App';
-import {SettingsToolbar} from '../../components/toolbars/settings';
-import {useTheme} from '../../providers/theme';
-import {TempScreen} from '../../screens/temp';
+import {AppStackParamList} from '../../App';
+import {SettingsToolbar} from '../components/toolbars/settings';
+import {useTheme} from '../providers/theme';
+import {TempScreen} from '../screens/temp';
 
 type Properties = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
 };
 
-export type HomeStackParamList = {
-  Home: undefined;
+export type LeaguesStackParamList = {
+  Leagues: undefined;
   Settings: undefined;
 };
 
-const Stack = createNativeStackNavigator<HomeStackParamList>();
+const Stack = createNativeStackNavigator<LeaguesStackParamList>();
 
-const HomeStack: React.FC<Properties> = ({navigation}) => {
+const LeaguesStack: React.FC<Properties> = ({navigation}) => {
   const theme = useTheme();
   return (
     <Stack.Navigator
@@ -35,9 +35,9 @@ const HomeStack: React.FC<Properties> = ({navigation}) => {
           );
         },
       }}>
-      <Stack.Screen name="Home" component={TempScreen} />
+      <Stack.Screen name="Leagues" component={TempScreen} />
     </Stack.Navigator>
   );
 };
 
-export {HomeStack};
+export {LeaguesStack};

@@ -9,12 +9,14 @@ import {FormRow} from '../core/forms/row';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {TextInputColorStyle} from '../../styles/text-input-color';
 import {useTheme} from '../../providers/theme';
+import {AuthStackParamList} from '../../stacks/auth';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type Properties = {
-  onSendPasswordRecoveryCode: (username: string) => void;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
-const Component: React.FC<Properties> = ({onSendPasswordRecoveryCode}) => {
+const Component: React.FC<Properties> = ({navigation}) => {
   const [username, setUsername] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
@@ -58,7 +60,7 @@ const Component: React.FC<Properties> = ({onSendPasswordRecoveryCode}) => {
                 try {
                   setIsProcessing(true);
                   await auth.sendPasswordRecoveryCode(username);
-                  onSendPasswordRecoveryCode(username);
+                  navigation.navigate('Reset Password', {username});
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);

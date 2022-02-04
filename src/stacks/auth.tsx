@@ -27,7 +27,6 @@ const AuthStack: React.FC<Properties> = () => {
         headerStyle: {backgroundColor: theme.colors.background},
         headerTintColor: theme.colors.link,
         headerTitleStyle: {color: theme.colors.text},
-        // headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="Sign In" component={SignInScreen} />
       <Stack.Screen name="Sign Up" component={SignUpScreen} />

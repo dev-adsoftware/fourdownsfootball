@@ -56,10 +56,10 @@ class Service {
     try {
       const result = await API.post('fourdowns', '/nations', {
         body: {
-          ...this.mapNationToApi(body),
           sequence: '0',
           lastUpdateDate: new Date().toISOString(),
           lastUpdatedBy: 'system',
+          ...this.mapNationToApi(body),
         },
       });
       return this.mapApiToNation(result);
