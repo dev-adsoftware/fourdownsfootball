@@ -5,11 +5,16 @@ import {Button} from '../buttons/button';
 
 type Properties = {
   text: string;
+  isProcessingExternal?: boolean;
   onConfirm: () => Promise<void>;
 };
 
-const Component: React.FC<Properties> = ({text, onConfirm}) => {
-  const [isProcessing, setIsProcessing] = React.useState(false);
+const Component: React.FC<Properties> = ({
+  text,
+  isProcessingExternal,
+  onConfirm,
+}) => {
+  const [isProcessing, setIsProcessing] = React.useState(isProcessingExternal);
 
   const theme = useTheme();
 

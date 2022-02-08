@@ -10,7 +10,8 @@ const Component: React.FC<Properties> = ({}) => {
     separator: {
       height: 1,
       backgroundColor: theme.colors.separator,
-      marginLeft: 10,
+      // marginLeft: 10,
+      marginVertical: 10,
     },
   });
   return <View style={[styles.separator]} />;

@@ -1,6 +1,6 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -12,15 +12,15 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useData} from '../../providers/data';
 import {useTheme} from '../../providers/theme';
 import {Team} from '../../services/teams';
+import {TeamsStackParamList} from '../../stacks/teams';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
 type Properties = {
-  onPressTeam: (team: Team) => void;
-  onPressCreateTeam: () => void;
+  navigation: NativeStackNavigationProp<TeamsStackParamList>;
 };
 
-const TeamsList: React.FC<Properties> = ({onPressTeam, onPressCreateTeam}) => {
+const TeamsList: React.FC<Properties> = ({navigation}) => {
   const theme = useTheme();
 
   const {teams} = useData();
@@ -57,16 +57,35 @@ const TeamsList: React.FC<Properties> = ({onPressTeam, onPressCreateTeam}) => {
     createButtonIcon: {
       marginRight: 10,
     },
-    createButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
     listContainer: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.secondaryBackground,
     },
-    itemContainer: {
-      paddingHorizontal: 10,
-      paddingVertical: 10,
+    groupContainer: {
+      backgroundColor: theme.colors.background,
+      marginTop: 5,
+      marginHorizontal: 3,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.separator,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {width: 0, height: 3},
+      elevation: 3,
+      padding: 15,
+    },
+    groupHeader: {
+      paddingBottom: 10,
+      marginBottom: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.separator,
+    },
+    groupHeaderText: {
+      ...theme.typography.footnote,
+      fontWeight: 'bold',
+      letterSpacing: 1,
+    },
+    itemContentRow: {
       flexDirection: 'row',
       alignItems: 'center',
     },
@@ -82,21 +101,20 @@ const TeamsList: React.FC<Properties> = ({onPressTeam, onPressCreateTeam}) => {
     },
     itemAvatarText: {
       color: theme.colors.white,
-      fontWeight: 'bold',
-      fontSize: 16,
+      ...theme.typography.body,
     },
     itemTeamNameText: {
       color: theme.colors.text,
-      fontSize: 16,
-      fontWeight: '500',
+      ...theme.typography.body,
     },
     itemLeagueText: {
       color: theme.colors.secondaryText,
-      fontSize: 12,
+      ...theme.typography.caption1,
     },
     footerPadding: {
-      height: 100,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.secondaryBackground,
+      height: 1,
+      marginTop: 10,
     },
   });
 
@@ -104,74 +122,100 @@ const TeamsList: React.FC<Properties> = ({onPressTeam, onPressCreateTeam}) => {
     return `${team.town.name.slice(0, 1)}${team.nickname.slice(0, 1)}`;
   };
 
-  const renderItem = ({item}: {item: Team}) => {
+  const renderItem = ({
+    item,
+  }: {
+    item: {groupHeader: string; groupItems: Team[]};
+  }) => {
     return (
-      <Pressable
-        style={[styles.itemContainer]}
-        onPress={() => {
-          onPressTeam(item);
-        }}>
-        <View
-          style={[
-            styles.itemAvatar,
-            {
-              backgroundColor: (theme.colors as {[x: string]: string})[
-                item.primaryColor.toLowerCase()
-              ],
-            },
-          ]}>
-          <Text style={[styles.itemAvatarText]}>
-            {getAvatarAbbreviation(item)}
-          </Text>
+      <View style={[styles.groupContainer]}>
+        <View style={[styles.groupHeader]}>
+          <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
-        <View>
-          <Text style={[styles.itemTeamNameText]}>
-            {item.town.name} {item.nickname}
-          </Text>
-          <Text style={[styles.itemLeagueText]}>I.1</Text>
-        </View>
-      </Pressable>
+        {item.groupItems.map((groupItem: Team, index: number) => {
+          return (
+            <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
+              <Pressable
+                style={[styles.itemContentRow]}
+                onPress={() => {
+                  navigation.navigate('Team Detail Stack', {team: groupItem});
+                }}>
+                <View
+                  style={[
+                    styles.itemAvatar,
+                    {
+                      backgroundColor: (theme.colors as {[x: string]: string})[
+                        groupItem.primaryColor.toLowerCase()
+                      ],
+                    },
+                  ]}>
+                  <Text style={[styles.itemAvatarText]}>
+                    {getAvatarAbbreviation(groupItem)}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={[styles.itemTeamNameText]}>
+                    {groupItem.town.name} {groupItem.nickname}
+                  </Text>
+                  <Text style={[styles.itemLeagueText]}>I.1</Text>
+                </View>
+              </Pressable>
+              {index < item.groupItems.length - 1 ? (
+                <SectionListItemSeparator />
+              ) : (
+                <></>
+              )}
+            </View>
+          );
+        })}
+      </View>
     );
   };
 
-  return teams.data.isLoading ? (
-    <ActivityIndicator style={[styles.loadingContainer]} />
-  ) : teams.data.items.length === 0 ? (
-    <View style={[styles.emptyContainer]}>
-      <View style={[styles.oopsCircle]}>
-        <FontAwesome5Icon
-          style={[styles.oopsIcon]}
-          name="exclamation"
-          color={theme.colors.error}
-          size={24}
+  return (
+    <FlatList
+      style={[styles.listContainer]}
+      data={[
+        {groupHeader: 'ACTIVE', groupItems: teams.data.items},
+        {
+          groupHeader: 'INACTIVE',
+          groupItems: [...teams.data.items, ...teams.data.items],
+        },
+        {
+          groupHeader: 'FAVORITES',
+          groupItems: [...teams.data.items, ...teams.data.items],
+        },
+      ]}
+      keyExtractor={item => item.groupHeader}
+      renderItem={renderItem}
+      refreshControl={
+        <RefreshControl
+          refreshing={teams.data.isLoading}
+          onRefresh={teams.refresh}
         />
-      </View>
-      <Text style={[styles.oopsText]}>Oops! You don't own any teams.</Text>
-      <Button
-        text="Create New"
-        iconLeft="plus"
-        onPress={() => {
-          onPressCreateTeam();
-        }}
-      />
-    </View>
-  ) : (
-    <>
-      <FlatList
-        style={[styles.listContainer]}
-        data={teams.data.items}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        refreshControl={
-          <RefreshControl
-            refreshing={teams.data.isLoading}
-            onRefresh={teams.refresh}
+      }
+      ListEmptyComponent={
+        <View style={[styles.emptyContainer]}>
+          <View style={[styles.oopsCircle]}>
+            <FontAwesome5Icon
+              style={[styles.oopsIcon]}
+              name="exclamation"
+              color={theme.colors.error}
+              size={24}
+            />
+          </View>
+          <Text style={[styles.oopsText]}>Oops! You don't own any teams.</Text>
+          <Button
+            text="Request Team"
+            iconLeft="plus"
+            onPress={() => {
+              navigation.navigate('Team Request', {});
+            }}
           />
-        }
-        ItemSeparatorComponent={SectionListItemSeparator}
-        ListFooterComponent={<View style={[styles.footerPadding]} />}
-      />
-    </>
+        </View>
+      }
+      ListFooterComponent={<View style={[styles.footerPadding]} />}
+    />
   );
 };
 

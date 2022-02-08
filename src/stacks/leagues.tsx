@@ -4,7 +4,6 @@ import {
 } from '@react-navigation/native-stack';
 import React from 'react';
 import {AppStackParamList} from '../../App';
-import {SettingsToolbar} from '../components/toolbars/settings';
 import {useTheme} from '../providers/theme';
 import {TempScreen} from '../screens/temp';
 
@@ -19,21 +18,15 @@ export type LeaguesStackParamList = {
 
 const Stack = createNativeStackNavigator<LeaguesStackParamList>();
 
-const LeaguesStack: React.FC<Properties> = ({navigation}) => {
+const LeaguesStack: React.FC<Properties> = ({}) => {
   const theme = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
-        headerTintColor: theme.colors.text,
+        headerStyle: {backgroundColor: theme.colors.black},
+        headerTintColor: theme.colors.white,
         headerBackTitleVisible: false,
-        headerRight: () => {
-          return (
-            <SettingsToolbar
-              onPressCog={() => navigation.navigate('Settings')}
-            />
-          );
-        },
+        contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Leagues" component={TempScreen} />
     </Stack.Navigator>

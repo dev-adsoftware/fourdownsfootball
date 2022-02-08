@@ -2,7 +2,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {GamesList} from '../../components/games/list';
 import {NewToolbar} from '../../components/toolbars/new';
-import {GamesStackParamList} from '../../stacks/games-tab/games';
+import {GamesStackParamList} from '../../stacks/games';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GamesStackParamList>;
@@ -13,19 +13,13 @@ const GamesScreen: React.FC<Properties> = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <NewToolbar onNew={() => navigation.navigate('Request Game Stack')} />
+          <NewToolbar onNew={() => navigation.navigate('Game Request', {})} />
         );
       },
     });
   }, [navigation]);
 
-  return (
-    <GamesList
-      onPressRequestGame={() => {
-        navigation.navigate('Request Game Stack');
-      }}
-    />
-  );
+  return <GamesList navigation={navigation} />;
 };
 
 export {GamesScreen};

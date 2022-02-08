@@ -34,6 +34,7 @@ const Component: React.FC<Properties> = ({
     itemGrid: {
       flex: 1,
       color: theme.colors.text,
+      ...theme.typography.body,
     },
     itemGridDisabled: {
       color: theme.colors.secondaryText,
@@ -50,6 +51,7 @@ const Component: React.FC<Properties> = ({
     itemSelectText: {
       marginRight: 20,
       color: theme.colors.secondaryText,
+      ...theme.typography.body,
     },
   });
 

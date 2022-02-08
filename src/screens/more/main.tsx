@@ -1,9 +1,8 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {SectionList, StyleSheet, Text, Pressable, View} from 'react-native';
+import {StyleSheet, Text, Pressable, View, FlatList} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {SectionListItemSeparator} from '../../components/core/section-list/sectionlist-item-separator';
-import {SectionListSectionSeparator} from '../../components/core/section-list/sectionlist-section-separator';
 import {useTheme} from '../../providers/theme';
 import {MoreStackParamList} from '../../stacks/more';
 
@@ -13,12 +12,12 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({navigation}) => {
   const sections: {
-    title: string;
-    data: [{heading: string; option: keyof MoreStackParamList}];
+    groupHeader: string;
+    groupItems: [{heading: string; option: keyof MoreStackParamList}];
   }[] = [
     {
-      title: 'ACTIONS',
-      data: [
+      groupHeader: 'ACTIONS',
+      groupItems: [
         {
           heading: 'Sign out',
           option: 'Sign Out',
@@ -31,22 +30,41 @@ const Component: React.FC<Properties> = ({navigation}) => {
 
   const styles = StyleSheet.create({
     listContainer: {
-      width: '100%',
-      backgroundColor: theme.colors.background,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.separator,
+      backgroundColor: theme.colors.secondaryBackground,
     },
-    itemRow: {
+    groupContainer: {
       backgroundColor: theme.colors.background,
-      paddingLeft: 10,
-      paddingVertical: 10,
+      marginTop: 5,
+      marginHorizontal: 3,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.separator,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {width: 0, height: 3},
+      elevation: 3,
+      padding: 15,
+    },
+    groupHeader: {
+      paddingBottom: 10,
+      marginBottom: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.separator,
+    },
+    groupHeaderText: {
+      ...theme.typography.footnote,
+      fontWeight: 'bold',
+      letterSpacing: 1,
+    },
+    itemContentRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginRight: 0,
     },
     itemGrid: {
       flex: 1,
       color: theme.colors.text,
+      ...theme.typography.body,
     },
     itemGridRight: {
       alignItems: 'flex-end',
@@ -63,7 +81,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
     listSectionHeader: {
       backgroundColor: theme.colors.secondaryBackground,
       color: theme.colors.secondaryText,
-      fontSize: 12,
+      ...theme.typography.subheading,
       paddingLeft: 10,
       marginTop: 0,
       marginBottom: 0,
@@ -71,48 +89,73 @@ const Component: React.FC<Properties> = ({navigation}) => {
       paddingBottom: 3,
       textAlignVertical: 'bottom',
     },
+    footerPadding: {
+      backgroundColor: theme.colors.secondaryBackground,
+      height: 1,
+      marginTop: 10,
+    },
   });
 
   const renderItem = ({
     item,
   }: {
     item: {
-      heading: string;
-      option: keyof MoreStackParamList;
+      groupHeader: string;
+      groupItems: {
+        heading: string;
+        option: keyof MoreStackParamList;
+      }[];
     };
   }) => {
     return (
-      <Pressable
-        onPress={() => {
-          navigation.navigate(item.option);
-        }}
-        style={[styles.itemRow]}>
-        <Text style={[styles.itemGrid]}>{item.heading}</Text>
-        <View style={[styles.itemGrid, styles.itemGridRight]}>
-          <View style={[styles.itemSelectContainer]}>
-            <Text style={[styles.itemSelectText]} />
-            <FontAwesome5Icon
-              name="chevron-right"
-              size={12}
-              color={theme.colors.secondaryText}
-            />
-          </View>
+      <View style={[styles.groupContainer]}>
+        <View style={[styles.groupHeader]}>
+          <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
-      </Pressable>
+        {item.groupItems.map(
+          (
+            groupItem: {heading: string; option: keyof MoreStackParamList},
+            index: number,
+          ) => {
+            return (
+              <View key={`${item.groupHeader}-${groupItem.option}-${index}`}>
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate(groupItem.option);
+                  }}
+                  style={[styles.itemContentRow]}>
+                  <Text style={[styles.itemGrid]}>{groupItem.heading}</Text>
+                  <View style={[styles.itemGrid, styles.itemGridRight]}>
+                    <View style={[styles.itemSelectContainer]}>
+                      <Text style={[styles.itemSelectText]} />
+                      <FontAwesome5Icon
+                        name="chevron-right"
+                        size={12}
+                        color={theme.colors.secondaryText}
+                      />
+                    </View>
+                  </View>
+                </Pressable>
+                {index < item.groupItems.length - 1 ? (
+                  <SectionListItemSeparator />
+                ) : (
+                  <></>
+                )}
+              </View>
+            );
+          },
+        )}
+      </View>
     );
   };
 
   return (
-    <SectionList
+    <FlatList
       style={[styles.listContainer]}
-      sections={sections}
-      keyExtractor={(item, index) => item.heading + index}
+      data={sections}
+      keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
-      renderSectionHeader={({section: {title}}) => (
-        <Text style={[styles.listSectionHeader]}>{title}</Text>
-      )}
-      ItemSeparatorComponent={SectionListItemSeparator}
-      SectionSeparatorComponent={SectionListSectionSeparator}
+      ListFooterComponent={<View style={[styles.footerPadding]} />}
     />
   );
 };

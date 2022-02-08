@@ -14,7 +14,6 @@ import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
-import {SectionListSectionSeparator} from '../core/section-list/sectionlist-section-separator';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {TeamRequest, TeamRequestsService} from '../../services/team-requests';
 import {useAuth} from '../../providers/auth';
@@ -100,7 +99,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
     sectionHeader: {
       backgroundColor: theme.colors.secondaryBackground,
       color: theme.colors.secondaryText,
-      fontSize: 12,
+      ...theme.typography.subheading,
       paddingLeft: 10,
       marginTop: 0,
       marginBottom: 0,
@@ -122,7 +121,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
     },
     captionText: {
       color: theme.colors.secondaryText,
-      fontSize: 10,
+      ...theme.typography.caption1,
       paddingHorizontal: 10,
     },
     verifySectionRow: {
@@ -217,7 +216,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
         <>
           <View style={[styles.container]}>
             <Text style={[styles.sectionHeader]}>TEAM NAME</Text>
-            <SectionListSectionSeparator />
+            <SectionListItemSeparator />
 
             <View style={[styles.itemRow, styles.itemRowInput]}>
               <Form compact>
@@ -261,9 +260,9 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 </FormRow>
               </Form>
             </View>
-            <SectionListSectionSeparator />
+            <SectionListItemSeparator />
             <Text style={[styles.sectionHeader]}>LOCATION</Text>
-            <SectionListSectionSeparator />
+            <SectionListItemSeparator />
             <SelectTrigger
               label="Country"
               value={nation?.name}
@@ -306,7 +305,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 });
               }}
             />
-            <SectionListSectionSeparator />
+            <SectionListItemSeparator />
             <View style={[styles.buttonContainer]}>
               <Button
                 text="Submit Team Request"

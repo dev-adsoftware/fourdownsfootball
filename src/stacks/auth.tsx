@@ -24,9 +24,9 @@ const AuthStack: React.FC<Properties> = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
-        headerTintColor: theme.colors.link,
-        headerTitleStyle: {color: theme.colors.text},
+        headerStyle: {backgroundColor: theme.colors.black},
+        headerTintColor: theme.colors.white,
+        headerTitleStyle: {color: theme.colors.white},
       }}>
       <Stack.Screen name="Sign In" component={SignInScreen} />
       <Stack.Screen name="Sign Up" component={SignUpScreen} />

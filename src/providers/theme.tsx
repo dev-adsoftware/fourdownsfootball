@@ -3,7 +3,12 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native';
-import {ColorSchemeName, PlatformColor, useColorScheme} from 'react-native';
+import {
+  ColorSchemeName,
+  PlatformColor,
+  TextStyle,
+  useColorScheme,
+} from 'react-native';
 import {resolveColorSync} from '@klarna/platform-colors';
 
 export class Theme {
@@ -11,10 +16,13 @@ export class Theme {
   public colors: {
     background: string;
     secondaryBackground: string;
+    tertiaryBackground: string;
     fill: string;
     separator: string;
     text: string;
     secondaryText: string;
+    tertiaryText: string;
+    quaternaryText: string;
     placeholderText: string;
     link: string;
     error: string;
@@ -32,6 +40,18 @@ export class Theme {
     black: string;
     white: string;
   };
+  public typography: {
+    largeTitle: TextStyle;
+    title1: TextStyle;
+    title2: TextStyle;
+    title3: TextStyle;
+    body: TextStyle;
+    headline: TextStyle;
+    subheading: TextStyle;
+    footnote: TextStyle;
+    caption1: TextStyle;
+    caption2: TextStyle;
+  };
 
   constructor(colorScheme: ColorSchemeName) {
     this.colorScheme = colorScheme;
@@ -40,10 +60,15 @@ export class Theme {
       secondaryBackground: resolveColorSync(
         PlatformColor('secondarySystemBackground'),
       ),
+      tertiaryBackground: resolveColorSync(
+        PlatformColor('tertiarySystemBackground'),
+      ),
       fill: resolveColorSync(PlatformColor('systemFill')),
       separator: resolveColorSync(PlatformColor('separator')),
       text: resolveColorSync(PlatformColor('label')),
       secondaryText: resolveColorSync(PlatformColor('secondaryLabel')),
+      tertiaryText: resolveColorSync(PlatformColor('tertiaryLabel')),
+      quaternaryText: resolveColorSync(PlatformColor('quaternaryLabel')),
       placeholderText: resolveColorSync(PlatformColor('placeholderText')),
       link: resolveColorSync(PlatformColor('link')),
       error: resolveColorSync(PlatformColor('systemRed')),
@@ -61,6 +86,23 @@ export class Theme {
       black: 'black',
       white: 'white',
     };
+    this.typography = {
+      largeTitle: {fontSize: 34},
+      title1: {fontSize: 28},
+      title2: {fontSize: 22},
+      title3: {fontSize: 20},
+      body: {
+        fontSize: 17,
+      },
+      headline: {
+        fontSize: 17,
+        fontWeight: '500',
+      },
+      subheading: {fontSize: 15},
+      footnote: {fontSize: 13},
+      caption1: {fontSize: 12},
+      caption2: {fontSize: 11},
+    };
     // console.log(this.colors);
   }
 
@@ -75,7 +117,7 @@ export class Theme {
           ? NavigationDarkTheme.colors
           : NavigationDefaultTheme.colors),
         // primary: 'red',
-        background: this.colors.background,
+        background: this.colors.tertiaryBackground,
         // card: 'red',
         // text: 'red',
         // border: this.colors.border,

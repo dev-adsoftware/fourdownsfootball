@@ -20,7 +20,7 @@ const Component: React.FC<Properties> = ({onNew}) => {
   return (
     <View style={styles.toolbar}>
       <Pressable style={[styles.button]} onPress={onNew}>
-        <FontAwesome5 name="plus" color={theme.colors.text} size={20} />
+        <FontAwesome5 name="plus" color={theme.colors.white} size={17} />
       </Pressable>
     </View>
   );

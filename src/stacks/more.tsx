@@ -24,9 +24,10 @@ const MoreStack: React.FC<Properties> = ({}) => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
-        headerTintColor: theme.colors.text,
+        headerStyle: {backgroundColor: theme.colors.black},
+        headerTintColor: theme.colors.white,
         headerBackTitleVisible: false,
+        contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="More" component={MoreMainScreen} />
       <Stack.Screen name="Sign Out" component={SignOutConfirmationScreen} />

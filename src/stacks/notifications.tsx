@@ -22,9 +22,10 @@ const NotificationsStack: React.FC<Properties> = ({}) => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
-        headerTintColor: theme.colors.text,
+        headerStyle: {backgroundColor: theme.colors.black},
+        headerTintColor: theme.colors.white,
         headerBackTitleVisible: false,
+        contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Notifications" component={TempScreen} />
     </Stack.Navigator>

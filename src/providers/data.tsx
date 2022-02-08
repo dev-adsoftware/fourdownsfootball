@@ -19,6 +19,7 @@ interface Data {
   teams: DataSegmentWithRefresh<Team>;
   gameRequests: DataSegmentWithRefresh<GameRequest>;
   gameInvites: DataSegmentWithRefresh<GameInvite>;
+  clearAll: () => void;
 }
 
 type Properties = {
@@ -63,11 +64,19 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     setIsGameInvitesLoading(false);
   }, [auth.owner?.id]);
 
+  const clearAll = React.useCallback(() => {
+    setTeams([]);
+    setGameRequests([]);
+    setGameInvites([]);
+  }, []);
+
   React.useEffect(() => {
-    refreshTeams();
-    refreshGameRequests();
-    refreshGameInvites();
-  }, [refreshTeams, refreshGameRequests, refreshGameInvites]);
+    if (auth.owner) {
+      refreshTeams();
+      refreshGameRequests();
+      refreshGameInvites();
+    }
+  }, [auth.owner, refreshTeams, refreshGameRequests, refreshGameInvites]);
 
   return (
     <DataContext.Provider
@@ -84,6 +93,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
           data: {items: gameInvites, isLoading: isGameInvitesLoading},
           refresh: refreshGameInvites,
         },
+        clearAll,
       }}>
       {children}
     </DataContext.Provider>

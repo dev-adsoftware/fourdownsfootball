@@ -1,6 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {Color} from '../components/teams/select-color-input';
 import {useTheme} from '../providers/theme';
 import {NationSelectScreen} from '../screens/teams/nation-select';
 import {TeamPlayerDetailScreen} from '../screens/teams/player-detail';
@@ -25,12 +24,6 @@ export type TeamsStackParamList = {
     nation?: Nation;
     state?: State;
     town?: Town;
-    primaryColor?: Color;
-    secondaryColor?: Color;
-    stripeColor?: Color;
-    teamEmphasis?: string;
-    offenseStyle?: string;
-    defenseStyle?: string;
   };
   'Nation Select': {
     selectedNation?: Nation;
@@ -59,9 +52,10 @@ const TeamsStack: React.FC<Properties> = ({}) => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
-        headerTintColor: theme.colors.text,
+        headerStyle: {backgroundColor: theme.colors.black},
+        headerTintColor: theme.colors.white,
         headerBackTitleVisible: false,
+        contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Teams" component={TeamsScreen} />
       <Stack.Screen name="Team Detail Stack" component={TeamDetailTabStack} />

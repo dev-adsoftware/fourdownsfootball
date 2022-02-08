@@ -4,7 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {LeaguesStack} from './leagues';
 import {TeamsStack} from './teams';
 import {useTheme} from '../providers/theme';
-import {GamesStack} from './games-tab/games';
+import {GamesStack} from './games';
 import {MoreStack} from './more';
 import {NotificationsStack} from './notifications';
 
@@ -24,12 +24,20 @@ const MainTabStack: React.FC<Properties> = ({}) => {
   const theme = useTheme();
   return (
     <Tab.Navigator
+      initialRouteName="Games Stack"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
           backgroundColor: theme.colors.secondaryBackground,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.separator,
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 5,
+          shadowOffset: {width: 0, height: 0},
+          elevation: 3,
         },
-        tabBarActiveTintColor: theme.colors.blue,
+        tabBarActiveTintColor: theme.colors.black,
         tabBarInactiveTintColor: theme.colors.placeholderText,
       }}>
       <Tab.Screen

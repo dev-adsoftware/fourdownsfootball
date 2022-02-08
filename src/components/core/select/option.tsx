@@ -30,6 +30,7 @@ const Component: React.FC<Properties> = ({
     itemGrid: {
       flex: labelIconComponent ? 14 : 5,
       color: theme.colors.text,
+      ...theme.typography.body,
     },
     itemGridRight: {
       alignItems: 'flex-end',

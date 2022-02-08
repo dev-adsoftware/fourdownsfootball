@@ -46,9 +46,15 @@ const Main = () => {
     <SplashScreen />
   ) : (
     <DataProvider>
-      <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-        {!auth.isAuthenticated ? <AuthStack /> : <MainTabStack />}
-      </NavigationContainer>
+      {!auth.isAuthenticated ? (
+        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+          <AuthStack />
+        </NavigationContainer>
+      ) : (
+        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+          <MainTabStack />
+        </NavigationContainer>
+      )}
     </DataProvider>
   );
 };

@@ -34,9 +34,6 @@ const Component: React.FC<Properties> = ({
 }) => {
   const theme = useTheme();
   const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-    },
     button: {
       backgroundColor: disabled
         ? theme.colors.secondaryBackground
@@ -48,9 +45,11 @@ const Component: React.FC<Properties> = ({
         ? theme.colors.separator
         : activeColor || theme.colors.blue,
       borderRadius: 20,
+      paddingVertical: compact ? 1 : 7,
+      paddingHorizontal: compact ? 10 : 20,
+      flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: compact ? 3 : 7,
-      paddingHorizontal: compact ? 15 : 20,
+      justifyContent: 'center',
     },
     text: {
       color: disabled
@@ -58,15 +57,16 @@ const Component: React.FC<Properties> = ({
         : filled
         ? theme.colors.white
         : activeColor || theme.colors.blue,
-      fontWeight: '500',
-      marginTop: 1,
+      ...(compact
+        ? {...theme.typography.caption1, fontWeight: '500'}
+        : theme.typography.headline),
     },
-
-    leftIconContainer: {marginRight: 10, marginTop: -1},
-    rightIconContainer: {marginLeft: 10, marginTop: -1},
-    emptyIconContainer: {height: 20},
-    activityIndicator: {marginTop: compact ? 3 : 0},
-    activityIndicatorText: {marginTop: compact ? 2 : 0},
+    iconContainer: {
+      width: compact ? 7 : 20,
+      marginRight: compact ? 5 : 10,
+      marginLeft: compact ? 5 : 10,
+      // backgroundColor: 'red',
+    },
   });
 
   return (
@@ -80,22 +80,23 @@ const Component: React.FC<Properties> = ({
       disabled={disabled}
       onPress={onPress}>
       {isLoading ? (
-        <View style={[styles.container]}>
+        <>
           <ActivityIndicator
-            style={[styles.leftIconContainer, styles.activityIndicator]}
+            style={[styles.iconContainer]}
             color={
               filled ? theme.colors.white : activeColor || theme.colors.blue
             }
-            size={compact ? 10 : 17}
+            size={compact ? 15 : 17}
           />
-          <Text style={[styles.text, styles.activityIndicatorText]}>
-            {text}
-          </Text>
-        </View>
+          <Text style={[styles.text]}>{text}</Text>
+          <View style={[styles.iconContainer]}>
+            <Text> </Text>
+          </View>
+        </>
       ) : (
-        <View style={[styles.container]}>
+        <>
           {iconLeft ? (
-            <View style={[styles.leftIconContainer]}>
+            <View style={[styles.iconContainer]}>
               <FontAwesome5Icon
                 name={iconLeft}
                 color={
@@ -105,15 +106,17 @@ const Component: React.FC<Properties> = ({
                     ? theme.colors.white
                     : activeColor || theme.colors.blue
                 }
-                size={20}
+                size={compact ? 15 : 17}
               />
             </View>
           ) : (
-            <View style={[styles.emptyIconContainer]} />
+            <View style={[styles.iconContainer]}>
+              <Text> </Text>
+            </View>
           )}
           <Text style={[styles.text]}>{text}</Text>
           {iconRight ? (
-            <View style={[styles.rightIconContainer]}>
+            <View style={[styles.iconContainer]}>
               <FontAwesome5Icon
                 name={iconRight}
                 color={
@@ -123,13 +126,15 @@ const Component: React.FC<Properties> = ({
                     ? theme.colors.white
                     : activeColor || theme.colors.blue
                 }
-                size={20}
+                size={compact ? 15 : 17}
               />
             </View>
           ) : (
-            <View style={[styles.emptyIconContainer]} />
+            <View style={[styles.iconContainer]}>
+              <Text> </Text>
+            </View>
           )}
-        </View>
+        </>
       )}
     </Pressable>
   );

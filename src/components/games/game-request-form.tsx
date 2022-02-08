@@ -10,30 +10,19 @@ import {useTheme} from '../../providers/theme';
 import {GameRequest, GameRequestsService} from '../../services/game-requests';
 import {Owner} from '../../services/owners';
 import {Team} from '../../services/teams';
-import {RequestGameStackParamList} from '../../stacks/games-tab/request';
+import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
-import {SectionListSectionSeparator} from '../core/section-list/sectionlist-section-separator';
 import {SelectTrigger} from '../core/select/trigger';
 import {ErrorSnackbar} from '../core/snackbar/error';
 
 type Properties = {
   team?: Team;
   owner?: Owner;
-  // onPressSelectTeam: (selectedTeam?: Team) => void;
-  // onPressSelectOwner: (selectedOwner?: Owner) => void;
-  // onDismiss: () => void;
-  navigation: NativeStackNavigationProp<RequestGameStackParamList>;
+  navigation: NativeStackNavigationProp<GamesStackParamList>;
 };
 
-const Component: React.FC<Properties> = ({
-  team,
-  owner,
-  // onPressSelectTeam,
-  // onPressSelectOwner,
-  // onDismiss,
-  navigation,
-}) => {
+const Component: React.FC<Properties> = ({team, owner, navigation}) => {
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [gameRequest, setGameRequest] = React.useState<GameRequest>();
   const [error, setError] = React.useState('');
@@ -47,7 +36,7 @@ const Component: React.FC<Properties> = ({
       const newGameRequest = await new GameRequestsService().create({
         id: uuid.v4() as string,
         ownerId: auth.owner?.id as string,
-        teamId: '',
+        teamId: team?.id as string,
         invitedOwnerId: owner?.id as string,
         status: 'Submitted',
       });
@@ -61,6 +50,7 @@ const Component: React.FC<Properties> = ({
 
   const theme = useTheme();
   const styles = StyleSheet.create({
+    loadingContainer: {marginTop: 20},
     container: {
       flex: 1,
       justifyContent: 'flex-start',
@@ -71,7 +61,7 @@ const Component: React.FC<Properties> = ({
     sectionHeader: {
       backgroundColor: theme.colors.secondaryBackground,
       color: theme.colors.secondaryText,
-      fontSize: 12,
+      ...theme.typography.subheading,
       paddingLeft: 10,
       marginTop: 0,
       marginBottom: 0,
@@ -128,19 +118,22 @@ const Component: React.FC<Properties> = ({
             />
           </View>
         ) : (
-          <ActivityIndicator />
+          <ActivityIndicator style={[styles.loadingContainer]} />
         )
       ) : (
         <View style={[styles.container]}>
           <Text style={[styles.sectionHeader]}>REQUEST PARAMETERS</Text>
-          <SectionListSectionSeparator />
+          <SectionListItemSeparator />
           <SelectTrigger
             label="Team"
             value={team?.nickname}
             required
             onSelect={() => {
-              // onPressSelectTeam(team);
-              navigation.navigate('Select Team', {selectedTeam: team});
+              navigation.navigate('Team Select', {
+                selectedTeam: team,
+                returnRoute: 'Game Request',
+                returnParamKey: 'team',
+              });
             }}
           />
           <SectionListItemSeparator />
@@ -149,15 +142,19 @@ const Component: React.FC<Properties> = ({
             value={owner?.name}
             required
             onSelect={() => {
-              // onPressSelectOwner(owner);
-              navigation.navigate('Select Owner', {selectedOwner: owner});
+              navigation.navigate('Owner Select', {
+                selectedOwner: owner,
+                returnRoute: 'Game Request',
+                returnParamKey: 'owner',
+              });
             }}
           />
-          <SectionListSectionSeparator />
+          <SectionListItemSeparator />
           <View style={[styles.buttonContainer]}>
             <Button
               text="Submit Game Request"
               activeColor={theme.colors.green}
+              disabled={!team || !owner}
               onPress={() => {
                 createGameRequest();
               }}

@@ -35,6 +35,7 @@ const TeamDetailTabStack: React.FC<Properties> = ({route, navigation}) => {
         ],
       },
       headerTintColor: theme.colors.white,
+      contentStyle: {backgroundColor: theme.colors.secondaryBackground},
     });
   });
 

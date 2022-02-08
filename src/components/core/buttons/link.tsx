@@ -21,8 +21,7 @@ const Component: React.FC<Properties> = ({
   const styles = StyleSheet.create({
     text: {
       color: activeColor || theme.colors.link,
-      fontWeight: '500',
-      fontSize: 14,
+      ...theme.typography.body,
     },
   });
   return (

@@ -67,10 +67,6 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
     createButtonIcon: {
       marginRight: 10,
     },
-    createButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
     listContainer: {
       width: '100%',
       backgroundColor: theme.colors.background,
@@ -101,11 +97,11 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
     },
     itemPlayerNameText: {
       color: theme.colors.link,
-      fontSize: 12,
+      ...theme.typography.footnote,
     },
     itemPlayerJerseyText: {
       color: theme.colors.secondaryText,
-      fontSize: 10,
+      ...theme.typography.footnote,
       marginLeft: 5,
     },
     itemColumn2: {
@@ -120,7 +116,7 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
     },
     itemPlayerRatingText: {
       color: theme.colors.secondaryText,
-      fontSize: 12,
+      ...theme.typography.footnote,
       alignItems: 'center',
     },
     headerContainer: {
@@ -131,7 +127,7 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
     },
     headerLabelText: {
       color: theme.colors.text,
-      fontSize: 12,
+      ...theme.typography.footnote,
       alignItems: 'center',
     },
     footerPadding: {

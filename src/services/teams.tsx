@@ -7,6 +7,7 @@ export interface Team {
   nickname: string;
   primaryColor: string;
   town: Town;
+  name: string;
 }
 
 class Service {
@@ -19,6 +20,7 @@ class Service {
       nickname: input.nickname,
       primaryColor: input.primaryColor,
       town,
+      name: `${town.name} ${input.nickname}`,
     };
   }
 
