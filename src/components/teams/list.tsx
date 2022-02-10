@@ -11,6 +11,7 @@ import {
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useData} from '../../providers/data';
 import {useTheme} from '../../providers/theme';
+import {TeamRequest} from '../../services/team-requests';
 import {Team} from '../../services/teams';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {Button} from '../core/buttons/button';
@@ -23,7 +24,7 @@ type Properties = {
 const TeamsList: React.FC<Properties> = ({navigation}) => {
   const theme = useTheme();
 
-  const {teams} = useData();
+  const {teams, teamRequests} = useData();
 
   const styles = StyleSheet.create({
     loadingContainer: {
@@ -172,26 +173,40 @@ const TeamsList: React.FC<Properties> = ({navigation}) => {
     );
   };
 
+  console.log(teamRequests.data.items);
+  console.log(teams.data.items);
+
   return (
     <FlatList
       style={[styles.listContainer]}
       data={[
         {groupHeader: 'ACTIVE', groupItems: teams.data.items},
         {
-          groupHeader: 'INACTIVE',
-          groupItems: [...teams.data.items, ...teams.data.items],
-        },
-        {
-          groupHeader: 'FAVORITES',
-          groupItems: [...teams.data.items, ...teams.data.items],
+          groupHeader: 'TEAM REQUESTS IN PROGRESS',
+          groupItems: teamRequests.data.items.map(
+            (teamRequest: TeamRequest): Team => {
+              console.log(teamRequest);
+              return {
+                id: teamRequest.id,
+                ownerId: teamRequest.ownerId,
+                nickname: teamRequest.nickname,
+                primaryColor: teamRequest.primaryColor,
+                town: teamRequest.town,
+                name: `${teamRequest.town.name} ${teamRequest.nickname}`,
+              };
+            },
+          ),
         },
       ]}
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
         <RefreshControl
-          refreshing={teams.data.isLoading}
-          onRefresh={teams.refresh}
+          refreshing={teams.data.isLoading || teamRequests.data.isLoading}
+          onRefresh={() => {
+            teams.refresh();
+            teamRequests.refresh();
+          }}
         />
       }
       ListEmptyComponent={

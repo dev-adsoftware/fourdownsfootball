@@ -12,7 +12,6 @@ import {Owner} from '../../services/owners';
 import {Team} from '../../services/teams';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
-import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {SelectTrigger} from '../core/select/trigger';
 import {ErrorSnackbar} from '../core/snackbar/error';
 
@@ -52,25 +51,41 @@ const Component: React.FC<Properties> = ({team, owner, navigation}) => {
   const styles = StyleSheet.create({
     loadingContainer: {marginTop: 20},
     container: {
-      flex: 1,
-      justifyContent: 'flex-start',
       backgroundColor: theme.colors.background,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.separator,
+      marginTop: 5,
+      marginHorizontal: 3,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.separator,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {width: 0, height: 3},
+      elevation: 3,
+      // padding: 15,
     },
     sectionHeader: {
       backgroundColor: theme.colors.secondaryBackground,
-      color: theme.colors.secondaryText,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.separator,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    sectionHeaderText: {
+      color: theme.colors.text,
       ...theme.typography.subheading,
-      paddingLeft: 10,
-      marginTop: 0,
-      marginBottom: 0,
       paddingTop: 10,
+      paddingLeft: 10,
       paddingBottom: 3,
-      textAlignVertical: 'bottom',
+    },
+    sectionSeparator: {height: 1, backgroundColor: theme.colors.separator},
+    itemSeparator: {
+      height: 1,
+      backgroundColor: theme.colors.separator,
+      marginLeft: 10,
     },
     buttonContainer: {
-      marginTop: 20,
+      marginVertical: 20,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center',
@@ -122,8 +137,9 @@ const Component: React.FC<Properties> = ({team, owner, navigation}) => {
         )
       ) : (
         <View style={[styles.container]}>
-          <Text style={[styles.sectionHeader]}>REQUEST PARAMETERS</Text>
-          <SectionListItemSeparator />
+          <View style={[styles.sectionHeader]}>
+            <Text style={[styles.sectionHeaderText]}>GAME OPTIONS</Text>
+          </View>
           <SelectTrigger
             label="Team"
             value={team?.nickname}
@@ -136,7 +152,7 @@ const Component: React.FC<Properties> = ({team, owner, navigation}) => {
               });
             }}
           />
-          <SectionListItemSeparator />
+          <View style={[styles.itemSeparator]} />
           <SelectTrigger
             label="Opponent"
             value={owner?.name}
@@ -149,7 +165,7 @@ const Component: React.FC<Properties> = ({team, owner, navigation}) => {
               });
             }}
           />
-          <SectionListItemSeparator />
+          <View style={[styles.sectionSeparator]} />
           <View style={[styles.buttonContainer]}>
             <Button
               text="Submit Game Request"

@@ -1,9 +1,10 @@
 import {API} from 'aws-amplify';
+import {Town, TownsService} from './towns';
 
 export interface TeamRequest {
   id: string;
   ownerId: string;
-  townId: string;
+  town: Town;
   nickname: string;
   primaryColor: string;
   secondaryColor?: string;
@@ -16,11 +17,11 @@ export interface TeamRequest {
 class Service {
   constructor() {}
 
-  private mapApiToTeamRequest(input: any): TeamRequest {
+  private mapApiToTeamRequest(input: any, town: Town): TeamRequest {
     return {
       id: input.id,
       ownerId: input.ownerId,
-      townId: input.townId,
+      town,
       nickname: input.nickname,
       primaryColor: input.primaryColor,
       secondaryColor: input.secondaryColor,
@@ -35,7 +36,7 @@ class Service {
     return {
       id: input.id,
       ownerId: input.ownerId,
-      townId: input.townId,
+      townId: input.town.id,
       nickname: input.nickname,
       primaryColor: input.primaryColor,
       secondaryColor: input.secondaryColor,
@@ -49,7 +50,8 @@ class Service {
   public async get(id: string): Promise<TeamRequest> {
     try {
       const result = await API.get('fourdowns', `/team-requests/${id}`, {});
-      return this.mapApiToTeamRequest(result);
+      const town = await new TownsService().get(result.townId);
+      return this.mapApiToTeamRequest(result, town);
     } catch (e) {
       throw e;
     }
@@ -68,9 +70,12 @@ class Service {
         },
       );
       return {
-        items: result.items.map((item: any) => {
-          return this.mapApiToTeamRequest(item);
-        }),
+        items: await Promise.all(
+          result.items.map(async (item: any) => {
+            const town = await new TownsService().get(item.townId);
+            return this.mapApiToTeamRequest(item, town);
+          }),
+        ),
       };
     } catch (e) {
       console.log(e);
@@ -89,7 +94,8 @@ class Service {
           ...this.mapTeamRequestToApi(body),
         },
       });
-      return this.mapApiToTeamRequest(result);
+      const town = await new TownsService().get(result.townId);
+      return this.mapApiToTeamRequest(result, town);
     } catch (e) {
       console.log(e);
       throw e;
@@ -109,7 +115,8 @@ class Service {
         },
         queryStringParameters: {updateMask: updateKeys.join(',')},
       });
-      return this.mapApiToTeamRequest(result);
+      const town = await new TownsService().get(result.townId);
+      return this.mapApiToTeamRequest(result, town);
     } catch (e) {
       console.log(e);
       throw e;

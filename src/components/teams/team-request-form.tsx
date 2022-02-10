@@ -13,7 +13,6 @@ import {Button} from '../core/buttons/button';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
-import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {TeamRequest, TeamRequestsService} from '../../services/team-requests';
 import {useAuth} from '../../providers/auth';
@@ -70,7 +69,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
       const newTeamRequest = await new TeamRequestsService().create({
         id: uuid.v4() as string,
         ownerId: auth.owner?.id as string,
-        townId: town?.id as string,
+        town: town as Town,
         nickname: nickname,
         primaryColor: 'Green',
         teamEmphasis: 'Balanced',
@@ -93,19 +92,37 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
     },
     container: {
       backgroundColor: theme.colors.background,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.separator,
+      marginTop: 5,
+      marginHorizontal: 3,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.separator,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {width: 0, height: 3},
+      elevation: 3,
+      // padding: 15,
     },
     sectionHeader: {
       backgroundColor: theme.colors.secondaryBackground,
-      color: theme.colors.secondaryText,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.separator,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    sectionHeaderText: {
+      color: theme.colors.text,
       ...theme.typography.subheading,
-      paddingLeft: 10,
-      marginTop: 0,
-      marginBottom: 0,
       paddingTop: 10,
+      paddingLeft: 10,
       paddingBottom: 3,
-      textAlignVertical: 'bottom',
+    },
+    sectionSeparator: {height: 1, backgroundColor: theme.colors.separator},
+    itemSeparator: {
+      height: 1,
+      backgroundColor: theme.colors.separator,
+      marginLeft: 10,
     },
     itemRow: {
       backgroundColor: theme.colors.background,
@@ -120,8 +137,8 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
       color: theme.colors.text,
     },
     captionText: {
-      color: theme.colors.secondaryText,
-      ...theme.typography.caption1,
+      color: theme.colors.text,
+      ...theme.typography.footnote,
       paddingHorizontal: 10,
     },
     verifySectionRow: {
@@ -164,7 +181,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
       borderRadius: 10,
     },
     buttonContainer: {
-      marginTop: 20,
+      marginVertical: 20,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center',
@@ -215,9 +232,9 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
       ) : (
         <>
           <View style={[styles.container]}>
-            <Text style={[styles.sectionHeader]}>TEAM NAME</Text>
-            <SectionListItemSeparator />
-
+            <View style={[styles.sectionHeader]}>
+              <Text style={[styles.sectionHeaderText]}>TEAM NAME</Text>
+            </View>
             <View style={[styles.itemRow, styles.itemRowInput]}>
               <Form compact>
                 <FormRow compact>
@@ -260,9 +277,10 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 </FormRow>
               </Form>
             </View>
-            <SectionListItemSeparator />
-            <Text style={[styles.sectionHeader]}>LOCATION</Text>
-            <SectionListItemSeparator />
+            <View style={[styles.sectionSeparator]} />
+            <View style={[styles.sectionHeader]}>
+              <Text style={[styles.sectionHeaderText]}>LOCATION</Text>
+            </View>
             <SelectTrigger
               label="Country"
               value={nation?.name}
@@ -275,7 +293,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 });
               }}
             />
-            <SectionListItemSeparator />
+            <View style={[styles.itemSeparator]} />
             <SelectTrigger
               label="State"
               disabled={!nation}
@@ -290,7 +308,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 });
               }}
             />
-            <SectionListItemSeparator />
+            <View style={[styles.itemSeparator]} />
             <SelectTrigger
               label="City"
               disabled={!state}
@@ -305,7 +323,7 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
                 });
               }}
             />
-            <SectionListItemSeparator />
+            <View style={[styles.sectionSeparator]} />
             <View style={[styles.buttonContainer]}>
               <Button
                 text="Submit Team Request"

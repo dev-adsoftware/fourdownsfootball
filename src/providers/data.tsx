@@ -1,6 +1,7 @@
 import React from 'react';
 import {GameInvite, GameInvitesService} from '../services/game-invites';
 import {GameRequest, GameRequestsService} from '../services/game-requests';
+import {TeamRequest, TeamRequestsService} from '../services/team-requests';
 import {Team, TeamsService} from '../services/teams';
 import {useAuth} from './auth';
 
@@ -17,6 +18,7 @@ type DataSegmentWithRefresh<T> = {
 };
 interface Data {
   teams: DataSegmentWithRefresh<Team>;
+  teamRequests: DataSegmentWithRefresh<TeamRequest>;
   gameRequests: DataSegmentWithRefresh<GameRequest>;
   gameInvites: DataSegmentWithRefresh<GameInvite>;
   clearAll: () => void;
@@ -29,6 +31,10 @@ type Properties = {
 const DataProvider: React.FC<Properties> = ({children}) => {
   const [teams, setTeams] = React.useState<Team[]>([]);
   const [isTeamsLoading, setIsTeamsLoading] = React.useState(true);
+
+  const [teamRequests, setTeamRequests] = React.useState<TeamRequest[]>([]);
+  const [isTeamRequestsLoading, setIsTeamRequestsLoading] =
+    React.useState(true);
 
   const [gameRequests, setGameRequests] = React.useState<GameRequest[]>([]);
   const [isGameRequestsLoading, setIsGameRequestsLoading] =
@@ -44,6 +50,15 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     const teamsService = new TeamsService();
     setTeams((await teamsService.listByOwner(auth.owner?.id as string)).items);
     setIsTeamsLoading(false);
+  }, [auth.owner?.id]);
+
+  const refreshTeamRequests = React.useCallback(async () => {
+    setIsTeamRequestsLoading(true);
+    const teamRequestsService = new TeamRequestsService();
+    setTeamRequests(
+      (await teamRequestsService.listByOwner(auth.owner?.id as string)).items,
+    );
+    setIsTeamRequestsLoading(false);
   }, [auth.owner?.id]);
 
   const refreshGameRequests = React.useCallback(async () => {
@@ -66,6 +81,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
 
   const clearAll = React.useCallback(() => {
     setTeams([]);
+    setTeamRequests([]);
     setGameRequests([]);
     setGameInvites([]);
   }, []);
@@ -73,10 +89,17 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   React.useEffect(() => {
     if (auth.owner) {
       refreshTeams();
+      refreshTeamRequests();
       refreshGameRequests();
       refreshGameInvites();
     }
-  }, [auth.owner, refreshTeams, refreshGameRequests, refreshGameInvites]);
+  }, [
+    auth.owner,
+    refreshTeams,
+    refreshTeamRequests,
+    refreshGameRequests,
+    refreshGameInvites,
+  ]);
 
   return (
     <DataContext.Provider
@@ -84,6 +107,10 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         teams: {
           data: {items: teams, isLoading: isTeamsLoading},
           refresh: refreshTeams,
+        },
+        teamRequests: {
+          data: {items: teamRequests, isLoading: isTeamRequestsLoading},
+          refresh: refreshTeamRequests,
         },
         gameRequests: {
           data: {items: gameRequests, isLoading: isGameRequestsLoading},
