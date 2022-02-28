@@ -1,26 +1,40 @@
+import moment from 'moment';
 import React from 'react';
 import {GameInvite, GameInvitesService} from '../services/game-invites';
+import {
+  GameParticipant,
+  GameParticipantsService,
+} from '../services/game-participants';
 import {GameRequest, GameRequestsService} from '../services/game-requests';
+import {createGameShell, Game, GamesService} from '../services/games';
+import {Notification, NotificationsService} from '../services/notifications';
 import {TeamRequest, TeamRequestsService} from '../services/team-requests';
 import {Team, TeamsService} from '../services/teams';
 import {useAuth} from './auth';
 
 const DataContext = React.createContext<Data | undefined>(undefined);
 
-type DataSegment<T> = {
+export interface DataSetSegment<T> {
   items: T[];
   isLoading: boolean;
-};
-
-type DataSegmentWithRefresh<T> = {
-  data: DataSegment<T>;
   refresh: () => Promise<void>;
-};
+}
+
+export interface DataItemSegment<T> {
+  item: T;
+  isLoading: boolean;
+  set: (item: T) => void;
+  refresh: () => Promise<void>;
+}
+
 interface Data {
-  teams: DataSegmentWithRefresh<Team>;
-  teamRequests: DataSegmentWithRefresh<TeamRequest>;
-  gameRequests: DataSegmentWithRefresh<GameRequest>;
-  gameInvites: DataSegmentWithRefresh<GameInvite>;
+  teams: DataSetSegment<Team>;
+  teamRequests: DataSetSegment<TeamRequest>;
+  gameRequests: DataSetSegment<GameRequest>;
+  gameInvites: DataSetSegment<GameInvite>;
+  gameParticipants: DataSetSegment<GameParticipant>;
+  activeGame: DataItemSegment<Game>;
+  notifications: DataSetSegment<Notification>;
   clearAll: () => void;
 }
 
@@ -43,6 +57,19 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   const [gameInvites, setGameInvites] = React.useState<GameInvite[]>([]);
   const [isGameInvitesLoading, setIsGameInvitesLoading] = React.useState(true);
 
+  const [gameParticipants, setGameParticipants] = React.useState<
+    GameParticipant[]
+  >([]);
+  const [isGameParticipantsLoading, setIsGameParticipantsLoading] =
+    React.useState(true);
+
+  const [activeGame, setActiveGame] = React.useState<Game>();
+  const [isActiveGameLoading, setIsActiveGameLoading] = React.useState(true);
+
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [isNotificationsLoading, setIsNotificationsLoading] =
+    React.useState(true);
+
   const auth = useAuth();
 
   const refreshTeams = React.useCallback(async () => {
@@ -56,7 +83,11 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     setIsTeamRequestsLoading(true);
     const teamRequestsService = new TeamRequestsService();
     setTeamRequests(
-      (await teamRequestsService.listByOwner(auth.owner?.id as string)).items,
+      (
+        await teamRequestsService.listByOwner(auth.owner?.id as string)
+      ).items.filter((teamRequest: TeamRequest) => {
+        return teamRequest.status !== 'Complete';
+      }),
     );
     setIsTeamRequestsLoading(false);
   }, [auth.owner?.id]);
@@ -65,7 +96,11 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     setIsGameRequestsLoading(true);
     const gameRequestsService = new GameRequestsService();
     setGameRequests(
-      (await gameRequestsService.listByOwner(auth.owner?.id as string)).items,
+      (
+        await gameRequestsService.listByOwner(auth.owner?.id as string)
+      ).items.filter((item: GameRequest) => {
+        return item.status !== 'Accepted';
+      }),
     );
     setIsGameRequestsLoading(false);
   }, [auth.owner?.id]);
@@ -74,9 +109,47 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     setIsGameInvitesLoading(true);
     const gameInvitesService = new GameInvitesService();
     setGameInvites(
-      (await gameInvitesService.listByOwner(auth.owner?.id as string)).items,
+      (
+        await gameInvitesService.listByOwner(auth.owner?.id as string)
+      ).items.filter((item: GameInvite) => {
+        return item.status !== 'Accepted';
+      }),
     );
     setIsGameInvitesLoading(false);
+  }, [auth.owner?.id]);
+
+  const refreshGameParticipants = React.useCallback(async () => {
+    setIsGameParticipantsLoading(true);
+    const gameParticipantsService = new GameParticipantsService();
+    setGameParticipants(
+      (await gameParticipantsService.listByOwner(auth.owner?.id as string))
+        .items,
+    );
+    setIsGameParticipantsLoading(false);
+  }, [auth.owner?.id]);
+
+  const refreshActiveGame = React.useCallback(async () => {
+    if (!activeGame?.id) {
+      return;
+    }
+
+    setIsActiveGameLoading(true);
+    const gamesService = new GamesService();
+    setActiveGame(await gamesService.get(activeGame?.id as string));
+    setIsActiveGameLoading(false);
+  }, [activeGame?.id]);
+
+  const refreshNotifications = React.useCallback(async () => {
+    setIsNotificationsLoading(true);
+    const notificationsService = new NotificationsService();
+    setNotifications(
+      (
+        await notificationsService.listByOwner(auth.owner?.id as string, {
+          asOf: moment().subtract(7, 'days').toISOString(),
+        })
+      ).items,
+    );
+    setIsNotificationsLoading(false);
   }, [auth.owner?.id]);
 
   const clearAll = React.useCallback(() => {
@@ -84,6 +157,9 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     setTeamRequests([]);
     setGameRequests([]);
     setGameInvites([]);
+    setGameParticipants([]);
+    setActiveGame(undefined);
+    setNotifications([]);
   }, []);
 
   React.useEffect(() => {
@@ -92,6 +168,9 @@ const DataProvider: React.FC<Properties> = ({children}) => {
       refreshTeamRequests();
       refreshGameRequests();
       refreshGameInvites();
+      refreshGameParticipants();
+      refreshActiveGame();
+      refreshNotifications();
     }
   }, [
     auth.owner,
@@ -99,26 +178,50 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     refreshTeamRequests,
     refreshGameRequests,
     refreshGameInvites,
+    refreshGameParticipants,
+    refreshActiveGame,
+    refreshNotifications,
   ]);
 
   return (
     <DataContext.Provider
       value={{
         teams: {
-          data: {items: teams, isLoading: isTeamsLoading},
+          items: teams,
+          isLoading: isTeamsLoading,
           refresh: refreshTeams,
         },
         teamRequests: {
-          data: {items: teamRequests, isLoading: isTeamRequestsLoading},
+          items: teamRequests,
+          isLoading: isTeamRequestsLoading,
           refresh: refreshTeamRequests,
         },
         gameRequests: {
-          data: {items: gameRequests, isLoading: isGameRequestsLoading},
+          items: gameRequests,
+          isLoading: isGameRequestsLoading,
           refresh: refreshGameRequests,
         },
         gameInvites: {
-          data: {items: gameInvites, isLoading: isGameInvitesLoading},
+          items: gameInvites,
+          isLoading: isGameInvitesLoading,
           refresh: refreshGameInvites,
+        },
+        gameParticipants: {
+          items: gameParticipants,
+          isLoading: isGameParticipantsLoading,
+          refresh: refreshGameParticipants,
+        },
+
+        activeGame: {
+          item: activeGame || createGameShell(),
+          isLoading: isActiveGameLoading,
+          set: setActiveGame,
+          refresh: refreshActiveGame,
+        },
+        notifications: {
+          items: notifications,
+          isLoading: isNotificationsLoading,
+          refresh: refreshNotifications,
         },
         clearAll,
       }}>

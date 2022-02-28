@@ -1,53 +1,23 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import uuid from 'react-native-uuid';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-
-import {useAuth} from '../../providers/auth';
-import {useData} from '../../providers/data';
-import {useTheme} from '../../providers/theme';
-import {GameRequest, GameRequestsService} from '../../services/game-requests';
+import {StyleSheet, Text, View} from 'react-native';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {Owner} from '../../services/owners';
 import {Team} from '../../services/teams';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
 import {SelectTrigger} from '../core/select/trigger';
-import {ErrorSnackbar} from '../core/snackbar/error';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   team?: Team;
   owner?: Owner;
+  onSubmit: (team: Team, owner: Owner) => Promise<void>;
   navigation: NativeStackNavigationProp<GamesStackParamList>;
-};
+}
 
-const Component: React.FC<Properties> = ({team, owner, navigation}) => {
-  const [isProcessing, setIsProcessing] = React.useState(false);
-  const [gameRequest, setGameRequest] = React.useState<GameRequest>();
-  const [error, setError] = React.useState('');
+const Component: React.FC<Properties> = props => {
+  const {team, owner, onSubmit, navigation, theme} = props;
 
-  const auth = useAuth();
-  const {gameRequests} = useData();
-
-  const createGameRequest = async () => {
-    setIsProcessing(true);
-    try {
-      const newGameRequest = await new GameRequestsService().create({
-        id: uuid.v4() as string,
-        ownerId: auth.owner?.id as string,
-        teamId: team?.id as string,
-        invitedOwnerId: owner?.id as string,
-        status: 'Submitted',
-      });
-
-      await gameRequests.refresh();
-      setGameRequest(newGameRequest);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  };
-
-  const theme = useTheme();
   const styles = StyleSheet.create({
     loadingContainer: {marginTop: 20},
     container: {
@@ -110,83 +80,50 @@ const Component: React.FC<Properties> = ({team, owner, navigation}) => {
   });
 
   return (
-    <>
-      {isProcessing ? (
-        gameRequest ? (
-          <View style={[styles.doneContainer]}>
-            <View style={[styles.doneIconRow]}>
-              <View style={[styles.doneCircle]}>
-                <FontAwesome5Icon
-                  style={[styles.doneIcon]}
-                  name="check"
-                  color={theme.colors.green}
-                  size={24}
-                />
-              </View>
-            </View>
-            <Button
-              text="Complete!"
-              activeColor={theme.colors.green}
-              onPress={() => {
-                navigation.goBack();
-              }}
-            />
-          </View>
-        ) : (
-          <ActivityIndicator style={[styles.loadingContainer]} />
-        )
-      ) : (
-        <View style={[styles.container]}>
-          <View style={[styles.sectionHeader]}>
-            <Text style={[styles.sectionHeaderText]}>GAME OPTIONS</Text>
-          </View>
-          <SelectTrigger
-            label="Team"
-            value={team?.nickname}
-            required
-            onSelect={() => {
-              navigation.navigate('Team Select', {
-                selectedTeam: team,
-                returnRoute: 'Game Request',
-                returnParamKey: 'team',
-              });
-            }}
-          />
-          <View style={[styles.itemSeparator]} />
-          <SelectTrigger
-            label="Opponent"
-            value={owner?.name}
-            required
-            onSelect={() => {
-              navigation.navigate('Owner Select', {
-                selectedOwner: owner,
-                returnRoute: 'Game Request',
-                returnParamKey: 'owner',
-              });
-            }}
-          />
-          <View style={[styles.sectionSeparator]} />
-          <View style={[styles.buttonContainer]}>
-            <Button
-              text="Submit Game Request"
-              activeColor={theme.colors.green}
-              disabled={!team || !owner}
-              onPress={() => {
-                createGameRequest();
-              }}
-            />
-          </View>
-        </View>
-      )}
-      <ErrorSnackbar
-        text={error}
-        visible={error.length > 0}
-        onDismiss={() => {
-          setError('');
+    <View style={[styles.container]}>
+      <View style={[styles.sectionHeader]}>
+        <Text style={[styles.sectionHeaderText]}>GAME OPTIONS</Text>
+      </View>
+      <SelectTrigger
+        label="Team"
+        value={team?.nickname}
+        required
+        onSelect={() => {
+          navigation.navigate('Team Select', {
+            selectedTeam: team,
+            returnRoute: 'Game Request',
+            returnParamKey: 'team',
+          });
         }}
       />
-    </>
+      <View style={[styles.itemSeparator]} />
+      <SelectTrigger
+        label="Opponent"
+        value={owner?.name}
+        required
+        onSelect={() => {
+          navigation.navigate('Owner Select', {
+            selectedOwner: owner,
+            returnRoute: 'Game Request',
+            returnParamKey: 'owner',
+          });
+        }}
+      />
+      <View style={[styles.sectionSeparator]} />
+      <View style={[styles.buttonContainer]}>
+        <Button
+          text="Submit Game Request"
+          activeColor={theme.colors.green}
+          disabled={!team || !owner}
+          onPress={async () => {
+            if (team && owner) {
+              await onSubmit(team, owner);
+            }
+          }}
+        />
+      </View>
+    </View>
   );
 };
 
-export {Component as GameRequestForm};
+export const GameRequestForm = withTheme(Component);

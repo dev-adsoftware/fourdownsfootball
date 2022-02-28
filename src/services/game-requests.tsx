@@ -1,9 +1,11 @@
 import {API} from 'aws-amplify';
+import {Team, TeamsService} from './teams';
 
 export interface GameRequest {
   id: string;
   ownerId: string;
   teamId: string;
+  team?: Team;
   invitedOwnerId: string;
   status: string;
 }
@@ -11,17 +13,20 @@ export interface GameRequest {
 class Service {
   constructor() {}
 
-  private mapApiToGameRequest(input: any): GameRequest {
+  public mapApiToGameRequest(input: any): GameRequest {
     return {
       id: input.id,
       ownerId: input.ownerId,
       teamId: input.teamId,
+      team: input.team
+        ? new TeamsService().mapApiToTeam(input.team)
+        : undefined,
       invitedOwnerId: input.invitedOwnerId,
       status: input.status,
     };
   }
 
-  private mapGameRequestToApi(input: GameRequest): any {
+  public mapGameRequestToApi(input: GameRequest): any {
     return {
       id: input.id,
       ownerId: input.ownerId,
@@ -33,7 +38,9 @@ class Service {
 
   public async get(id: string): Promise<GameRequest> {
     try {
-      const result = await API.get('fourdowns', `/game-requests/${id}`, {});
+      const result = await API.get('fourdowns', `/game-requests/${id}`, {
+        queryStringParameters: {detailType: 'full'},
+      });
       return this.mapApiToGameRequest(result);
     } catch (e) {
       throw e;
@@ -49,7 +56,10 @@ class Service {
         'fourdowns',
         `/owners/${ownerId}/game-requests`,
         {
-          queryStringParameters,
+          queryStringParameters: {
+            ...queryStringParameters,
+            ...{detailType: 'full'},
+          },
         },
       );
       return {
@@ -73,6 +83,9 @@ class Service {
           lastUpdatedBy: 'system',
           ...this.mapGameRequestToApi(body),
         },
+        queryStringParameters: {
+          detailType: 'full',
+        },
       });
       return this.mapApiToGameRequest(result);
     } catch (e) {
@@ -92,7 +105,10 @@ class Service {
           ...updates,
           sequence: String(Number(updates.sequence) + 1),
         },
-        queryStringParameters: {updateMask: updateKeys.join(',')},
+        queryStringParameters: {
+          updateMask: updateKeys.join(','),
+          detailType: 'full',
+        },
       });
       return this.mapApiToGameRequest(result);
     } catch (e) {

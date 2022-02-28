@@ -5,7 +5,7 @@ import {
 import React from 'react';
 import {AppStackParamList} from '../../App';
 import {useTheme} from '../providers/theme';
-import {TempScreen} from '../screens/temp';
+import {NotificationsScreen} from '../screens/notifications/notifications';
 
 type Properties = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -27,7 +27,7 @@ const NotificationsStack: React.FC<Properties> = ({}) => {
         headerBackTitleVisible: false,
         contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
-      <Stack.Screen name="Notifications" component={TempScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
     </Stack.Navigator>
   );
 };

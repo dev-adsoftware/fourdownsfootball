@@ -67,6 +67,8 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
 
   const signIn = async (username: string, password: string) => {
     const user = await AWSAuth.signIn(username, password);
+    const creds = await AWSAuth.currentCredentials();
+    console.log(creds);
     const fetchedOwner = await getOrCreateOwner(user.username, username);
     setOwner(fetchedOwner);
     setIsAuthenticated(true);

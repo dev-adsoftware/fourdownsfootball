@@ -1,28 +1,26 @@
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {Validator} from '../../globals/validator';
-import {useAuth} from '../../providers/auth';
-import {AuthStackParamList} from '../../stacks/auth';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {Button} from '../core/buttons/button';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
 import {ErrorSnackbar} from '../core/snackbar/error';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   username: string;
-  navigation: NativeStackNavigationProp<AuthStackParamList>;
-};
+  onSubmit: (username: string, password: string, code: string) => Promise<void>;
+}
 
-const Component: React.FC<Properties> = ({username, navigation}) => {
+const Component: React.FC<Properties> = props => {
+  const {username, onSubmit} = props;
+
   const [code, setCode] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [password2, setPassword2] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
-
-  const auth = useAuth();
 
   const styles = StyleSheet.create({
     container: {
@@ -90,8 +88,7 @@ const Component: React.FC<Properties> = ({username, navigation}) => {
               onPress={async () => {
                 try {
                   setIsProcessing(true);
-                  await auth.resetPassword(username, password, code);
-                  navigation.navigate('Sign In');
+                  await onSubmit(username, password, code);
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);
@@ -114,4 +111,4 @@ const Component: React.FC<Properties> = ({username, navigation}) => {
   );
 };
 
-export {Component as ResetPasswordForm};
+export const ResetPasswordForm = withTheme(Component);

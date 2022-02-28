@@ -87,21 +87,23 @@ export class Theme {
       white: 'white',
     };
     this.typography = {
-      largeTitle: {fontSize: 34},
-      title1: {fontSize: 28},
-      title2: {fontSize: 22},
-      title3: {fontSize: 20},
+      largeTitle: {fontSize: 34, color: this.colors.text},
+      title1: {fontSize: 28, color: this.colors.text},
+      title2: {fontSize: 22, color: this.colors.text},
+      title3: {fontSize: 20, color: this.colors.text},
       body: {
         fontSize: 17,
+        color: this.colors.text,
       },
       headline: {
         fontSize: 17,
         fontWeight: '500',
+        color: this.colors.text,
       },
-      subheading: {fontSize: 15},
-      footnote: {fontSize: 13},
-      caption1: {fontSize: 12},
-      caption2: {fontSize: 11},
+      subheading: {fontSize: 15, color: this.colors.text},
+      footnote: {fontSize: 13, color: this.colors.text},
+      caption1: {fontSize: 12, color: this.colors.text},
+      caption2: {fontSize: 11, color: this.colors.text},
     };
     // console.log(this.colors);
   }

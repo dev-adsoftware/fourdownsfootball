@@ -6,62 +6,54 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 import {TextInputBox} from '../input/text-input-box';
 import {SelectListItemSeparator} from './item-separator';
 import {SelectOption} from './option';
 
-type Properties<T extends {id: string; name: string}> = {
-  options: T[];
-  labelKey?: keyof T;
-  labelFn?: (option: T) => string;
-  filterKeys?: (keyof T)[];
-  filterFn?: (option: T, filter: string) => boolean;
-  selectedOption?: T;
+export interface SelectListOption {
+  id: string;
+  label: string;
+  filter: string;
+}
+
+interface Properties extends InjectedThemeProps {
+  options: SelectListOption[];
+  selectedOptionId?: string;
   isLoading?: boolean;
   searchPlaceholder?: string;
-  onSelect: (option: T) => void;
-};
+  onSelect: (optionId: string) => void;
+}
 
-function Component<T extends {id: string; name: string}>({
-  options,
-  labelKey = 'name',
-  labelFn,
-  filterKeys,
-  filterFn,
-  isLoading = false,
-  selectedOption,
-  searchPlaceholder,
-  onSelect,
-}: Properties<T>) {
+const Component: React.FC<Properties> = props => {
+  const {
+    options,
+    isLoading = false,
+    selectedOptionId,
+    searchPlaceholder,
+    onSelect,
+    theme,
+  } = props;
+
   const [searchText, setSearchText] = React.useState('');
   const [filter, setFilter] = React.useState('');
-  const [filteredItems, setFilteredItems] = React.useState<T[]>([]);
+  const [filteredItems, setFilteredItems] = React.useState<SelectListOption[]>(
+    [],
+  );
 
-  const [newlySelectedOption, setNewlySelectedOption] = React.useState<
-    T | undefined
-  >(selectedOption);
+  const [newlySelectedOptionId, setNewlySelectedOptionId] =
+    React.useState(selectedOptionId);
 
   React.useEffect(() => {
     setFilteredItems(
-      options.filter((option: T) => {
+      options.filter((option: SelectListOption) => {
         return (
           filter.length < 3 ||
-          (filterFn
-            ? filterFn(option, filter)
-            : (filterKeys || ['name'])
-                .map((key: keyof T) => {
-                  return option[key];
-                })
-                .join('')
-                .toLowerCase()
-                .indexOf(filter.toLowerCase()) > -1)
+          option.filter.toLowerCase().indexOf(filter.toLowerCase()) > -1
         );
       }),
     );
-  }, [options, filterFn, filterKeys, filter]);
-
-  const theme = useTheme();
+  }, [options, filter]);
 
   const styles = StyleSheet.create({
     listContainer: {
@@ -83,14 +75,14 @@ function Component<T extends {id: string; name: string}>({
     },
   });
 
-  const renderItem = ({item}: {item: T}) => {
+  const renderItem = ({item}: {item: SelectListOption}) => {
     return (
       <SelectOption
-        label={labelFn ? labelFn(item) : (item[labelKey] as unknown as string)}
-        isSelected={item.id === newlySelectedOption?.id}
+        label={item.label}
+        isSelected={item.id === newlySelectedOptionId}
         onSelect={() => {
-          setNewlySelectedOption(item);
-          setTimeout(() => onSelect(item), 200);
+          setNewlySelectedOptionId(item.id);
+          setTimeout(() => onSelect(item.id), 200);
         }}
       />
     );
@@ -103,7 +95,7 @@ function Component<T extends {id: string; name: string}>({
       style={[styles.listContainer]}
       data={filteredItems}
       extraData={filter}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item.id as string}
       renderItem={renderItem}
       ItemSeparatorComponent={SelectListItemSeparator}
       ListHeaderComponent={
@@ -133,6 +125,6 @@ function Component<T extends {id: string; name: string}>({
       ListFooterComponent={<View style={[styles.footerPadding]} />}
     />
   );
-}
+};
 
-export {Component as SelectList};
+export const SelectList = withTheme(Component);

@@ -9,60 +9,32 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useData} from '../../providers/data';
-import {useTheme} from '../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {DataSetSegment} from '../../providers/data';
 import {GameInvite} from '../../services/game-invites';
+import {GameParticipant} from '../../services/game-participants';
 import {GameRequest} from '../../services/game-requests';
+import {Game, createGameShell} from '../../services/games';
 import {Team} from '../../services/teams';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
+  gameRequests: DataSetSegment<GameRequest>;
+  gameInvites: DataSetSegment<GameInvite>;
+  gameParticipants: DataSetSegment<GameParticipant>;
   navigation: NativeStackNavigationProp<GamesStackParamList>;
-};
+}
 
-type Game = {
-  id: string;
-  homeTeam: Team | {id: string};
-  awayTeam: Team | {id: string};
-  status: string;
-};
-
-const GamesList: React.FC<Properties> = ({navigation}) => {
-  const [games, setGames] = React.useState<Game[]>([]);
-  const theme = useTheme();
-
-  const {gameRequests, gameInvites} = useData();
-
-  const fetchGames = React.useCallback(async () => {
-    setGames([
-      ...gameRequests.data.items.map((gameRequest: GameRequest) => {
-        return {
-          id: gameRequest.id,
-          homeTeam: {id: gameRequest.teamId},
-          awayTeam: {id: gameRequest.invitedOwnerId},
-          status: gameRequest.status,
-        };
-      }),
-      ...gameInvites.data.items.map((gameInvite: GameInvite) => {
-        return {
-          id: gameInvite.id,
-          homeTeam: {id: gameInvite.gameRequestId},
-          awayTeam: {id: gameInvite.ownerId},
-          status: 'Requesting RSVP',
-        };
-      }),
-    ]);
-  }, [gameRequests.data.items, gameInvites.data.items]);
-
-  React.useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+const Component: React.FC<Properties> = props => {
+  const {gameRequests, gameInvites, gameParticipants, navigation, theme} =
+    props;
 
   const refresh = () => {
     gameRequests.refresh();
     gameInvites.refresh();
+    gameParticipants.refresh();
   };
 
   const styles = StyleSheet.create({
@@ -71,6 +43,7 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: 100,
     },
     oopsCircle: {
       borderWidth: 2,
@@ -120,6 +93,7 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
     },
     groupHeaderText: {
       ...theme.typography.footnote,
+      color: theme.colors.text,
       fontWeight: 'bold',
       letterSpacing: 1,
     },
@@ -135,31 +109,56 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
     itemStatusContainer: {flex: 2, marginLeft: 10},
     itemStatusText: {
       ...theme.typography.footnote,
-      color: theme.colors.secondaryText,
+      color: theme.colors.text,
     },
     itemAvatar: {
       borderWidth: 1,
       borderColor: theme.colors.separator,
-      width: 30,
-      height: 30,
-      borderRadius: 15,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 8,
       backgroundColor: theme.colors.green,
     },
     itemAvatarText: {
+      ...theme.typography.caption2,
       color: theme.colors.white,
-      ...theme.typography.subheading,
+    },
+    itemPlayIcon: {
+      width: 15,
+    },
+    itemPossessionIcon: {
+      marginLeft: 5,
     },
     itemTeamRow: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 3,
     },
+    itemTeamRowInProgress: {
+      flex: 9,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    itemTeamRowInProgressScoreContainer: {
+      flex: 1,
+      marginRight: 5,
+    },
+    itemTeamRowInProgressScoreText: {
+      ...theme.typography.footnote,
+      textAlign: 'right',
+    },
     itemTeamNameText: {
-      color: theme.colors.text,
       ...theme.typography.body,
+      color: theme.colors.text,
+    },
+    itemTeamRowWinningTeamNameText: {
+      fontWeight: '500',
+    },
+    itemTeamRowWinningTeamScoreText: {
+      fontWeight: '700',
     },
     rsvpButtonContainer: {
       flex: 1,
@@ -174,6 +173,212 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
     },
   });
 
+  const getAvatarAbbreviation = (team?: Team) => {
+    if (!team) {
+      return '?';
+    }
+
+    return `${team.town.name.slice(0, 1).toUpperCase()}${team.nickname
+      .slice(0, 1)
+      .toUpperCase()}`;
+  };
+
+  const renderGameRequest = (game: Game) => {
+    return (
+      <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
+        <View style={[styles.itemTeamsContainer]}>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemAvatar]}>
+              <Text style={[styles.itemAvatarText]}>
+                {getAvatarAbbreviation(game.awayTeam)}
+              </Text>
+            </View>
+            <Text style={[styles.itemTeamNameText]}>
+              {game.awayTeam?.name || 'TBD'}
+            </Text>
+          </View>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemAvatar]}>
+              <Text style={[styles.itemAvatarText]}>
+                {getAvatarAbbreviation(game.homeTeam)}
+              </Text>
+            </View>
+            <Text style={[styles.itemTeamNameText]}>
+              {game.homeTeam?.name || 'TBD'}
+            </Text>
+          </View>
+        </View>
+        <View style={[styles.itemStatusContainer]}>
+          <Text style={[styles.itemStatusText]}>{game.state}</Text>
+        </View>
+      </Pressable>
+    );
+  };
+
+  const renderGameInvite = (game: Game) => {
+    return (
+      <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
+        <View style={[styles.itemTeamsContainer]}>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemAvatar]}>
+              <Text style={[styles.itemAvatarText]}>
+                {getAvatarAbbreviation(game.awayTeam)}
+              </Text>
+            </View>
+            <Text style={[styles.itemTeamNameText]}>
+              {game.awayTeam?.name || 'TBD'}
+            </Text>
+          </View>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemAvatar]}>
+              <Text style={[styles.itemAvatarText]}>
+                {getAvatarAbbreviation(game.homeTeam)}
+              </Text>
+            </View>
+            <Text style={[styles.itemTeamNameText]}>
+              {game.homeTeam?.name || 'TBD'}
+            </Text>
+          </View>
+        </View>
+        <View style={[styles.itemStatusContainer]}>
+          {game.state === 'Sent' ? (
+            <View style={[styles.rsvpButtonContainer]}>
+              <Button
+                text="RSVP"
+                compact
+                filled={false}
+                iconLeft="caret-right"
+                onPress={() => {
+                  navigation.navigate('Game RSVP', {
+                    gameInvite: gameInvites.items.filter(
+                      (gameInvite: GameInvite) => {
+                        return gameInvite.id === game.id;
+                      },
+                    )[0],
+                  });
+                }}
+              />
+            </View>
+          ) : (
+            <Text style={[styles.itemStatusText]}>{game.state}</Text>
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  const renderGameInProgress = (game: Game) => {
+    return (
+      <Pressable
+        style={[styles.itemContentRow]}
+        onPress={() => {
+          navigation.navigate('Game Detail Stack', {game});
+        }}>
+        <View style={[styles.itemTeamsContainer]}>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemTeamRowInProgress]}>
+              <View style={[styles.itemAvatar]}>
+                <Text style={[styles.itemAvatarText]}>
+                  {getAvatarAbbreviation(game.awayTeam)}
+                </Text>
+              </View>
+              {game.actingTeamId === game.awayTeamId ? (
+                <FontAwesome5Icon
+                  style={[styles.itemPlayIcon]}
+                  name="play"
+                  size={10}
+                  color={theme.colors.text}
+                />
+              ) : (
+                <View style={[styles.itemPlayIcon]} />
+              )}
+              <Text
+                style={[
+                  styles.itemTeamNameText,
+                  game.awayTeamScore >= game.homeTeamScore
+                    ? styles.itemTeamRowWinningTeamNameText
+                    : {},
+                ]}>
+                {game.awayTeam?.nickname || 'TBD'}
+              </Text>
+              {game.offenseTeamId === game.awayTeamId ? (
+                <FontAwesome5Icon
+                  style={[styles.itemPossessionIcon]}
+                  name="football-ball"
+                  size={12}
+                  color={theme.colors.brown}
+                />
+              ) : (
+                <></>
+              )}
+            </View>
+            <View style={[styles.itemTeamRowInProgressScoreContainer]}>
+              <Text
+                style={[
+                  styles.itemTeamRowInProgressScoreText,
+                  game.awayTeamScore >= game.homeTeamScore
+                    ? styles.itemTeamRowWinningTeamScoreText
+                    : {},
+                ]}>
+                {game.awayTeamScore}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.itemTeamRow]}>
+            <View style={[styles.itemAvatar]}>
+              <Text style={[styles.itemAvatarText]}>
+                {getAvatarAbbreviation(game.homeTeam)}
+              </Text>
+            </View>
+            {game.actingTeamId === game.homeTeamId ? (
+              <FontAwesome5Icon
+                style={[styles.itemPlayIcon]}
+                name="play"
+                size={10}
+                color={theme.colors.text}
+              />
+            ) : (
+              <View style={[styles.itemPlayIcon]} />
+            )}
+            <Text
+              style={[
+                styles.itemTeamNameText,
+                game.homeTeamScore >= game.awayTeamScore
+                  ? styles.itemTeamRowWinningTeamNameText
+                  : {},
+              ]}>
+              {game.homeTeam?.nickname || 'TBD'}
+            </Text>
+            {game.offenseTeamId === game.homeTeamId ? (
+              <FontAwesome5Icon
+                style={[styles.itemPossessionIcon]}
+                name="football-ball"
+                size={12}
+                color={theme.colors.brown}
+              />
+            ) : (
+              <></>
+            )}
+            <View style={[styles.itemTeamRowInProgressScoreContainer]}>
+              <Text
+                style={[
+                  styles.itemTeamRowInProgressScoreText,
+                  game.homeTeamScore >= game.awayTeamScore
+                    ? styles.itemTeamRowWinningTeamScoreText
+                    : {},
+                ]}>
+                {game.homeTeamScore}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={[styles.itemStatusContainer]}>
+          <Text style={[styles.itemStatusText]}>{game.state}</Text>
+        </View>
+      </Pressable>
+    );
+  };
+
   const renderItem = ({
     item,
   }: {
@@ -187,43 +392,22 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
         {item.groupItems.map((groupItem: Game, index: number) => {
           return (
             <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
-              <Pressable
-                style={[styles.itemContentRow]}
-                onPress={() => {
-                  console.log('pressed game');
-                }}>
-                <View style={[styles.itemTeamsContainer]}>
-                  <View style={[styles.itemTeamRow]}>
-                    <View style={[styles.itemAvatar]}>
-                      <Text style={[styles.itemAvatarText]}>AT</Text>
-                    </View>
-                    <Text style={[styles.itemTeamNameText]}>Away Team</Text>
-                  </View>
-                  <View style={[styles.itemTeamRow]}>
-                    <View style={[styles.itemAvatar]}>
-                      <Text style={[styles.itemAvatarText]}>HT</Text>
-                    </View>
-                    <Text style={[styles.itemTeamNameText]}>Home Team</Text>
-                  </View>
-                </View>
-                <View style={[styles.itemStatusContainer]}>
-                  {groupItem.status === 'Requesting RSVP' ? (
-                    <View style={[styles.rsvpButtonContainer]}>
-                      <Button
-                        text="RSVP"
-                        compact
-                        // filled={false}
-                        iconLeft="caret-right"
-                        onPress={() => console.log('accept rsvp')}
-                      />
-                    </View>
-                  ) : (
-                    <Text style={[styles.itemStatusText]}>
-                      {groupItem.status.toUpperCase()}
-                    </Text>
-                  )}
-                </View>
-              </Pressable>
+              {item.groupHeader === 'PENDING GAME REQUESTS' ? (
+                renderGameRequest(groupItem)
+              ) : (
+                <></>
+              )}
+              {item.groupHeader === 'INVITATIONS' ? (
+                renderGameInvite(groupItem)
+              ) : (
+                <></>
+              )}
+              {item.groupHeader === 'IN PROGRESS' ? (
+                renderGameInProgress(groupItem)
+              ) : (
+                <></>
+              )}
+
               {index < item.groupItems.length - 1 ? (
                 <SectionListItemSeparator />
               ) : (
@@ -240,28 +424,59 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
     <FlatList
       style={[styles.listContainer]}
       data={[
-        {
-          groupHeader: 'PENDING GAME REQUESTS',
-          groupItems: [...games, ...games],
-        },
-        {
-          groupHeader: 'INVITATIONS',
-          groupItems: [...games],
-        },
-        {
-          groupHeader: 'IN PROGRESS',
-          groupItems: [...games, ...games, ...games],
-        },
-        {
-          groupHeader: 'RECENTLY COMPLETED',
-          groupItems: [...games, ...games, ...games],
-        },
+        ...(gameRequests.items.length > 0
+          ? [
+              {
+                groupHeader: 'PENDING GAME REQUESTS',
+                groupItems: gameRequests.items.map(
+                  (gameRequest: GameRequest): Game => {
+                    return {
+                      ...createGameShell(),
+                      id: gameRequest.id,
+                      homeTeam: gameRequest.team,
+                      state: gameRequest.status,
+                    };
+                  },
+                ),
+              },
+            ]
+          : []),
+        ...(gameInvites.items.length > 0
+          ? [
+              {
+                groupHeader: 'INVITATIONS',
+                groupItems: gameInvites.items.map(
+                  (gameInvite: GameInvite): Game => {
+                    return {
+                      ...createGameShell(),
+                      id: gameInvite.id,
+                      homeTeam: gameInvite.gameRequest?.team,
+                      awayTeam: gameInvite.team,
+                      state: gameInvite.status,
+                    };
+                  },
+                ),
+              },
+            ]
+          : []),
+        ...(gameParticipants.items.length > 0
+          ? [
+              {
+                groupHeader: 'IN PROGRESS',
+                groupItems: gameParticipants.items.map(
+                  (gameParticipant: GameParticipant): Game => {
+                    return gameParticipant?.game || createGameShell();
+                  },
+                ),
+              },
+            ]
+          : []),
       ]}
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
         <RefreshControl
-          refreshing={gameRequests.data.isLoading || gameInvites.data.isLoading}
+          refreshing={gameRequests.isLoading || gameInvites.isLoading}
           onRefresh={refresh}
         />
       }
@@ -292,4 +507,4 @@ const GamesList: React.FC<Properties> = ({navigation}) => {
   );
 };
 
-export {GamesList};
+export const GamesList = withTheme(Component);

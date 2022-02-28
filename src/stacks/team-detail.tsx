@@ -26,7 +26,6 @@ const TeamDetailTabStack: React.FC<Properties> = ({route, navigation}) => {
   const theme = useTheme();
 
   React.useLayoutEffect(() => {
-    console.log(route.params.team);
     navigation.setOptions({
       title: route.params.team.town.name,
       headerStyle: {

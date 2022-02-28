@@ -1,22 +1,18 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 import {Button} from '../buttons/button';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   text: string;
   isProcessingExternal?: boolean;
   onConfirm: () => Promise<void>;
-};
+}
 
-const Component: React.FC<Properties> = ({
-  text,
-  isProcessingExternal,
-  onConfirm,
-}) => {
+const Component: React.FC<Properties> = props => {
+  const {text, isProcessingExternal, onConfirm, theme} = props;
+
   const [isProcessing, setIsProcessing] = React.useState(isProcessingExternal);
-
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -56,4 +52,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as ConfirmActionForm};
+export const ConfirmActionForm = withTheme(Component);

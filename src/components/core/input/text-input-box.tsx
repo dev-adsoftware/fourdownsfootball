@@ -1,13 +1,13 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   children: React.ReactNode;
-};
+}
 
-const Component: React.FC<Properties> = ({children}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {children, theme} = props;
   const styles = StyleSheet.create({
     inputBox: {
       borderWidth: 1,
@@ -21,4 +21,4 @@ const Component: React.FC<Properties> = ({children}) => {
   return <View style={[styles.inputBox]}>{children}</View>;
 };
 
-export {Component as TextInputBox};
+export const TextInputBox = withTheme(Component);

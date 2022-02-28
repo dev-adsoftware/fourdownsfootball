@@ -9,22 +9,22 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useData} from '../../providers/data';
-import {useTheme} from '../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {DataSetSegment} from '../../providers/data';
 import {TeamRequest} from '../../services/team-requests';
 import {Team} from '../../services/teams';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
+  teams: DataSetSegment<Team>;
+  teamRequests: DataSetSegment<TeamRequest>;
   navigation: NativeStackNavigationProp<TeamsStackParamList>;
-};
+}
 
-const TeamsList: React.FC<Properties> = ({navigation}) => {
-  const theme = useTheme();
-
-  const {teams, teamRequests} = useData();
+const Component: React.FC<Properties> = props => {
+  const {teams, teamRequests, navigation, theme} = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {
@@ -83,6 +83,7 @@ const TeamsList: React.FC<Properties> = ({navigation}) => {
     },
     groupHeaderText: {
       ...theme.typography.footnote,
+      color: theme.colors.text,
       fontWeight: 'bold',
       letterSpacing: 1,
     },
@@ -101,16 +102,34 @@ const TeamsList: React.FC<Properties> = ({navigation}) => {
       marginRight: 10,
     },
     itemAvatarText: {
-      color: theme.colors.white,
       ...theme.typography.body,
+      color: theme.colors.white,
+    },
+    itemTeamIdentifier: {
+      height: 50,
+      justifyContent: 'center',
+    },
+    itemTeamIdentifierBorder: {
+      borderRightWidth: 1,
+      borderRightColor: theme.colors.separator,
+      paddingRight: 10,
+      marginRight: 10,
+      width: 180,
     },
     itemTeamNameText: {
-      color: theme.colors.text,
       ...theme.typography.body,
+      color: theme.colors.text,
     },
     itemLeagueText: {
-      color: theme.colors.secondaryText,
       ...theme.typography.caption1,
+      color: theme.colors.secondaryText,
+    },
+    itemTeamStatusContainer: {
+      flex: 1,
+    },
+    itemStatusText: {
+      ...theme.typography.footnote,
+      color: theme.colors.text,
     },
     footerPadding: {
       backgroundColor: theme.colors.secondaryBackground,
@@ -126,83 +145,107 @@ const TeamsList: React.FC<Properties> = ({navigation}) => {
   const renderItem = ({
     item,
   }: {
-    item: {groupHeader: string; groupItems: Team[]};
+    item: {groupHeader: string; groupItems: (Team & {status?: string})[]};
   }) => {
     return (
       <View style={[styles.groupContainer]}>
         <View style={[styles.groupHeader]}>
           <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
-        {item.groupItems.map((groupItem: Team, index: number) => {
-          return (
-            <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
-              <Pressable
-                style={[styles.itemContentRow]}
-                onPress={() => {
-                  navigation.navigate('Team Detail Stack', {team: groupItem});
-                }}>
-                <View
-                  style={[
-                    styles.itemAvatar,
-                    {
-                      backgroundColor: (theme.colors as {[x: string]: string})[
-                        groupItem.primaryColor.toLowerCase()
-                      ],
-                    },
-                  ]}>
-                  <Text style={[styles.itemAvatarText]}>
-                    {getAvatarAbbreviation(groupItem)}
-                  </Text>
-                </View>
-                <View>
-                  <Text style={[styles.itemTeamNameText]}>
-                    {groupItem.town.name} {groupItem.nickname}
-                  </Text>
-                  <Text style={[styles.itemLeagueText]}>I.1</Text>
-                </View>
-              </Pressable>
-              {index < item.groupItems.length - 1 ? (
-                <SectionListItemSeparator />
-              ) : (
-                <></>
-              )}
-            </View>
-          );
-        })}
+        {item.groupItems.map(
+          (groupItem: Team & {status?: string}, index: number) => {
+            return (
+              <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
+                <Pressable
+                  style={[styles.itemContentRow]}
+                  onPress={() => {
+                    navigation.navigate('Team Detail Stack', {team: groupItem});
+                  }}>
+                  <View
+                    style={[
+                      styles.itemAvatar,
+                      {
+                        backgroundColor: (
+                          theme.colors as {[x: string]: string}
+                        )[groupItem.primaryColor.toLowerCase()],
+                      },
+                    ]}>
+                    <Text style={[styles.itemAvatarText]}>
+                      {getAvatarAbbreviation(groupItem)}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.itemTeamIdentifier,
+                      groupItem.status
+                        ? styles.itemTeamIdentifierBorder
+                        : undefined,
+                    ]}>
+                    <Text style={[styles.itemTeamNameText]}>
+                      {groupItem.town.name} {groupItem.nickname}
+                    </Text>
+                    <Text style={[styles.itemLeagueText]}>
+                      {groupItem.league?.name || 'Awaiting league assignment'}
+                    </Text>
+                  </View>
+                  {groupItem.status ? (
+                    <View style={[styles.itemTeamStatusContainer]}>
+                      <Text style={[styles.itemStatusText]}>
+                        {groupItem.status || 'Awaiting league assignment'}
+                      </Text>
+                    </View>
+                  ) : (
+                    <></>
+                  )}
+                </Pressable>
+                {index < item.groupItems.length - 1 ? (
+                  <SectionListItemSeparator />
+                ) : (
+                  <></>
+                )}
+              </View>
+            );
+          },
+        )}
       </View>
     );
   };
-
-  console.log(teamRequests.data.items);
-  console.log(teams.data.items);
 
   return (
     <FlatList
       style={[styles.listContainer]}
       data={[
-        {groupHeader: 'ACTIVE', groupItems: teams.data.items},
-        {
-          groupHeader: 'TEAM REQUESTS IN PROGRESS',
-          groupItems: teamRequests.data.items.map(
-            (teamRequest: TeamRequest): Team => {
-              console.log(teamRequest);
-              return {
-                id: teamRequest.id,
-                ownerId: teamRequest.ownerId,
-                nickname: teamRequest.nickname,
-                primaryColor: teamRequest.primaryColor,
-                town: teamRequest.town,
-                name: `${teamRequest.town.name} ${teamRequest.nickname}`,
-              };
-            },
-          ),
-        },
+        ...(teamRequests.items.length > 0
+          ? [
+              {
+                groupHeader: 'TEAM REQUESTS IN PROGRESS',
+                groupItems: teamRequests.items.map(
+                  (teamRequest: TeamRequest): Team & {status?: string} => {
+                    return {
+                      id: teamRequest.id,
+                      ownerId: teamRequest.ownerId,
+                      nickname: teamRequest.nickname,
+                      primaryColor: teamRequest.primaryColor,
+                      townId: teamRequest.townId,
+                      town: teamRequest.town,
+                      name: `${teamRequest.town.name} ${teamRequest.nickname}`,
+                      status: teamRequest.status || 'Processing',
+                      leagueId: 'Awaiting league assignment',
+                    };
+                  },
+                ),
+              },
+            ]
+          : []),
+        ...(teams.items.length > 0
+          ? [{groupHeader: 'ACTIVE', groupItems: teams.items}]
+          : []),
       ]}
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
         <RefreshControl
-          refreshing={teams.data.isLoading || teamRequests.data.isLoading}
+          refreshing={teams.isLoading || teamRequests.isLoading}
           onRefresh={() => {
             teams.refresh();
             teamRequests.refresh();
@@ -234,4 +277,4 @@ const TeamsList: React.FC<Properties> = ({navigation}) => {
   );
 };
 
-export {TeamsList};
+export const TeamsList = withTheme(Component);

@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {withTheme, InjectedThemeProps} from '../../../hoc/with-theme';
 
-type Properties = {};
+interface Properties extends InjectedThemeProps {}
 
-const Component: React.FC<Properties> = ({}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {theme} = props;
   const styles = StyleSheet.create({
     separator: {
       height: 1,
@@ -15,4 +15,4 @@ const Component: React.FC<Properties> = ({}) => {
   return <View style={[styles.separator]} />;
 };
 
-export {Component as DataTableItemSeparator};
+export const DataTableItemSeparator = withTheme(Component);

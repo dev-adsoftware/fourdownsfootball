@@ -7,9 +7,12 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "graphql:download-schema": "aws --profile gftf --region us-east-1 appsync get-introspection-schema --api-id p7culhypprfmtpggz64ssdvc64 --format SDL src/graphql/schema.graphql",
+    "graphql:codegen": "apollo client:codegen --localSchemaFile=src/graphql/schema.graphql --includes=src/graphql/queries/*.query.tsx --target=typescript --tsFileExtension=tsx --no-addTypename --outputFlat src/graphql/types"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.9",
     "@klarna/platform-colors": "^0.3.1",
     "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-community/netinfo": "^7.1.7",
@@ -20,6 +23,8 @@
     "@react-navigation/stack": "^6.0.11",
     "amazon-cognito-identity-js": "^5.2.4",
     "aws-amplify": "^4.3.12",
+    "graphql": "^16.3.0",
+    "moment": "^2.29.1",
     "react": "17.0.2",
     "react-native": "0.66.4",
     "react-native-gesture-handler": "^1.10.3",
@@ -32,6 +37,7 @@
     "react-native-tab-view": "^3.1.1",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.0.0",
+    "svg-path-properties": "^1.0.11",
     "uuid": "^8.3.2",
     "validate.js": "^0.13.1"
   },
@@ -48,6 +54,7 @@
     "@types/validate.js": "^0.11.0",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
+    "apollo": "^2.33.9",
     "babel-jest": "^26.6.3",
     "eslint": "^7.14.0",
     "jest": "^26.6.3",

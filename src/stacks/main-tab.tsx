@@ -37,7 +37,7 @@ const MainTabStack: React.FC<Properties> = ({}) => {
           shadowOffset: {width: 0, height: 0},
           elevation: 3,
         },
-        tabBarActiveTintColor: theme.colors.black,
+        tabBarActiveTintColor: theme.colors.text, //theme.colors.black,
         tabBarInactiveTintColor: theme.colors.placeholderText,
       }}>
       <Tab.Screen

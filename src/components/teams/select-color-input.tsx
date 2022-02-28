@@ -1,14 +1,14 @@
 import React from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
-import {useTheme} from '../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {SelectOption} from '../core/select/option';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   allowNone?: boolean;
   selectedColor?: Color;
   onPressOption: (color: Color) => void;
-};
+}
 
 export type Color = {name: string; value: string};
 
@@ -16,18 +16,14 @@ export type Option = {
   color: Color;
 };
 
-const Component: React.FC<Properties> = ({
-  allowNone,
-  selectedColor,
-  onPressOption,
-}) => {
+const Component: React.FC<Properties> = props => {
+  const {allowNone, selectedColor, onPressOption, theme} = props;
+
   const [items, setItems] = React.useState<Option[]>([]);
 
   const [newlySelectedColor, setNewlySelectedColor] = React.useState<
     Color | undefined
   >(selectedColor);
-
-  const theme = useTheme();
 
   React.useEffect(() => {
     setItems([
@@ -109,4 +105,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as ColorSelectInput};
+export const ColorSelectInput = withTheme(Component);

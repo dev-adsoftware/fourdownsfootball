@@ -8,35 +8,19 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useTheme} from '../../providers/theme';
-import {Player, PlayersService} from '../../services/players';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {Player} from '../../services/players';
 import {DataTableItemSeparator} from '../core/datatable/datatable-item-separator';
 
-type Properties = {
-  teamId: string;
+interface Properties extends InjectedThemeProps {
+  players: Player[];
+  isLoading: boolean;
   onPressPlayer: (player: Player) => void;
-};
+  onRefresh: () => Promise<void>;
+}
 
-const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
-  const [players, setPlayers] = React.useState<Player[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  const theme = useTheme();
-
-  const fetchPlayers = React.useCallback(async () => {
-    setIsLoading(true);
-    const fetchedPlayers = (
-      await new PlayersService().listByTeam(teamId)
-    ).items.sort((a: Player, b: Player) => {
-      return a.lastName > b.lastName ? 1 : -1;
-    });
-    setPlayers(fetchedPlayers);
-    setIsLoading(false);
-  }, [teamId]);
-
-  React.useEffect(() => {
-    fetchPlayers();
-  }, [fetchPlayers]);
+const Component: React.FC<Properties> = props => {
+  const {isLoading, players, onPressPlayer, onRefresh, theme} = props;
 
   const styles = StyleSheet.create({
     emptyContainer: {
@@ -191,7 +175,7 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
         keyExtractor={item => item.id}
         renderItem={renderItem}
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={fetchPlayers} />
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }
         ItemSeparatorComponent={DataTableItemSeparator}
         ListHeaderComponent={
@@ -216,4 +200,4 @@ const TeamsRosterList: React.FC<Properties> = ({teamId, onPressPlayer}) => {
   );
 };
 
-export {TeamsRosterList};
+export const TeamsRosterList = withTheme(Component);

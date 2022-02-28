@@ -1,30 +1,28 @@
 import React from 'react';
 import validate from 'validate.js';
 import {StyleSheet, TextInput, View} from 'react-native';
-import {useAuth} from '../../providers/auth';
 import {LinkButton} from '../core/buttons/link';
 import {Button} from '../core/buttons/button';
 import {TextInputBox} from '../core/input/text-input-box';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
-import {useTheme} from '../../providers/theme';
 import {TextInputColorStyle} from '../../styles/text-input-color';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '../../stacks/auth';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 
-type Properties = {
-  navigation: NativeStackNavigationProp<AuthStackParamList>;
-};
+interface Properties extends InjectedThemeProps {
+  onSubmit: (username: string, password: string) => Promise<void>;
+  onForgot: () => Promise<void>;
+  onSignUp: () => Promise<void>;
+}
 
-const Component: React.FC<Properties> = ({navigation}) => {
+const Component: React.FC<Properties> = props => {
+  const {onSubmit, onForgot, onSignUp, theme} = props;
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
-
-  const auth = useAuth();
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -87,7 +85,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
               onPress={async () => {
                 try {
                   setIsProcessing(true);
-                  await auth.signIn(username, password);
+                  await onSubmit(username, password);
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);
@@ -103,18 +101,11 @@ const Component: React.FC<Properties> = ({navigation}) => {
             <>
               <FormRow>
                 <View style={[styles.forgotBox]}>
-                  <LinkButton
-                    onPress={() => navigation.navigate('Forgot Password')}
-                    text="Forgot Password?"
-                  />
+                  <LinkButton onPress={onForgot} text="Forgot Password?" />
                 </View>
               </FormRow>
               <FormRow>
-                <Button
-                  text="Sign Up"
-                  filled={false}
-                  onPress={() => navigation.navigate('Sign Up')}
-                />
+                <Button text="Sign Up" filled={false} onPress={onSignUp} />
               </FormRow>
             </>
           )}
@@ -131,4 +122,4 @@ const Component: React.FC<Properties> = ({navigation}) => {
   );
 };
 
-export {Component as SigninForm};
+export const SigninForm = withTheme(Component);

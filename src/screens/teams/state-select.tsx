@@ -1,7 +1,7 @@
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {SelectList} from '../../components/core/select/list';
+import {SelectList, SelectListOption} from '../../components/core/select/list';
 import {State, StatesService} from '../../services/states';
 import {TeamsStackParamList} from '../../stacks/teams';
 
@@ -12,16 +12,16 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [options, setOptions] = React.useState<State[]>([]);
+  const [states, setStates] = React.useState<State[]>([]);
 
   const fetchStates = React.useCallback(async () => {
     setIsLoading(true);
-    const states = (
+    const fetchedStates = (
       await new StatesService().listByNation(route.params?.nationId)
     ).items.sort((a: State, b: State) => {
       return a.name > b.name ? 1 : -1;
     });
-    setOptions(states);
+    setStates(fetchedStates);
     setIsLoading(false);
   }, [route.params.nationId]);
 
@@ -30,15 +30,21 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
   }, [fetchStates]);
 
   return (
-    <SelectList<State>
+    <SelectList
+      options={states.map((state: State): SelectListOption => {
+        return {id: state.id, label: state.name, filter: state.name};
+      })}
       isLoading={isLoading}
       searchPlaceholder="Search States"
-      options={options}
-      selectedOption={route.params.selectedState}
-      onSelect={(option: State) => {
+      selectedOptionId={route.params.selectedState?.id}
+      onSelect={(optionId: string) => {
         navigation.navigate({
           name: route.params.returnRoute,
-          params: {[route.params.returnParamKey]: option},
+          params: {
+            [route.params.returnParamKey]: states.filter((state: State) => {
+              return state.id === optionId;
+            })[0],
+          },
           merge: true,
         });
       }}

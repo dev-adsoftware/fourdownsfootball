@@ -1,15 +1,17 @@
 import React from 'react';
 import {Animated, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 import {LinkButton} from '../buttons/link';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   text: string;
   visible?: boolean;
   onDismiss: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({text, visible, onDismiss}) => {
+const Component: React.FC<Properties> = props => {
+  const {text, visible, onDismiss, theme} = props;
+
   const [hidden, setHidden] = React.useState<boolean>(!visible);
 
   const {current: opacity} = React.useRef<Animated.Value>(
@@ -67,8 +69,6 @@ const Component: React.FC<Properties> = ({text, visible, onDismiss}) => {
       });
     }
   }, [visible, duration, opacity, scale, onDismiss]);
-
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -128,4 +128,4 @@ const Component: React.FC<Properties> = ({text, visible, onDismiss}) => {
   );
 };
 
-export {Component as ErrorSnackbar};
+export const ErrorSnackbar = withTheme(Component);

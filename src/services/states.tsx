@@ -10,7 +10,7 @@ export interface State {
 class Service {
   constructor() {}
 
-  private mapApiToState(input: any): State {
+  public mapApiToState(input: any): State {
     return {
       id: input.id,
       nationId: input.nationId,
@@ -19,7 +19,7 @@ class Service {
     };
   }
 
-  private mapStateToApi(input: State): any {
+  public mapStateToApi(input: State): any {
     return {
       id: input.id,
       nationId: input.nationId,

@@ -1,46 +1,31 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import uuid from 'react-native-uuid';
-import {useTheme} from '../../providers/theme';
-import {Button} from '../core/buttons/button';
+import {StyleSheet, Text, View, TextInput} from 'react-native';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
-import {ErrorSnackbar} from '../core/snackbar/error';
-import {TeamRequest, TeamRequestsService} from '../../services/team-requests';
-import {useAuth} from '../../providers/auth';
-import {useData} from '../../providers/data';
 import {SelectTrigger} from '../core/select/trigger';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {Nation} from '../../services/nations';
 import {State} from '../../services/states';
 import {Town} from '../../services/towns';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {Button} from '../core/buttons/button';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   nation?: Nation;
   state?: State;
   town?: Town;
+  onSubmit: (town: Town, nickname: string) => Promise<void>;
   navigation: NativeStackNavigationProp<TeamsStackParamList>;
-};
+}
 
-const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
+const Component: React.FC<Properties> = props => {
+  const {nation, state, town, onSubmit, navigation, theme} = props;
+
   const [nickname, setNickname] = React.useState('');
-  const [isValidNickname, setIsValidNickname] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const [isProcessing, setIsProcessing] = React.useState(false);
-  const [teamRequest, setTeamRequest] = React.useState<TeamRequest>();
 
-  const {teams} = useData();
-
-  const validateNickname = (input: string) => {
+  const isValidNickname = (input: string) => {
     const sentence = input.trim().replace(/[ ]+/, ' ').split(' ');
 
     const tokenResults = sentence.map((word: string) => {
@@ -50,41 +35,11 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
     });
 
     if (tokenResults.indexOf(false) !== -1) {
-      throw Error('Invalid Nickname');
+      return false;
     }
 
-    return sentence.join(' ');
+    return true;
   };
-
-  const auth = useAuth();
-
-  const createTeamRequest = async () => {
-    setIsProcessing(true);
-    try {
-      if (!isValidNickname) {
-        setIsProcessing(false);
-        throw Error('Invalid nickname');
-      }
-
-      const newTeamRequest = await new TeamRequestsService().create({
-        id: uuid.v4() as string,
-        ownerId: auth.owner?.id as string,
-        town: town as Town,
-        nickname: nickname,
-        primaryColor: 'Green',
-        teamEmphasis: 'Balanced',
-        offenseStyle: 'Balanced',
-        defenseStyle: 'Balanced',
-      });
-
-      teams.refresh();
-      setTeamRequest(newTeamRequest);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  };
-
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     loadingContainer: {
@@ -201,150 +156,100 @@ const Component: React.FC<Properties> = ({nation, state, town, navigation}) => {
   });
 
   return (
-    <>
-      {isProcessing ? (
-        <>
-          {teamRequest ? (
-            <View style={[styles.doneContainer]}>
-              <View style={[styles.processingIconRow]}>
-                <View style={[styles.doneCircle]}>
-                  <FontAwesome5Icon
-                    style={[styles.doneIcon]}
-                    name="check"
-                    color={theme.colors.green}
-                    size={24}
-                  />
-                </View>
-              </View>
-              <Button
-                text="Complete!"
-                activeColor={theme.colors.green}
-                onPress={async () => {
-                  teams.refresh();
-                  navigation.goBack();
-                }}
+    <View style={[styles.container]}>
+      <View style={[styles.sectionHeader]}>
+        <Text style={[styles.sectionHeaderText]}>TEAM NAME</Text>
+      </View>
+      <View style={[styles.itemRow, styles.itemRowInput]}>
+        <Form compact>
+          <FormRow compact>
+            <TextInputBox>
+              <TextInput
+                style={[styles.textInput]}
+                textAlign="left"
+                maxLength={40}
+                autoCapitalize="words"
+                returnKeyType="done"
+                placeholder="Nickname"
+                value={nickname}
+                onChangeText={(text: string) => setNickname(text)}
               />
-            </View>
-          ) : (
-            <ActivityIndicator style={[styles.loadingContainer]} />
-          )}
-        </>
-      ) : (
-        <>
-          <View style={[styles.container]}>
-            <View style={[styles.sectionHeader]}>
-              <Text style={[styles.sectionHeaderText]}>TEAM NAME</Text>
-            </View>
-            <View style={[styles.itemRow, styles.itemRowInput]}>
-              <Form compact>
-                <FormRow compact>
-                  <TextInputBox>
-                    <TextInput
-                      style={[styles.textInput]}
-                      textAlign="left"
-                      maxLength={40}
-                      autoCapitalize="words"
-                      returnKeyType="done"
-                      placeholder="Nickname"
-                      value={nickname}
-                      onChangeText={(text: string) => setNickname(text)}
-                      onSubmitEditing={({nativeEvent}) => {
-                        try {
-                          const validatedNickname = validateNickname(
-                            nativeEvent.text,
-                          );
-                          setNickname(validatedNickname);
-                          setIsValidNickname(true);
-                        } catch (e) {
-                          setError('Invalid nickname');
-                          setIsValidNickname(false);
-                        }
-                      }}
-                    />
-                  </TextInputBox>
-                </FormRow>
-                <FormRow compact>
-                  <Text style={[styles.captionText]}>
-                    Must adhere to the following rules:{'\n'}• May not exceed 40
-                    characters.{'\n'}• May not contain numbers or punctuation.
-                    {'\n'}• Must be plural and proper case.{'\n'}• May not start
-                    with an article ("a", "an", "the").{'\n'}• May not start
-                    with a pronoun (e.g. "my").
-                    {'\n'}• May not cannot contain any offensive language.
-                    {'\n\n'}Valid examples include Blue Jays, Kings, and Flying
-                    Purple Elephants.
-                  </Text>
-                </FormRow>
-              </Form>
-            </View>
-            <View style={[styles.sectionSeparator]} />
-            <View style={[styles.sectionHeader]}>
-              <Text style={[styles.sectionHeaderText]}>LOCATION</Text>
-            </View>
-            <SelectTrigger
-              label="Country"
-              value={nation?.name}
-              required
-              onSelect={() => {
-                navigation.navigate('Nation Select', {
-                  selectedNation: nation,
-                  returnRoute: 'Team Request',
-                  returnParamKey: 'nation',
-                });
-              }}
-            />
-            <View style={[styles.itemSeparator]} />
-            <SelectTrigger
-              label="State"
-              disabled={!nation}
-              value={state?.name}
-              required
-              onSelect={() => {
-                navigation.navigate('State Select', {
-                  nationId: nation?.id as string,
-                  selectedState: state,
-                  returnRoute: 'Team Request',
-                  returnParamKey: 'state',
-                });
-              }}
-            />
-            <View style={[styles.itemSeparator]} />
-            <SelectTrigger
-              label="City"
-              disabled={!state}
-              value={town?.name}
-              required
-              onSelect={() => {
-                navigation.navigate('Town Select', {
-                  stateId: state?.id as string,
-                  selectedTown: town,
-                  returnRoute: 'Team Request',
-                  returnParamKey: 'town',
-                });
-              }}
-            />
-            <View style={[styles.sectionSeparator]} />
-            <View style={[styles.buttonContainer]}>
-              <Button
-                text="Submit Team Request"
-                activeColor={theme.colors.green}
-                disabled={!nation || !state || !town || !isValidNickname}
-                onPress={() => {
-                  createTeamRequest();
-                }}
-              />
-            </View>
-          </View>
-        </>
-      )}
-      <ErrorSnackbar
-        text={error}
-        visible={error.length > 0}
-        onDismiss={() => {
-          setError('');
+            </TextInputBox>
+          </FormRow>
+          <FormRow compact>
+            <Text style={[styles.captionText]}>
+              Must adhere to the following rules:{'\n'}• May not exceed 40
+              characters.{'\n'}• May not contain numbers or punctuation.
+              {'\n'}• Must be plural and proper case.{'\n'}• May not start with
+              an article ("a", "an", "the").{'\n'}• May not start with a pronoun
+              (e.g. "my").
+              {'\n'}• May not cannot contain any offensive language.
+              {'\n\n'}Valid examples include Blue Jays, Kings, and Flying Purple
+              Elephants.
+            </Text>
+          </FormRow>
+        </Form>
+      </View>
+      <View style={[styles.sectionSeparator]} />
+      <View style={[styles.sectionHeader]}>
+        <Text style={[styles.sectionHeaderText]}>LOCATION</Text>
+      </View>
+      <SelectTrigger
+        label="Country"
+        value={nation?.name}
+        required
+        onSelect={() => {
+          navigation.navigate('Nation Select', {
+            selectedNation: nation,
+            returnRoute: 'Team Request',
+            returnParamKey: 'nation',
+          });
         }}
       />
-    </>
+      <View style={[styles.itemSeparator]} />
+      <SelectTrigger
+        label="State"
+        disabled={!nation}
+        value={state?.name}
+        required
+        onSelect={() => {
+          navigation.navigate('State Select', {
+            nationId: nation?.id as string,
+            selectedState: state,
+            returnRoute: 'Team Request',
+            returnParamKey: 'state',
+          });
+        }}
+      />
+      <View style={[styles.itemSeparator]} />
+      <SelectTrigger
+        label="City"
+        disabled={!state}
+        value={town?.name}
+        required
+        onSelect={() => {
+          navigation.navigate('Town Select', {
+            stateId: state?.id as string,
+            selectedTown: town,
+            returnRoute: 'Team Request',
+            returnParamKey: 'town',
+          });
+        }}
+      />
+      <View style={[styles.sectionSeparator]} />
+      <View style={[styles.buttonContainer]}>
+        <Button
+          text="Submit Team Request"
+          activeColor={theme.colors.green}
+          disabled={!nation || !state || !town || !isValidNickname(nickname)}
+          onPress={async () => {
+            if (town && isValidNickname(nickname)) {
+              await onSubmit(town, nickname.trim().replace(/[ ]+/, ' '));
+            }
+          }}
+        />
+      </View>
+    </View>
   );
 };
-export {Component as TeamRequestForm};
+export const TeamRequestForm = withTheme(Component);

@@ -1,28 +1,24 @@
 import React from 'react';
 import validate from 'validate.js';
 import {StyleSheet, TextInput, View} from 'react-native';
-import {useAuth} from '../../providers/auth';
 import {Button} from '../core/buttons/button';
 import {TextInputBox} from '../core/input/text-input-box';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {TextInputColorStyle} from '../../styles/text-input-color';
-import {useTheme} from '../../providers/theme';
-import {AuthStackParamList} from '../../stacks/auth';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 
-type Properties = {
-  navigation: NativeStackNavigationProp<AuthStackParamList>;
-};
+interface Properties extends InjectedThemeProps {
+  onSubmit: (username: string) => Promise<void>;
+}
 
-const Component: React.FC<Properties> = ({navigation}) => {
+const Component: React.FC<Properties> = props => {
+  const {onSubmit, theme} = props;
+
   const [username, setUsername] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
-
-  const auth = useAuth();
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -59,8 +55,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
               onPress={async () => {
                 try {
                   setIsProcessing(true);
-                  await auth.sendPasswordRecoveryCode(username);
-                  navigation.navigate('Reset Password', {username});
+                  await onSubmit(username);
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);
@@ -83,4 +78,4 @@ const Component: React.FC<Properties> = ({navigation}) => {
   );
 };
 
-export {Component as ForgotPasswordForm};
+export const ForgotPasswordForm = withTheme(Component);

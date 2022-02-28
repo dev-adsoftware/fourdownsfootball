@@ -2,6 +2,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {GamesList} from '../../components/games/list';
 import {NewToolbar} from '../../components/toolbars/new';
+import {useData} from '../../providers/data';
 import {GamesStackParamList} from '../../stacks/games';
 
 type Properties = {
@@ -19,7 +20,16 @@ const GamesScreen: React.FC<Properties> = ({navigation}) => {
     });
   }, [navigation]);
 
-  return <GamesList navigation={navigation} />;
+  const {gameRequests, gameInvites, gameParticipants} = useData();
+
+  return (
+    <GamesList
+      gameRequests={gameRequests}
+      gameInvites={gameInvites}
+      gameParticipants={gameParticipants}
+      navigation={navigation}
+    />
+  );
 };
 
 export {GamesScreen};

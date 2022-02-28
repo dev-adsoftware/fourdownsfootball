@@ -1,30 +1,26 @@
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import validate from 'validate.js';
-import {useAuth} from '../../providers/auth';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
 import {ErrorSnackbar} from '../core/snackbar/error';
 import {TextInputColorStyle} from '../../styles/text-input-color';
-import {useTheme} from '../../providers/theme';
 import {Button} from '../core/buttons/button';
-import {AuthStackParamList} from '../../stacks/auth';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 
-type Properties = {
-  navigation: NativeStackNavigationProp<AuthStackParamList>;
-};
+interface Properties extends InjectedThemeProps {
+  onSubmit: (username: string, password: string) => Promise<void>;
+}
 
-const Component: React.FC<Properties> = ({navigation}) => {
+const Component: React.FC<Properties> = props => {
+  const {onSubmit, theme} = props;
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [password2, setPassword2] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
-
-  const auth = useAuth();
-  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -103,8 +99,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
               onPress={async () => {
                 try {
                   setIsProcessing(true);
-                  await auth.signUp({username, password});
-                  navigation.navigate('Sign Up Confirmation', {username});
+                  await onSubmit(username, password);
                 } catch (e) {
                   if (e instanceof Error) {
                     setError(e.message);
@@ -127,4 +122,4 @@ const Component: React.FC<Properties> = ({navigation}) => {
   );
 };
 
-export {Component as SignupForm};
+export const SignupForm = withTheme(Component);

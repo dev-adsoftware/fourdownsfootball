@@ -1,7 +1,7 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
-import Svg, {Circle, Line, Path, Polygon, Rect} from 'react-native-svg';
+import {View, Text, StyleSheet} from 'react-native';
+import Svg, {Circle, Line, Polygon, Rect} from 'react-native-svg';
 import {AppStackParamList} from '../../App';
 import {Button} from '../components/core/buttons/button';
 import {useTheme} from '../providers/theme';
@@ -18,7 +18,7 @@ const TempScreen: React.FC<Properties> = ({navigation}) => {
     container: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
     },
     text: {
       color: theme.colors.text,
@@ -27,19 +27,14 @@ const TempScreen: React.FC<Properties> = ({navigation}) => {
     },
   });
 
-  const {height, width} = useWindowDimensions();
-  console.log(height, width);
-
-  console.log(Math.round((width * 0.8) / 100) * 100);
-
   return (
     <>
       <View style={[styles.container]}>
         <View
           style={{
-            width: width,
+            width: '100%',
             height: 100,
-            backgroundColor: theme.colors.fill,
+            backgroundColor: theme.colors.secondaryBackground,
             padding: 10,
           }}>
           <Svg height="100%" width="100%" viewBox="0 0 240 35">

@@ -2,17 +2,23 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {useTheme} from '../providers/theme';
 import {GameRequestScreen} from '../screens/games/game-request';
+import {GameRSVPScreen} from '../screens/games/game-rsvp';
 import {GamesScreen} from '../screens/games/games';
 import {OwnerSelectScreen} from '../screens/games/owner-select';
 import {TeamSelectScreen} from '../screens/games/team-select';
+import {GameInvite} from '../services/game-invites';
+import {Game} from '../services/games';
 import {Owner} from '../services/owners';
 import {Team} from '../services/teams';
+import {GameDetailTabStack} from './game-detail';
 
 type Properties = {};
 
 export type GamesStackParamList = {
   Games: undefined;
   'Game Request': {team?: Team; owner?: Owner};
+  'Game RSVP': {gameInvite: GameInvite; team?: Team};
+  'Game Detail Stack': {game: Game};
   'Team Select': {
     selectedTeam?: Team;
     returnRoute: keyof GamesStackParamList;
@@ -39,7 +45,9 @@ const GamesStack: React.FC<Properties> = ({}) => {
         contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Games" component={GamesScreen} />
+      <Stack.Screen name="Game Detail Stack" component={GameDetailTabStack} />
       <Stack.Screen name="Game Request" component={GameRequestScreen} />
+      <Stack.Screen name="Game RSVP" component={GameRSVPScreen} />
       <Stack.Screen
         name="Team Select"
         component={TeamSelectScreen}

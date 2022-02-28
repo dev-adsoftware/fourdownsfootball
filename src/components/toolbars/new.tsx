@@ -1,14 +1,14 @@
 import React from 'react';
 import {Pressable, View, StyleSheet} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useTheme} from '../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   onNew: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({onNew}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {onNew, theme} = props;
 
   const styles = StyleSheet.create({
     toolbar: {
@@ -26,4 +26,4 @@ const Component: React.FC<Properties> = ({onNew}) => {
   );
 };
 
-export {Component as NewToolbar};
+export const NewToolbar = withTheme(Component);

@@ -1,26 +1,27 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   label: string;
   value?: string;
   required?: boolean;
   hideValue?: boolean;
   disabled?: boolean;
   onSelect: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({
-  label,
-  value,
-  required = false,
-  hideValue = false,
-  disabled = false,
-  onSelect,
-}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {
+    label,
+    value,
+    required = false,
+    hideValue = false,
+    disabled = false,
+    onSelect,
+    theme,
+  } = props;
 
   const styles = StyleSheet.create({
     itemRow: {
@@ -79,4 +80,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as SelectTrigger};
+export const SelectTrigger = withTheme(Component);

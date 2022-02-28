@@ -9,7 +9,7 @@ export interface Nation {
 class Service {
   constructor() {}
 
-  private mapApiToNation(input: any): Nation {
+  public mapApiToNation(input: any): Nation {
     return {
       id: input.id,
       name: input.name,
@@ -17,7 +17,7 @@ class Service {
     };
   }
 
-  private mapNationToApi(input: Nation): any {
+  public mapNationToApi(input: Nation): any {
     return {
       id: input.id,
       name: input.name,

@@ -1,4 +1,5 @@
 import {API} from 'aws-amplify';
+import {GET_OWNER} from '../graphql/queries/get-owner.query';
 
 export interface Owner {
   id: string;
@@ -9,19 +10,33 @@ export interface Owner {
 class Service {
   constructor() {}
 
-  private mapApiToOwner(input: any): Owner {
+  public mapApiToOwner(input: any): Owner {
     return {id: input.id, name: input.name, email: input.email};
   }
 
-  private mapOwnerToApi(input: Owner): any {
+  public mapOwnerToApi(input: Owner): any {
     return {id: input.id, name: input.name, email: input.email};
   }
 
   public async get(id: string): Promise<Owner> {
     try {
+      console.log('calling owners rest api', id);
+      console.log(API.endpoint('fourdowns'));
       const result = await API.get('fourdowns', `/owners/${id}`, {});
+      console.log(result);
+
+      // console.log('calling owners graphql');
+      // // console.log(GET_OWNER);
+      // const graphResult = await API.graphql({
+      //   query: 'query { getOwner(id: "1") { id } }',
+      // });
+      // console.log(graphResult);
+
       return this.mapApiToOwner(result);
     } catch (e) {
+      console.log('threw an error');
+      console.log(e);
+      // console.log(e.response);
       throw e;
     }
   }

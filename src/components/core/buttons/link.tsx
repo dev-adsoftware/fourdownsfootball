@@ -1,27 +1,22 @@
 import React from 'react';
 import {StyleSheet, Text, View, Pressable} from 'react-native';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   text: string;
   activeColor?: string;
   disabledColor?: string;
   disabled?: boolean;
   onPress: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({
-  text,
-  activeColor,
-  disabled,
-  onPress,
-}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {text, activeColor, disabled, onPress, theme} = props;
 
   const styles = StyleSheet.create({
     text: {
-      color: activeColor || theme.colors.link,
       ...theme.typography.body,
+      color: activeColor || theme.colors.link,
     },
   });
   return (
@@ -33,4 +28,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as LinkButton};
+export const LinkButton = withTheme(Component);

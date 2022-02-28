@@ -1,7 +1,7 @@
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {SelectList} from '../../components/core/select/list';
+import {SelectList, SelectListOption} from '../../components/core/select/list';
 import {Nation, NationsService} from '../../services/nations';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {EmojiDecoder} from '../../utilities/emoji-decoder';
@@ -13,16 +13,16 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [options, setOptions] = React.useState<Nation[]>([]);
+  const [nations, setNations] = React.useState<Nation[]>([]);
 
   const fetchNations = React.useCallback(async () => {
     setIsLoading(true);
-    const nations = (await new NationsService().list()).items.sort(
+    const fetchedNations = (await new NationsService().list()).items.sort(
       (a: Nation, b: Nation) => {
         return a.name > b.name ? 1 : -1;
       },
     );
-    setOptions(nations);
+    setNations(fetchedNations);
     setIsLoading(false);
   }, []);
 
@@ -30,21 +30,26 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
     fetchNations();
   }, [fetchNations]);
 
-  const labelFn = React.useCallback((nation: Nation) => {
-    return `${EmojiDecoder.decode(nation.abbr)} ${nation.name}`;
-  }, []);
-
   return (
-    <SelectList<Nation>
-      options={options}
-      labelFn={labelFn}
+    <SelectList
+      options={nations.map((nation: Nation): SelectListOption => {
+        return {
+          id: nation.id,
+          label: `${EmojiDecoder.decode(nation.abbr)} ${nation.name}`,
+          filter: nation.name,
+        };
+      })}
       isLoading={isLoading}
       searchPlaceholder="Search Countries"
-      selectedOption={route.params.selectedNation}
-      onSelect={(option: Nation) => {
+      selectedOptionId={route.params.selectedNation?.id}
+      onSelect={(optionId: string) => {
         navigation.navigate({
           name: route.params.returnRoute,
-          params: {[route.params.returnParamKey]: option},
+          params: {
+            [route.params.returnParamKey]: nations.filter((nation: Nation) => {
+              return nation.id === optionId;
+            })[0],
+          },
           merge: true,
         });
       }}

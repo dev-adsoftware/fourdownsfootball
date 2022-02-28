@@ -3,6 +3,7 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ResetPasswordForm} from '../../components/auth/reset-password-form';
 import {AuthStackParamList} from '../../stacks/auth';
+import {useAuth} from '../../providers/auth';
 
 type Properties = {
   route: RouteProp<AuthStackParamList, 'Reset Password'>;
@@ -10,10 +11,14 @@ type Properties = {
 };
 
 const Screen: React.FC<Properties> = ({route, navigation}) => {
+  const auth = useAuth();
   return (
     <ResetPasswordForm
       username={route.params.username}
-      navigation={navigation}
+      onSubmit={async (username: string, password: string, code: string) => {
+        await auth.resetPassword(username, password, code);
+        navigation.navigate('Sign In');
+      }}
     />
   );
 };

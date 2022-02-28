@@ -1,22 +1,23 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   label: string;
   isSelected?: boolean;
   labelIconComponent?: React.ReactNode;
   onSelect: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({
-  label,
-  isSelected = false,
-  labelIconComponent,
-  onSelect,
-}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {
+    label,
+    isSelected = false,
+    labelIconComponent,
+    onSelect,
+    theme,
+  } = props;
 
   const styles = StyleSheet.create({
     itemRow: {
@@ -68,4 +69,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as SelectOption};
+export const SelectOption = withTheme(Component);

@@ -7,9 +7,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {useTheme} from '../../../providers/theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
 
-type Properties = {
+interface Properties extends InjectedThemeProps {
   text: string;
   activeColor?: string;
   filled?: boolean;
@@ -19,20 +19,22 @@ type Properties = {
   iconRight?: string;
   isLoading?: boolean;
   onPress: () => void;
-};
+}
 
-const Component: React.FC<Properties> = ({
-  text,
-  activeColor,
-  filled = true,
-  compact = false,
-  disabled,
-  iconLeft,
-  iconRight,
-  isLoading = false,
-  onPress,
-}) => {
-  const theme = useTheme();
+const Component: React.FC<Properties> = props => {
+  const {
+    text,
+    activeColor,
+    filled = true,
+    compact,
+    disabled,
+    iconLeft,
+    iconRight,
+    isLoading,
+    onPress,
+    theme,
+  } = props;
+
   const styles = StyleSheet.create({
     button: {
       backgroundColor: disabled
@@ -45,27 +47,32 @@ const Component: React.FC<Properties> = ({
         ? theme.colors.separator
         : activeColor || theme.colors.blue,
       borderRadius: 20,
-      paddingVertical: compact ? 1 : 7,
+      paddingVertical: compact ? 7 : 7,
       paddingHorizontal: compact ? 10 : 20,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
     },
     text: {
+      ...(compact
+        ? {...theme.typography.footnote, fontWeight: '500'}
+        : theme.typography.headline),
       color: disabled
         ? theme.colors.secondaryText
         : filled
         ? theme.colors.white
         : activeColor || theme.colors.blue,
-      ...(compact
-        ? {...theme.typography.caption1, fontWeight: '500'}
-        : theme.typography.headline),
     },
     iconContainer: {
-      width: compact ? 7 : 20,
+      width: compact ? 5 : 20,
       marginRight: compact ? 5 : 10,
       marginLeft: compact ? 5 : 10,
-      // backgroundColor: 'red',
+    },
+    leftIconContainer: {
+      marginLeft: compact ? 5 : 10,
+    },
+    rightIconContainer: {
+      marginRight: compact ? 5 : 10,
     },
   });
 
@@ -110,9 +117,7 @@ const Component: React.FC<Properties> = ({
               />
             </View>
           ) : (
-            <View style={[styles.iconContainer]}>
-              <Text> </Text>
-            </View>
+            <View style={[styles.rightIconContainer]} />
           )}
           <Text style={[styles.text]}>{text}</Text>
           {iconRight ? (
@@ -130,9 +135,7 @@ const Component: React.FC<Properties> = ({
               />
             </View>
           ) : (
-            <View style={[styles.iconContainer]}>
-              <Text> </Text>
-            </View>
+            <View style={[styles.rightIconContainer]} />
           )}
         </>
       )}
@@ -140,4 +143,4 @@ const Component: React.FC<Properties> = ({
   );
 };
 
-export {Component as Button};
+export const Button = withTheme(Component);

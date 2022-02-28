@@ -13,7 +13,7 @@ export interface Town {
 class Service {
   constructor() {}
 
-  private mapApiToTown(input: any): Town {
+  public mapApiToTown(input: any): Town {
     return {
       id: input.id,
       stateId: input.stateId,
@@ -25,7 +25,7 @@ class Service {
     };
   }
 
-  private mapTownToApi(input: Town): any {
+  public mapTownToApi(input: Town): any {
     return {
       id: input.id,
       stateId: input.stateId,

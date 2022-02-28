@@ -4,6 +4,7 @@ import {Town, TownsService} from './towns';
 export interface TeamRequest {
   id: string;
   ownerId: string;
+  townId: string;
   town: Town;
   nickname: string;
   primaryColor: string;
@@ -12,16 +13,18 @@ export interface TeamRequest {
   teamEmphasis: string;
   offenseStyle: string;
   defenseStyle: string;
+  status?: string;
 }
 
 class Service {
   constructor() {}
 
-  private mapApiToTeamRequest(input: any, town: Town): TeamRequest {
+  public mapApiToTeamRequest(input: any): TeamRequest {
     return {
       id: input.id,
       ownerId: input.ownerId,
-      town,
+      townId: input.townId,
+      town: new TownsService().mapApiToTown(input.town),
       nickname: input.nickname,
       primaryColor: input.primaryColor,
       secondaryColor: input.secondaryColor,
@@ -29,10 +32,11 @@ class Service {
       teamEmphasis: input.teamEmphasis,
       offenseStyle: input.offenseStyle,
       defenseStyle: input.defenseStyle,
+      status: input.status,
     };
   }
 
-  private mapTeamRequestToApi(input: TeamRequest): any {
+  public mapTeamRequestToApi(input: TeamRequest): any {
     return {
       id: input.id,
       ownerId: input.ownerId,
@@ -44,14 +48,18 @@ class Service {
       teamEmphasis: input.teamEmphasis,
       offenseStyle: input.offenseStyle,
       defenseStyle: input.defenseStyle,
+      status: input.status,
     };
   }
 
   public async get(id: string): Promise<TeamRequest> {
     try {
-      const result = await API.get('fourdowns', `/team-requests/${id}`, {});
-      const town = await new TownsService().get(result.townId);
-      return this.mapApiToTeamRequest(result, town);
+      const result = await API.get('fourdowns', `/team-requests/${id}`, {
+        queryStringParameters: {
+          detailType: 'full',
+        },
+      });
+      return this.mapApiToTeamRequest(result);
     } catch (e) {
       throw e;
     }
@@ -66,14 +74,16 @@ class Service {
         'fourdowns',
         `/owners/${ownerId}/team-requests`,
         {
-          queryStringParameters,
+          queryStringParameters: {
+            ...queryStringParameters,
+            ...{detailType: 'full'},
+          },
         },
       );
       return {
         items: await Promise.all(
           result.items.map(async (item: any) => {
-            const town = await new TownsService().get(item.townId);
-            return this.mapApiToTeamRequest(item, town);
+            return this.mapApiToTeamRequest(item);
           }),
         ),
       };
@@ -93,9 +103,11 @@ class Service {
           lastUpdatedBy: 'system',
           ...this.mapTeamRequestToApi(body),
         },
+        queryStringParameters: {
+          detailType: 'full',
+        },
       });
-      const town = await new TownsService().get(result.townId);
-      return this.mapApiToTeamRequest(result, town);
+      return this.mapApiToTeamRequest(result);
     } catch (e) {
       console.log(e);
       throw e;
@@ -113,10 +125,12 @@ class Service {
           ...updates,
           sequence: String(Number(updates.sequence) + 1),
         },
-        queryStringParameters: {updateMask: updateKeys.join(',')},
+        queryStringParameters: {
+          updateMask: updateKeys.join(','),
+          detailType: 'full',
+        },
       });
-      const town = await new TownsService().get(result.townId);
-      return this.mapApiToTeamRequest(result, town);
+      return this.mapApiToTeamRequest(result);
     } catch (e) {
       console.log(e);
       throw e;

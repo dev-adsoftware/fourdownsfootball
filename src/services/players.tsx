@@ -13,7 +13,7 @@ export interface Player {
 class Service {
   constructor() {}
 
-  private mapApiToPlayer(input: any): Player {
+  public mapApiToPlayer(input: any): Player {
     return {
       id: input.id,
       teamId: input.teamId,
@@ -25,7 +25,7 @@ class Service {
     };
   }
 
-  private mapPlayerToApi(input: Player): any {
+  public mapPlayerToApi(input: Player): any {
     return {
       id: input.id,
       teamId: input.teamId,
