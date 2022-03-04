@@ -7,38 +7,35 @@ import {StateSelectScreen} from '../screens/teams/state-select';
 import {TeamRequestScreen} from '../screens/teams/team-request';
 import {TeamsScreen} from '../screens/teams/teams';
 import {TownSelectScreen} from '../screens/teams/town-select';
-import {Nation} from '../services/nations';
-import {Player} from '../services/players';
-import {State} from '../services/states';
-import {Team} from '../services/teams';
-import {Town} from '../services/towns';
+import {NationDto, PlayerDto, StateDto, TownDto} from '../services/dtos';
+import {OwnerDashboardExtendedTeamDto} from '../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {TeamDetailTabStack} from './team-detail';
 
 type Properties = {};
 
 export type TeamsStackParamList = {
   Teams: undefined;
-  'Team Detail Stack': {team: Team};
-  'Team Player Detail': {player: Player};
+  'Team Detail Stack': {team: OwnerDashboardExtendedTeamDto};
+  'Team Player Detail': {player: PlayerDto};
   'Team Request': {
-    nation?: Nation;
-    state?: State;
-    town?: Town;
+    nation?: NationDto;
+    state?: StateDto;
+    town?: TownDto;
   };
   'Nation Select': {
-    selectedNation?: Nation;
+    selectedNation?: NationDto;
     returnRoute: keyof TeamsStackParamList;
     returnParamKey: string;
   };
   'State Select': {
     nationId: string;
-    selectedState?: State;
+    selectedState?: StateDto;
     returnRoute: keyof TeamsStackParamList;
     returnParamKey: string;
   };
   'Town Select': {
     stateId: string;
-    selectedTown?: Town;
+    selectedTown?: TownDto;
     returnRoute: keyof TeamsStackParamList;
     returnParamKey: string;
   };

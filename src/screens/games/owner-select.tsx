@@ -1,9 +1,10 @@
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {SelectList} from '../../components/core/select/list';
-import {useAuth} from '../../providers/auth';
-import {Owner, OwnersService} from '../../services/owners';
+import {SelectList, SelectListOption} from '../../components/core/select/list';
+import {useData} from '../../providers/data';
+import {OwnerDto} from '../../services/dtos';
+import {OwnersService} from '../../services/owners';
 import {GamesStackParamList} from '../../stacks/games';
 
 type Properties = {
@@ -13,35 +14,41 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [options, setOptions] = React.useState<Owner[]>([]);
+  const [owners, setOwners] = React.useState<OwnerDto[]>([]);
 
-  const auth = useAuth();
+  const {ownerDashboard} = useData();
 
   const fetchOwners = React.useCallback(async () => {
     setIsLoading(true);
-    const owners = (await new OwnersService().list()).items.filter(
-      (item: Owner) => {
-        return item.id !== auth.owner?.id;
+    const fetchedOwners = (await new OwnersService().listOwners()).items.filter(
+      (item: OwnerDto) => {
+        return item.id !== ownerDashboard.item?.owner.id;
       },
     );
-    setOptions(owners);
+    setOwners(fetchedOwners);
     setIsLoading(false);
-  }, [auth.owner]);
+  }, [ownerDashboard.item?.owner.id]);
 
   React.useEffect(() => {
     fetchOwners();
   }, [fetchOwners]);
 
   return (
-    <SelectList<Owner>
-      options={options}
+    <SelectList
+      options={owners.map((owner: OwnerDto): SelectListOption => {
+        return {id: owner.id, label: owner.name, filter: owner.name};
+      })}
       isLoading={isLoading}
       searchPlaceholder="Search Owners"
-      selectedOption={route.params.selectedOwner}
-      onSelect={(option: Owner) => {
+      selectedOptionId={route.params.selectedOwner?.id}
+      onSelect={(optionId: string) => {
         navigation.navigate({
           name: route.params.returnRoute,
-          params: {[route.params.returnParamKey]: option},
+          params: {
+            [route.params.returnParamKey]: owners.filter((owner: OwnerDto) => {
+              return owner.id === optionId;
+            })[0],
+          },
           merge: true,
         });
       }}

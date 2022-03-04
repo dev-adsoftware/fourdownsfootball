@@ -1,3 +1,4 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   FlatList,
@@ -9,18 +10,20 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {Player} from '../../services/players';
+import {PlayerDto} from '../../services/dtos';
+import {TeamsStackParamList} from '../../stacks/teams';
 import {DataTableItemSeparator} from '../core/datatable/datatable-item-separator';
 
 interface Properties extends InjectedThemeProps {
-  players: Player[];
+  players: PlayerDto[];
   isLoading: boolean;
-  onPressPlayer: (player: Player) => void;
+  // onPressPlayer: (player: PlayerDto) => void;
   onRefresh: () => Promise<void>;
+  navigation: NativeStackNavigationProp<TeamsStackParamList>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {isLoading, players, onPressPlayer, onRefresh, theme} = props;
+  const {isLoading, players, onRefresh, navigation, theme} = props;
 
   const styles = StyleSheet.create({
     emptyContainer: {
@@ -120,7 +123,7 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const renderItem = ({item, index}: {item: Player; index: number}) => {
+  const renderItem = ({item, index}: {item: PlayerDto; index: number}) => {
     return (
       <Pressable
         style={[
@@ -128,7 +131,7 @@ const Component: React.FC<Properties> = props => {
           index % 2 !== 0 ? styles.itemContainerEven : {},
         ]}
         onPress={() => {
-          onPressPlayer(item);
+          navigation.navigate('Team Player Detail', {player: item});
         }}>
         <View style={[styles.itemColumn0]}>
           <FontAwesome5Icon

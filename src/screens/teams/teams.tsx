@@ -20,12 +20,18 @@ const TeamsScreen: React.FC<Properties> = ({navigation}) => {
     });
   }, [navigation]);
 
-  const {teams, teamRequests} = useData();
+  const {ownerDashboard} = useData();
 
   return (
     <TeamsList
-      teams={teams}
-      teamRequests={teamRequests}
+      teams={ownerDashboard.item?.teams || []}
+      teamRequests={(ownerDashboard.item?.teamRequests || []).filter(
+        teamRequest => {
+          return teamRequest.status !== 'Complete';
+        },
+      )}
+      isLoading={ownerDashboard.isLoading}
+      onRefresh={ownerDashboard.refresh}
       navigation={navigation}
     />
   );

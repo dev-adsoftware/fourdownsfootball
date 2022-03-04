@@ -9,10 +9,15 @@ type Properties = {
 };
 
 const NotificationsScreen: React.FC<Properties> = ({navigation}) => {
-  const {notifications} = useData();
+  const {ownerDashboard} = useData();
 
   return (
-    <NotificationsList notifications={notifications} navigation={navigation} />
+    <NotificationsList
+      notifications={ownerDashboard.item?.notifications || []}
+      isLoading={ownerDashboard.isLoading}
+      onRefresh={ownerDashboard.refresh}
+      navigation={navigation}
+    />
   );
 };
 

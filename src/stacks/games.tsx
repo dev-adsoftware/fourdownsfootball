@@ -6,26 +6,31 @@ import {GameRSVPScreen} from '../screens/games/game-rsvp';
 import {GamesScreen} from '../screens/games/games';
 import {OwnerSelectScreen} from '../screens/games/owner-select';
 import {TeamSelectScreen} from '../screens/games/team-select';
-import {GameInvite} from '../services/game-invites';
-import {Game} from '../services/games';
-import {Owner} from '../services/owners';
-import {Team} from '../services/teams';
+import {OwnerDto} from '../services/dtos';
+import {
+  OwnerDashboardExtendedGameDto,
+  OwnerDashboardExtendedGameInviteDto,
+  OwnerDashboardExtendedTeamDto,
+} from '../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GameDetailTabStack} from './game-detail';
 
 type Properties = {};
 
 export type GamesStackParamList = {
   Games: undefined;
-  'Game Request': {team?: Team; owner?: Owner};
-  'Game RSVP': {gameInvite: GameInvite; team?: Team};
-  'Game Detail Stack': {game: Game};
+  'Game Request': {team?: OwnerDashboardExtendedTeamDto; owner?: OwnerDto};
+  'Game RSVP': {
+    gameInvite: OwnerDashboardExtendedGameInviteDto;
+    team?: OwnerDashboardExtendedTeamDto;
+  };
+  'Game Detail Stack': {game: OwnerDashboardExtendedGameDto};
   'Team Select': {
-    selectedTeam?: Team;
+    selectedTeam?: OwnerDashboardExtendedTeamDto;
     returnRoute: keyof GamesStackParamList;
     returnParamKey: string;
   };
   'Owner Select': {
-    selectedOwner?: Owner;
+    selectedOwner?: OwnerDto;
     returnRoute: keyof GamesStackParamList;
     returnParamKey: string;
   };

@@ -1,111 +1,64 @@
-import {API} from 'aws-amplify';
-
-export interface DeviceRegistration {
-  id: string;
-  sequence: string;
-  ownerId: string;
-  token: string;
-}
-
-class Service {
-  constructor() {}
-
-  public mapApiToDeviceRegistration(input: any): DeviceRegistration {
-    return {
-      id: input.id,
-      sequence: input.sequence,
-      ownerId: input.ownerId,
-      token: input.token,
-    };
+import {BaseService} from './base-service';
+import {DeviceRegistrationDto} from './dtos';
+class Service extends BaseService {
+  constructor() {
+    super();
   }
 
-  public mapDeviceRegistrationToApi(input: DeviceRegistration): any {
-    return {
-      id: input.id,
-      sequence: input.sequence,
-      ownerId: input.ownerId,
-      token: input.token,
-    };
-  }
-
-  public async get(id: string): Promise<DeviceRegistration> {
+  public async deviceRegistrationExists(id: string): Promise<boolean> {
     try {
-      const result = await API.get(
-        'fourdowns',
-        `/device-registrations/${id}`,
-        {},
-      );
-      return this.mapApiToDeviceRegistration(result);
+      await this.get(`/device-registrations/${id}`, {});
+      return true;
     } catch (e) {
+      if (this.getStatusFromError(e) === 404) {
+        return false;
+      }
       throw e;
     }
+  }
+
+  public async getDeviceRegistration(
+    id: string,
+  ): Promise<DeviceRegistrationDto> {
+    return await this.get<DeviceRegistrationDto>(
+      `/device-registrations/${id}`,
+      {},
+    );
   }
 
   public async listByOwner(
     ownerId: string,
     queryStringParameters?: Record<string, unknown>,
-  ): Promise<{items: DeviceRegistration[]}> {
-    try {
-      const result = await API.get(
-        'fourdowns',
-        `/owners/${ownerId}/device-registrations`,
-        {
-          queryStringParameters,
-        },
-      );
-      return {
-        items: result.items.map((item: any) => {
-          return this.mapApiToDeviceRegistration(item);
-        }),
-      };
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
+  ): Promise<{items: DeviceRegistrationDto[]}> {
+    return await this.list<DeviceRegistrationDto>(
+      `/owners/${ownerId}/device-registrations`,
+      {
+        queryStringParameters,
+      },
+    );
   }
 
-  public async create(body: DeviceRegistration): Promise<DeviceRegistration> {
-    console.log('POST /device-registrations');
-    try {
-      const result = await API.post('fourdowns', '/device-registrations', {
-        body: {
-          sequence: '0',
-          lastUpdateDate: new Date().toISOString(),
-          lastUpdatedBy: 'system',
-          ...this.mapDeviceRegistrationToApi(body),
-        },
-      });
-      return this.mapApiToDeviceRegistration(result);
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
+  public async createDeviceRegistration(
+    deviceRegistration: DeviceRegistrationDto,
+  ): Promise<DeviceRegistrationDto> {
+    return await this.create<DeviceRegistrationDto>(
+      '/device-registrations',
+      deviceRegistration,
+    );
   }
 
-  public async update(
+  public async updateDeviceRegistration(
     id: string,
-    updateKeys: string[],
+    currentDeviceRegistration: DeviceRegistrationDto,
     updates: Record<string, unknown>,
-  ): Promise<DeviceRegistration> {
-    try {
-      const result = await API.patch(
-        'fourdowns',
-        `/device-registrations/${id}`,
-        {
-          body: {
-            lastUpdateDate: new Date().toISOString(),
-            lastUpdatedBy: 'system',
-            ...updates,
-            sequence: String(Number(updates.sequence) + 1),
-          },
-          queryStringParameters: {updateMask: updateKeys.join(',')},
-        },
-      );
-      return this.mapApiToDeviceRegistration(result);
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
+    updateKeys: string[],
+  ): Promise<DeviceRegistrationDto> {
+    return await this.update<DeviceRegistrationDto>(
+      `/device-registrations/${id}`,
+      currentDeviceRegistration,
+      updates,
+      updateKeys,
+    );
   }
 }
 

@@ -36,9 +36,6 @@ Amplify.configure({
       },
     ],
   },
-  // aws_appsync_graphqlEndpoint: env.graphqlEndpoint,
-  // aws_appsync_region: 'us-east-1',
-  // aws_appsync_authenticationType: 'AWS_IAM',
 });
 
 export type AppStackParamList = {

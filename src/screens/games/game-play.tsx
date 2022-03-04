@@ -5,14 +5,14 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {GamePlayField} from '../../components/games/game-play-field';
 import {useData} from '../../providers/data';
 import {useTheme} from '../../providers/theme';
-import {Team} from '../../services/teams';
+import {GameDetailExtendedTeamDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GameDetailTabParamList} from '../../stacks/game-detail';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
 };
 
-const GamePlayScreen: React.FC<Properties> = props => {
+const GamePlayScreen: React.FC<Properties> = () => {
   const {activeGame} = useData();
   const theme = useTheme();
   const styles = StyleSheet.create({
@@ -28,7 +28,7 @@ const GamePlayScreen: React.FC<Properties> = props => {
     },
   });
 
-  const getAvatarAbbreviation = (team?: Team) => {
+  const getAvatarAbbreviation = (team?: GameDetailExtendedTeamDto) => {
     if (!team) {
       return '?';
     }
@@ -42,9 +42,9 @@ const GamePlayScreen: React.FC<Properties> = props => {
     <>
       <View style={[styles.container]}>
         <GamePlayField
-          awayTeamAbbr={getAvatarAbbreviation(activeGame.item.awayTeam)}
+          awayTeamAbbr={getAvatarAbbreviation(activeGame.item?.awayTeam)}
           awayTeamColor={
-            activeGame.item.awayTeam
+            activeGame.item?.awayTeam
               ? (
                   theme.colors as {
                     [x: string]: string;
@@ -52,9 +52,9 @@ const GamePlayScreen: React.FC<Properties> = props => {
                 )[activeGame.item.awayTeam.primaryColor.toLowerCase()]
               : theme.colors.red
           }
-          homeTeamAbbr={getAvatarAbbreviation(activeGame.item.homeTeam)}
+          homeTeamAbbr={getAvatarAbbreviation(activeGame.item?.homeTeam)}
           homeTeamColor={
-            activeGame.item.homeTeam
+            activeGame.item?.homeTeam
               ? (
                   theme.colors as {
                     [x: string]: string;
@@ -62,8 +62,8 @@ const GamePlayScreen: React.FC<Properties> = props => {
                 )[activeGame.item.homeTeam.primaryColor.toLowerCase()]
               : theme.colors.blue
           }
-          ballOn={35 || activeGame.item.ballOn}
-          distance={5 || activeGame.item.distance}
+          ballOn={35 || activeGame.item?.ballOn}
+          distance={5 || activeGame.item?.distance}
           driveStartYardLine={20}
           lastPlay={{gainLoss: 15, playType: 'run'}}
         />
@@ -115,7 +115,7 @@ const GamePlayScreen: React.FC<Properties> = props => {
                 ...theme.typography.subheading,
                 textAlign: 'left',
               }}>
-              {activeGame.item.awayTeam?.nickname} are the away team so the coin
+              {activeGame.item?.awayTeam.nickname} are the away team so the coin
               toss decision is yours.{'\n\n'}
               Select crown or shield.
             </Text>

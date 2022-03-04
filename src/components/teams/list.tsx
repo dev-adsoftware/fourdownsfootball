@@ -10,21 +10,31 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {DataSetSegment} from '../../providers/data';
-import {TeamRequest} from '../../services/team-requests';
-import {Team} from '../../services/teams';
+import {
+  OwnerDashboardExtendedTeamDto,
+  OwnerDashboardExtendedTeamRequestDto,
+} from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
 interface Properties extends InjectedThemeProps {
-  teams: DataSetSegment<Team>;
-  teamRequests: DataSetSegment<TeamRequest>;
+  teams: OwnerDashboardExtendedTeamDto[];
+  teamRequests: OwnerDashboardExtendedTeamRequestDto[];
+  isLoading?: boolean;
+  onRefresh: () => Promise<void>;
   navigation: NativeStackNavigationProp<TeamsStackParamList>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {teams, teamRequests, navigation, theme} = props;
+  const {
+    teams,
+    teamRequests,
+    isLoading = true,
+    onRefresh,
+    navigation,
+    theme,
+  } = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {
@@ -34,6 +44,7 @@ const Component: React.FC<Properties> = props => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: 100,
     },
     oopsCircle: {
       borderWidth: 2,
@@ -138,14 +149,17 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const getAvatarAbbreviation = (team: Team) => {
+  const getAvatarAbbreviation = (team: OwnerDashboardExtendedTeamDto) => {
     return `${team.town.name.slice(0, 1)}${team.nickname.slice(0, 1)}`;
   };
 
   const renderItem = ({
     item,
   }: {
-    item: {groupHeader: string; groupItems: (Team & {status?: string})[]};
+    item: {
+      groupHeader: string;
+      groupItems: (OwnerDashboardExtendedTeamDto & {status?: string})[];
+    };
   }) => {
     return (
       <View style={[styles.groupContainer]}>
@@ -153,7 +167,10 @@ const Component: React.FC<Properties> = props => {
           <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
         {item.groupItems.map(
-          (groupItem: Team & {status?: string}, index: number) => {
+          (
+            groupItem: OwnerDashboardExtendedTeamDto & {status?: string},
+            index: number,
+          ) => {
             return (
               <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
                 <Pressable
@@ -215,42 +232,39 @@ const Component: React.FC<Properties> = props => {
     <FlatList
       style={[styles.listContainer]}
       data={[
-        ...(teamRequests.items.length > 0
+        ...(teamRequests.length > 0
           ? [
               {
                 groupHeader: 'TEAM REQUESTS IN PROGRESS',
-                groupItems: teamRequests.items.map(
-                  (teamRequest: TeamRequest): Team & {status?: string} => {
-                    return {
-                      id: teamRequest.id,
-                      ownerId: teamRequest.ownerId,
-                      nickname: teamRequest.nickname,
-                      primaryColor: teamRequest.primaryColor,
-                      townId: teamRequest.townId,
-                      town: teamRequest.town,
-                      name: `${teamRequest.town.name} ${teamRequest.nickname}`,
-                      status: teamRequest.status || 'Processing',
-                      leagueId: 'Awaiting league assignment',
-                    };
+                groupItems: teamRequests.map(
+                  (
+                    teamRequest: OwnerDashboardExtendedTeamRequestDto,
+                  ): OwnerDashboardExtendedTeamDto & {status?: string} => {
+                    const teamDto =
+                      new OwnerDashboardExtendedTeamDto() as OwnerDashboardExtendedTeamDto & {
+                        status?: string;
+                      };
+                    teamDto.id = teamRequest.id;
+                    teamDto.ownerId = teamRequest.ownerId;
+                    teamDto.nickname = teamRequest.nickname;
+                    teamDto.primaryColor = teamRequest.primaryColor;
+                    teamDto.town = teamRequest.town;
+                    teamDto.status = teamRequest.status || 'Processing';
+                    teamDto.leagueId = 'Awaiting league assignment';
+                    return teamDto;
                   },
                 ),
               },
             ]
           : []),
-        ...(teams.items.length > 0
-          ? [{groupHeader: 'ACTIVE', groupItems: teams.items}]
+        ...(teams.length > 0
+          ? [{groupHeader: 'ACTIVE', groupItems: teams}]
           : []),
       ]}
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
-        <RefreshControl
-          refreshing={teams.isLoading || teamRequests.isLoading}
-          onRefresh={() => {
-            teams.refresh();
-            teamRequests.refresh();
-          }}
-        />
+        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
       ListEmptyComponent={
         <View style={[styles.emptyContainer]}>

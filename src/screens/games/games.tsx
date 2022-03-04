@@ -20,13 +20,15 @@ const GamesScreen: React.FC<Properties> = ({navigation}) => {
     });
   }, [navigation]);
 
-  const {gameRequests, gameInvites, gameParticipants} = useData();
+  const {ownerDashboard} = useData();
 
   return (
     <GamesList
-      gameRequests={gameRequests}
-      gameInvites={gameInvites}
-      gameParticipants={gameParticipants}
+      gameRequests={ownerDashboard.item?.gameRequests || []}
+      gameInvites={ownerDashboard.item?.gameInvites || []}
+      gameParticipants={ownerDashboard.item?.gameParticipants || []}
+      isLoading={ownerDashboard.isLoading}
+      onRefresh={ownerDashboard.refresh}
       navigation={navigation}
     />
   );

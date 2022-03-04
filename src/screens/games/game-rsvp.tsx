@@ -2,10 +2,10 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {GameRSVPForm} from '../../components/games/game-rsvp-form';
-import {useAuth} from '../../providers/auth';
 import {useData} from '../../providers/data';
+import {GameInviteDto} from '../../services/dtos';
+import {OwnerDashboardExtendedTeamDto} from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GameInvitesService} from '../../services/game-invites';
-import {Team} from '../../services/teams';
 import {GamesStackParamList} from '../../stacks/games';
 
 type Properties = {
@@ -14,26 +14,24 @@ type Properties = {
 };
 
 const GameRSVPScreen: React.FC<Properties> = ({route, navigation}) => {
-  const auth = useAuth();
-  const {gameInvites} = useData();
+  const {ownerDashboard} = useData();
 
   return (
     <GameRSVPForm
       team={route.params?.team}
-      onSubmit={async (team: Team) => {
-        await new GameInvitesService().update(
+      onSubmit={async (team: OwnerDashboardExtendedTeamDto) => {
+        const currentGameInvite = new GameInviteDto().init({
+          ...route.params.gameInvite.toPlainObject(),
+        });
+
+        await new GameInvitesService().updateGameInvite(
           route.params.gameInvite.id,
-          ['sequence', 'lastUpdateDate', 'lastUpdatedBy', 'teamId', 'status'],
-          {
-            sequence: route.params.gameInvite.sequence,
-            lastUpdateDate: new Date().toISOString(),
-            lastUpdatedBy: auth.owner?.id,
-            teamId: team?.id,
-            status: 'Accepted',
-          },
+          currentGameInvite,
+          {teamId: team?.id, status: 'Accepted'},
+          ['teamId', 'status'],
         );
 
-        await gameInvites.refresh();
+        await ownerDashboard.refresh();
       }}
       navigation={navigation}
     />

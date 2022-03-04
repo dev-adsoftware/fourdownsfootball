@@ -7,6 +7,7 @@ import {GamesStackParamList} from './games';
 import {GameDetailScoreboard} from '../components/games/game-detail-scoreboard';
 import {useData} from '../providers/data';
 import {GamePlayScreen} from '../screens/games/game-play';
+import {GameDetailQueryResponseDto} from '../services/dtos';
 
 export type GameDetailTabParamList = {
   'Game Play': undefined;
@@ -32,8 +33,12 @@ const GameDetailTabStack: React.FC<Properties> = ({route, navigation}) => {
   const {activeGame} = useData();
 
   React.useEffect(() => {
-    activeGame.set(route.params.game);
-  }, [activeGame, route.params.game]);
+    if (route.params.game.id !== activeGame.item?.id) {
+      const game = new GameDetailQueryResponseDto();
+      game.id = route.params.game.id;
+      activeGame.set(game);
+    }
+  }, [activeGame, route.params.game.id]);
 
   return (
     <>

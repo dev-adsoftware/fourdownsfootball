@@ -2,16 +2,19 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {Owner} from '../../services/owners';
-import {Team} from '../../services/teams';
+import {OwnerDto} from '../../services/dtos';
+import {OwnerDashboardExtendedTeamDto} from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
 import {SelectTrigger} from '../core/select/trigger';
 
 interface Properties extends InjectedThemeProps {
-  team?: Team;
-  owner?: Owner;
-  onSubmit: (team: Team, owner: Owner) => Promise<void>;
+  team?: OwnerDashboardExtendedTeamDto;
+  owner?: OwnerDto;
+  onSubmit: (
+    team: OwnerDashboardExtendedTeamDto,
+    owner: OwnerDto,
+  ) => Promise<void>;
   navigation: NativeStackNavigationProp<GamesStackParamList>;
 }
 

@@ -5,12 +5,9 @@ import {
   Registered as RNRegistered,
   RegistrationError as RNRegistrationError,
 } from 'react-native-notifications';
-import {
-  DeviceRegistration,
-  DeviceRegistrationsService,
-} from '../services/device-registrations';
-import {getStatusFromError} from '../services/types';
-import {useAuth} from './auth';
+import {DeviceRegistrationsService} from '../services/device-registrations';
+import {DeviceRegistrationDto} from '../services/dtos';
+import {useData} from './data';
 
 interface Notification {}
 
@@ -25,26 +22,22 @@ type NotificationProviderProps = {
 function NotificationProvider({children}: NotificationProviderProps) {
   const [deviceToken, setDeviceToken] = React.useState<string>();
 
-  const auth = useAuth();
+  const {ownerDashboard} = useData();
 
   const getOrCreateDeviceRegistration = async (
     id: string,
     ownerId: string,
-  ): Promise<DeviceRegistration> => {
+  ): Promise<DeviceRegistrationDto> => {
     const service = new DeviceRegistrationsService();
-    try {
-      return await service.get(id);
-    } catch (e) {
-      if (getStatusFromError(e) === 404) {
-        return await service.create({
-          id,
-          sequence: '0',
-          token: id,
-          ownerId,
-        });
-      }
-      throw e;
+    if (!(await service.deviceRegistrationExists(id))) {
+      const deviceRegistrationDto = new DeviceRegistrationDto();
+      deviceRegistrationDto.id = id;
+      deviceRegistrationDto.token = id;
+      deviceRegistrationDto.ownerId = ownerId;
+      await service.createDeviceRegistration(deviceRegistrationDto);
     }
+
+    return await service.getDeviceRegistration(id);
   };
 
   const updateDeviceRegistration = React.useCallback(
@@ -55,15 +48,13 @@ function NotificationProvider({children}: NotificationProviderProps) {
           ownerId,
         );
         if (deviceRegistration.ownerId !== ownerId) {
-          await new DeviceRegistrationsService().update(
+          await new DeviceRegistrationsService().updateDeviceRegistration(
             localDeviceToken,
-            ['ownerId', 'sequence', 'lastUpdateDate', 'lastUpdatedBy'],
+            deviceRegistration,
             {
               ownerId: ownerId,
-              sequence: deviceRegistration.sequence,
-              lastUpdateDate: new Date().toISOString(),
-              lastUpdatedBy: ownerId,
             },
+            ['ownerId'],
           );
         }
       } catch (e) {
@@ -84,7 +75,9 @@ function NotificationProvider({children}: NotificationProviderProps) {
       );
       RNNotifications.events().registerRemoteNotificationsRegistrationFailed(
         (event: RNRegistrationError) => {
-          console.error(event);
+          if (!event.localizedDescription.endsWith('simulator')) {
+            console.error(event);
+          }
         },
       );
 
@@ -114,9 +107,12 @@ function NotificationProvider({children}: NotificationProviderProps) {
         },
       );
     } else {
-      updateDeviceRegistration(deviceToken, auth.owner?.id as string);
+      updateDeviceRegistration(
+        deviceToken,
+        ownerDashboard.item?.owner.id as string,
+      );
     }
-  }, [deviceToken, updateDeviceRegistration, auth.owner]);
+  }, [deviceToken, updateDeviceRegistration, ownerDashboard.item?.owner.id]);
 
   return (
     <NotificationContext.Provider value={{}}>

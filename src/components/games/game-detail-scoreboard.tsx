@@ -3,10 +3,10 @@ import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {DataItemSegment} from '../../providers/data';
-import {Game} from '../../services/games';
+import {GameDto} from '../../services/dtos';
 
 interface Properties extends InjectedThemeProps {
-  activeGame: DataItemSegment<Game>;
+  activeGame: DataItemSegment<GameDto>;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -100,7 +100,7 @@ const Component: React.FC<Properties> = props => {
             <Text style={[styles.avatarText]}>CC</Text>
           </View>
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item.awayTeam?.nickname}
+            {activeGame.item?.awayTeamId}
           </Text>
         </View>
       </View>
@@ -109,16 +109,17 @@ const Component: React.FC<Properties> = props => {
           style={[
             styles.scoreText,
             styles.awayScoreText,
-            activeGame.item.awayTeamScore >= activeGame.item.homeTeamScore
+            (activeGame.item?.awayTeamScore || 0) >=
+            (activeGame.item?.homeTeamScore || 0)
               ? styles.winningScoreText
               : {},
           ]}>
-          {activeGame.item.awayTeamScore}
+          {activeGame.item?.awayTeamScore}
         </Text>
       </View>
       <View style={[styles.stateIconsGrid]}>
         <View style={[styles.stateIconsColumn]}>
-          {activeGame.item.offenseTeamId === activeGame.item.awayTeamId ? (
+          {activeGame.item?.offenseTeamId === activeGame.item?.awayTeamId ? (
             <FontAwesome5Icon
               name="football-ball"
               color={theme.colors.brown}
@@ -128,7 +129,7 @@ const Component: React.FC<Properties> = props => {
           ) : (
             <></>
           )}
-          {activeGame.item.actingTeamId === activeGame.item.awayTeamId ? (
+          {activeGame.item?.actingTeamId === activeGame.item?.awayTeamId ? (
             <FontAwesome5Icon
               name="play"
               color={theme.colors.text}
@@ -141,11 +142,11 @@ const Component: React.FC<Properties> = props => {
         </View>
       </View>
       <View style={[styles.stateGrid]}>
-        <Text style={[styles.stateText]}>{activeGame.item.state}</Text>
+        <Text style={[styles.stateText]}>{activeGame.item?.state}</Text>
       </View>
       <View style={[styles.stateIconsGrid]}>
         <View style={[styles.stateIconsColumn]}>
-          {activeGame.item.offenseTeamId === activeGame.item.homeTeamId ? (
+          {activeGame.item?.offenseTeamId === activeGame.item?.homeTeamId ? (
             <FontAwesome5Icon
               name="football-ball"
               color={theme.colors.brown}
@@ -155,7 +156,7 @@ const Component: React.FC<Properties> = props => {
           ) : (
             <></>
           )}
-          {activeGame.item.actingTeamId === activeGame.item.homeTeamId ? (
+          {activeGame.item?.actingTeamId === activeGame.item?.homeTeamId ? (
             <FontAwesome5Icon
               name="play"
               color={theme.colors.text}
@@ -172,11 +173,12 @@ const Component: React.FC<Properties> = props => {
           style={[
             styles.scoreText,
             styles.homeScoreText,
-            activeGame.item.awayTeamScore >= activeGame.item.homeTeamScore
+            (activeGame.item?.awayTeamScore || 0) >=
+            (activeGame.item?.homeTeamScore || 0)
               ? styles.winningScoreText
               : {},
           ]}>
-          {activeGame.item.awayTeamScore}
+          {activeGame.item?.awayTeamScore}
         </Text>
       </View>
       <View style={[styles.teamLogoGridLast]}>
@@ -185,7 +187,7 @@ const Component: React.FC<Properties> = props => {
             <Text style={[styles.avatarText]}>EE</Text>
           </View>
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item.homeTeam?.nickname}
+            {activeGame.item?.homeTeamId}
           </Text>
         </View>
       </View>

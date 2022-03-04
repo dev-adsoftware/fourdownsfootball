@@ -2,7 +2,8 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {SelectList, SelectListOption} from '../../components/core/select/list';
-import {Nation, NationsService} from '../../services/nations';
+import {NationDto} from '../../services/dtos';
+import {NationsService} from '../../services/nations';
 import {TeamsStackParamList} from '../../stacks/teams';
 import {EmojiDecoder} from '../../utilities/emoji-decoder';
 
@@ -13,15 +14,15 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [nations, setNations] = React.useState<Nation[]>([]);
+  const [nations, setNations] = React.useState<NationDto[]>([]);
 
   const fetchNations = React.useCallback(async () => {
     setIsLoading(true);
-    const fetchedNations = (await new NationsService().list()).items.sort(
-      (a: Nation, b: Nation) => {
-        return a.name > b.name ? 1 : -1;
-      },
-    );
+    const fetchedNations = (
+      await new NationsService().listNations()
+    ).items.sort((a: NationDto, b: NationDto) => {
+      return a.name > b.name ? 1 : -1;
+    });
     setNations(fetchedNations);
     setIsLoading(false);
   }, []);
@@ -32,7 +33,7 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
 
   return (
     <SelectList
-      options={nations.map((nation: Nation): SelectListOption => {
+      options={nations.map((nation: NationDto): SelectListOption => {
         return {
           id: nation.id,
           label: `${EmojiDecoder.decode(nation.abbr)} ${nation.name}`,
@@ -46,9 +47,11 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
         navigation.navigate({
           name: route.params.returnRoute,
           params: {
-            [route.params.returnParamKey]: nations.filter((nation: Nation) => {
-              return nation.id === optionId;
-            })[0],
+            [route.params.returnParamKey]: nations.filter(
+              (nation: NationDto) => {
+                return nation.id === optionId;
+              },
+            )[0],
           },
           merge: true,
         });

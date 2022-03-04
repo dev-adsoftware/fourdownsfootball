@@ -7,7 +7,6 @@ interface Env {
   userPoolId: string;
   userPoolWebClientId: string;
   apiEndpoint: string;
-  graphqlEndpoint: string;
 }
 
 const EnvContext = React.createContext<Env | undefined>(undefined);

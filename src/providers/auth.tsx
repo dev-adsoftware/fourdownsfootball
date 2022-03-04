@@ -1,10 +1,12 @@
 import React from 'react';
 import {Auth as AWSAuth} from 'aws-amplify';
-import {Owner, OwnersService} from '../services/owners';
-import {getStatusFromError} from '../services/types';
 
 const AuthContext = React.createContext<Auth | undefined>(undefined);
 
+interface User {
+  username: string;
+  email: string;
+}
 interface Auth {
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -18,7 +20,7 @@ interface Auth {
     password: string,
     code: string,
   ) => Promise<void>;
-  owner?: Owner;
+  user?: User;
 }
 
 type Properties = {
@@ -28,33 +30,34 @@ type Properties = {
 const AuthProvider: React.FC<Properties> = ({children}) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [owner, setOwner] = React.useState<Owner>();
+  const [user, setUser] = React.useState<User>();
 
-  const getOrCreateOwner = async (
-    id: string,
-    username: string,
-  ): Promise<Owner> => {
-    const service = new OwnersService();
-    try {
-      return await service.get(id);
-    } catch (e) {
-      if (getStatusFromError(e) === 404) {
-        return await service.create({
-          id,
-          name: username,
-          email: username,
-        });
-      }
-      throw e;
-    }
-  };
+  // const checkOrCreateOwner = async (
+  //   id: string,
+  //   username: string,
+  // ): Promise<void> => {
+  //   const service = new OwnersService();
+  //   try {
+  //     await service.ownerExists(id);
+  //     return;
+  //   } catch (e) {
+  //     if (getStatusFromError(e) === 404) {
+  //       const ownerDto = new OwnerDto();
+  //       ownerDto.id = id;
+  //       ownerDto.name = username;
+  //       ownerDto.email = username;
+  //       await service.createOwner(ownerDto);
+  //       return;
+  //     }
+  //     throw e;
+  //   }
+  // };
 
   React.useEffect(() => {
     const init = async () => {
       try {
         const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
-        const fetchedOwner = await getOrCreateOwner(username, attributes.email);
-        setOwner(fetchedOwner);
+        setUser({username, email: attributes.email});
         setIsAuthenticated(true);
       } catch (e) {
         console.log(e);
@@ -65,12 +68,10 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
     init();
   }, []);
 
-  const signIn = async (username: string, password: string) => {
-    const user = await AWSAuth.signIn(username, password);
-    const creds = await AWSAuth.currentCredentials();
-    console.log(creds);
-    const fetchedOwner = await getOrCreateOwner(user.username, username);
-    setOwner(fetchedOwner);
+  const signIn = async (signInUsername: string, password: string) => {
+    await AWSAuth.signIn(signInUsername, password);
+    const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
+    setUser({username, email: attributes.email});
     setIsAuthenticated(true);
   };
 
@@ -110,7 +111,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
         verifyConfirmationCode,
         sendPasswordRecoveryCode,
         resetPassword,
-        owner,
+        user,
       }}>
       {children}
     </AuthContext.Provider>

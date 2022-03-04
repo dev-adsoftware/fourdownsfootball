@@ -10,19 +10,20 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {DataSetSegment} from '../../providers/data';
-import {Notification} from '../../services/notifications';
 import {NotificationsStackParamList} from '../../stacks/notifications';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {NotificationDto} from '../../services/dtos';
 
 interface Properties extends InjectedThemeProps {
-  notifications: DataSetSegment<Notification>;
+  notifications: NotificationDto[];
+  isLoading?: boolean;
+  onRefresh: () => Promise<void>;
   navigation: NativeStackNavigationProp<NotificationsStackParamList>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {notifications, theme} = props;
+  const {notifications, isLoading = true, onRefresh, theme} = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {
@@ -130,14 +131,14 @@ const Component: React.FC<Properties> = props => {
   const renderItem = ({
     item,
   }: {
-    item: {groupHeader: string; groupItems: Notification[]};
+    item: {groupHeader: string; groupItems: NotificationDto[]};
   }) => {
     return (
       <View style={[styles.groupContainer]}>
         <View style={[styles.groupHeader]}>
           <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
-        {item.groupItems.map((groupItem: Notification, index: number) => {
+        {item.groupItems.map((groupItem: NotificationDto, index: number) => {
           return (
             <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
               <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
@@ -180,8 +181,8 @@ const Component: React.FC<Properties> = props => {
       data={[
         {
           groupHeader: 'RECENT',
-          groupItems: notifications.items.sort(
-            (a: Notification, b: Notification) => {
+          groupItems: notifications.sort(
+            (a: NotificationDto, b: NotificationDto) => {
               return a.lastUpdateDate > b.lastUpdateDate ? -1 : 1;
             },
           ),
@@ -190,12 +191,7 @@ const Component: React.FC<Properties> = props => {
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
-        <RefreshControl
-          refreshing={notifications.isLoading}
-          onRefresh={() => {
-            notifications.refresh();
-          }}
-        />
+        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
       ListEmptyComponent={
         <View style={[styles.emptyContainer]}>

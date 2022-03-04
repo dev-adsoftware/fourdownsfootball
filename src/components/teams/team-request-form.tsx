@@ -6,17 +6,15 @@ import {TextInputBox} from '../core/input/text-input-box';
 import {SelectTrigger} from '../core/select/trigger';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TeamsStackParamList} from '../../stacks/teams';
-import {Nation} from '../../services/nations';
-import {State} from '../../services/states';
-import {Town} from '../../services/towns';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {Button} from '../core/buttons/button';
+import {NationDto, StateDto, TownDto} from '../../services/dtos';
 
 interface Properties extends InjectedThemeProps {
-  nation?: Nation;
-  state?: State;
-  town?: Town;
-  onSubmit: (town: Town, nickname: string) => Promise<void>;
+  nation?: NationDto;
+  state?: StateDto;
+  town?: TownDto;
+  onSubmit: (town: TownDto, nickname: string) => Promise<void>;
   navigation: NativeStackNavigationProp<TeamsStackParamList>;
 }
 

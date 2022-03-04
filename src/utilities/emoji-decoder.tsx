@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 class EmojiDecoder {
   public static decode(input: string): any {
     const u = (codeUnit: any) => {

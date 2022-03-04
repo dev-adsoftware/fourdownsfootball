@@ -1,0 +1,16 @@
+export enum Position {
+  K = 'k',
+  P = 'p',
+  QB = 'qb',
+  RB = 'rb',
+  FB = 'fb',
+  TE = 'te',
+  WR = 'wr',
+  OL = 'ol',
+  DE = 'de',
+  DL = 'dl',
+  LB = 'lb',
+  CB = 'cb',
+  S = 's',
+  N = 'n',
+}

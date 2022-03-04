@@ -10,32 +10,36 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {DataSetSegment} from '../../providers/data';
-import {GameInvite} from '../../services/game-invites';
-import {GameParticipant} from '../../services/game-participants';
-import {GameRequest} from '../../services/game-requests';
-import {Game, createGameShell} from '../../services/games';
-import {Team} from '../../services/teams';
+import {
+  OwnerDashboardExtendedGameDto,
+  OwnerDashboardExtendedGameInviteDto,
+  OwnerDashboardExtendedGameParticipantDto,
+  OwnerDashboardExtendedGameRequestDto,
+  OwnerDashboardExtendedTeamDto,
+} from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
 interface Properties extends InjectedThemeProps {
-  gameRequests: DataSetSegment<GameRequest>;
-  gameInvites: DataSetSegment<GameInvite>;
-  gameParticipants: DataSetSegment<GameParticipant>;
+  gameRequests: OwnerDashboardExtendedGameRequestDto[];
+  gameInvites: OwnerDashboardExtendedGameInviteDto[];
+  gameParticipants: OwnerDashboardExtendedGameParticipantDto[];
+  isLoading?: boolean;
+  onRefresh: () => Promise<void>;
   navigation: NativeStackNavigationProp<GamesStackParamList>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {gameRequests, gameInvites, gameParticipants, navigation, theme} =
-    props;
-
-  const refresh = () => {
-    gameRequests.refresh();
-    gameInvites.refresh();
-    gameParticipants.refresh();
-  };
+  const {
+    gameRequests,
+    gameInvites,
+    gameParticipants,
+    isLoading = true,
+    onRefresh,
+    navigation,
+    theme,
+  } = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {marginTop: 20},
@@ -173,7 +177,7 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const getAvatarAbbreviation = (team?: Team) => {
+  const getAvatarAbbreviation = (team?: OwnerDashboardExtendedTeamDto) => {
     if (!team) {
       return '?';
     }
@@ -183,7 +187,7 @@ const Component: React.FC<Properties> = props => {
       .toUpperCase()}`;
   };
 
-  const renderGameRequest = (game: Game) => {
+  const renderGameRequest = (game: OwnerDashboardExtendedGameDto) => {
     return (
       <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
         <View style={[styles.itemTeamsContainer]}>
@@ -194,7 +198,7 @@ const Component: React.FC<Properties> = props => {
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.awayTeam?.name || 'TBD'}
+              {game.awayTeam.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
@@ -204,7 +208,7 @@ const Component: React.FC<Properties> = props => {
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.homeTeam?.name || 'TBD'}
+              {game.homeTeam.nickname || 'TBD'}
             </Text>
           </View>
         </View>
@@ -215,7 +219,7 @@ const Component: React.FC<Properties> = props => {
     );
   };
 
-  const renderGameInvite = (game: Game) => {
+  const renderGameInvite = (game: OwnerDashboardExtendedGameDto) => {
     return (
       <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
         <View style={[styles.itemTeamsContainer]}>
@@ -226,7 +230,7 @@ const Component: React.FC<Properties> = props => {
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.awayTeam?.name || 'TBD'}
+              {game.awayTeam.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
@@ -236,7 +240,7 @@ const Component: React.FC<Properties> = props => {
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.homeTeam?.name || 'TBD'}
+              {game.homeTeam.nickname || 'TBD'}
             </Text>
           </View>
         </View>
@@ -250,11 +254,9 @@ const Component: React.FC<Properties> = props => {
                 iconLeft="caret-right"
                 onPress={() => {
                   navigation.navigate('Game RSVP', {
-                    gameInvite: gameInvites.items.filter(
-                      (gameInvite: GameInvite) => {
-                        return gameInvite.id === game.id;
-                      },
-                    )[0],
+                    gameInvite: gameInvites.filter(gameInvite => {
+                      return gameInvite.id === game.id;
+                    })[0],
                   });
                 }}
               />
@@ -267,7 +269,7 @@ const Component: React.FC<Properties> = props => {
     );
   };
 
-  const renderGameInProgress = (game: Game) => {
+  const renderGameInProgress = (game: OwnerDashboardExtendedGameDto) => {
     return (
       <Pressable
         style={[styles.itemContentRow]}
@@ -299,7 +301,7 @@ const Component: React.FC<Properties> = props => {
                     ? styles.itemTeamRowWinningTeamNameText
                     : {},
                 ]}>
-                {game.awayTeam?.nickname || 'TBD'}
+                {game.awayTeam.nickname || 'TBD'}
               </Text>
               {game.offenseTeamId === game.awayTeamId ? (
                 <FontAwesome5Icon
@@ -347,7 +349,7 @@ const Component: React.FC<Properties> = props => {
                   ? styles.itemTeamRowWinningTeamNameText
                   : {},
               ]}>
-              {game.homeTeam?.nickname || 'TBD'}
+              {game.homeTeam.nickname || 'TBD'}
             </Text>
             {game.offenseTeamId === game.homeTeamId ? (
               <FontAwesome5Icon
@@ -382,40 +384,42 @@ const Component: React.FC<Properties> = props => {
   const renderItem = ({
     item,
   }: {
-    item: {groupHeader: string; groupItems: Game[]};
+    item: {groupHeader: string; groupItems: OwnerDashboardExtendedGameDto[]};
   }) => {
     return (
       <View style={[styles.groupContainer]}>
         <View style={[styles.groupHeader]}>
           <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
         </View>
-        {item.groupItems.map((groupItem: Game, index: number) => {
-          return (
-            <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
-              {item.groupHeader === 'PENDING GAME REQUESTS' ? (
-                renderGameRequest(groupItem)
-              ) : (
-                <></>
-              )}
-              {item.groupHeader === 'INVITATIONS' ? (
-                renderGameInvite(groupItem)
-              ) : (
-                <></>
-              )}
-              {item.groupHeader === 'IN PROGRESS' ? (
-                renderGameInProgress(groupItem)
-              ) : (
-                <></>
-              )}
+        {item.groupItems.map(
+          (groupItem: OwnerDashboardExtendedGameDto, index: number) => {
+            return (
+              <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
+                {item.groupHeader === 'PENDING GAME REQUESTS' ? (
+                  renderGameRequest(groupItem)
+                ) : (
+                  <></>
+                )}
+                {item.groupHeader === 'INVITATIONS' ? (
+                  renderGameInvite(groupItem)
+                ) : (
+                  <></>
+                )}
+                {item.groupHeader === 'IN PROGRESS' ? (
+                  renderGameInProgress(groupItem)
+                ) : (
+                  <></>
+                )}
 
-              {index < item.groupItems.length - 1 ? (
-                <SectionListItemSeparator />
-              ) : (
-                <></>
-              )}
-            </View>
-          );
-        })}
+                {index < item.groupItems.length - 1 ? (
+                  <SectionListItemSeparator />
+                ) : (
+                  <></>
+                )}
+              </View>
+            );
+          },
+        )}
       </View>
     );
   };
@@ -424,50 +428,54 @@ const Component: React.FC<Properties> = props => {
     <FlatList
       style={[styles.listContainer]}
       data={[
-        ...(gameRequests.items.length > 0
+        ...(gameRequests.length > 0
           ? [
               {
                 groupHeader: 'PENDING GAME REQUESTS',
-                groupItems: gameRequests.items.map(
-                  (gameRequest: GameRequest): Game => {
-                    return {
-                      ...createGameShell(),
-                      id: gameRequest.id,
-                      homeTeam: gameRequest.team,
-                      state: gameRequest.status,
-                    };
-                  },
-                ),
+                groupItems:
+                  gameRequests.map(
+                    (gameRequest): OwnerDashboardExtendedGameDto => {
+                      const game = new OwnerDashboardExtendedGameDto();
+                      game.id = gameRequest.id;
+                      game.homeTeamId = gameRequest.teamId;
+                      game.state = gameRequest.status;
+                      return game;
+                    },
+                  ) || [],
               },
             ]
           : []),
-        ...(gameInvites.items.length > 0
+        ...(gameInvites.length > 0
           ? [
               {
                 groupHeader: 'INVITATIONS',
-                groupItems: gameInvites.items.map(
-                  (gameInvite: GameInvite): Game => {
-                    return {
-                      ...createGameShell(),
-                      id: gameInvite.id,
-                      homeTeam: gameInvite.gameRequest?.team,
-                      awayTeam: gameInvite.team,
-                      state: gameInvite.status,
-                    };
-                  },
-                ),
+                groupItems:
+                  gameInvites.map(
+                    (gameInvite): OwnerDashboardExtendedGameDto => {
+                      const game = new OwnerDashboardExtendedGameDto();
+                      game.id = gameInvite.id;
+                      game.homeTeamId = gameInvite.gameRequest.teamId;
+                      game.awayTeamId = gameInvite.teamId as string;
+                      game.state = gameInvite.status;
+                      return game;
+                    },
+                  ) || [],
               },
             ]
           : []),
-        ...(gameParticipants.items.length > 0
+        ...(gameParticipants.length > 0
           ? [
               {
                 groupHeader: 'IN PROGRESS',
-                groupItems: gameParticipants.items.map(
-                  (gameParticipant: GameParticipant): Game => {
-                    return gameParticipant?.game || createGameShell();
-                  },
-                ),
+                groupItems:
+                  gameParticipants.map(
+                    (gameParticipant): OwnerDashboardExtendedGameDto => {
+                      return (
+                        gameParticipant?.game ||
+                        new OwnerDashboardExtendedGameDto()
+                      );
+                    },
+                  ) || [],
               },
             ]
           : []),
@@ -475,10 +483,7 @@ const Component: React.FC<Properties> = props => {
       keyExtractor={item => item.groupHeader}
       renderItem={renderItem}
       refreshControl={
-        <RefreshControl
-          refreshing={gameRequests.isLoading || gameInvites.isLoading}
-          onRefresh={refresh}
-        />
+        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
       ListEmptyComponent={
         <View style={[styles.emptyContainer]}>
@@ -491,7 +496,7 @@ const Component: React.FC<Properties> = props => {
             />
           </View>
           <Text style={[styles.oopsText]}>
-            Oops! You don't have any games in progress.
+            Oops! You don't have any recent games.
           </Text>
           <Button
             text="Request Game"

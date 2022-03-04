@@ -2,7 +2,8 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {SelectList, SelectListOption} from '../../components/core/select/list';
-import {State, StatesService} from '../../services/states';
+import {StateDto} from '../../services/dtos';
+import {StatesService} from '../../services/states';
 import {TeamsStackParamList} from '../../stacks/teams';
 
 type Properties = {
@@ -12,13 +13,13 @@ type Properties = {
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [states, setStates] = React.useState<State[]>([]);
+  const [states, setStates] = React.useState<StateDto[]>([]);
 
   const fetchStates = React.useCallback(async () => {
     setIsLoading(true);
     const fetchedStates = (
       await new StatesService().listByNation(route.params?.nationId)
-    ).items.sort((a: State, b: State) => {
+    ).items.sort((a: StateDto, b: StateDto) => {
       return a.name > b.name ? 1 : -1;
     });
     setStates(fetchedStates);
@@ -31,7 +32,7 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
 
   return (
     <SelectList
-      options={states.map((state: State): SelectListOption => {
+      options={states.map((state: StateDto): SelectListOption => {
         return {id: state.id, label: state.name, filter: state.name};
       })}
       isLoading={isLoading}
@@ -41,7 +42,7 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
         navigation.navigate({
           name: route.params.returnRoute,
           params: {
-            [route.params.returnParamKey]: states.filter((state: State) => {
+            [route.params.returnParamKey]: states.filter((state: StateDto) => {
               return state.id === optionId;
             })[0],
           },

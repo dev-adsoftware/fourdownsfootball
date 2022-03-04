@@ -6,6 +6,8 @@ import {TeamsStackParamList} from './teams';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {TempScreen} from '../screens/temp';
 import {TeamRosterScreen} from '../screens/teams/roster';
+import {useData} from '../providers/data';
+import {TeamDetailQueryResponseDto} from '../services/dtos';
 
 export type TeamDetailTabParamList = {
   scores: undefined;
@@ -37,6 +39,16 @@ const TeamDetailTabStack: React.FC<Properties> = ({route, navigation}) => {
       contentStyle: {backgroundColor: theme.colors.secondaryBackground},
     });
   });
+
+  const {activeTeam} = useData();
+
+  React.useEffect(() => {
+    if (route.params.team.id !== activeTeam.item?.id) {
+      const team = new TeamDetailQueryResponseDto();
+      team.id = route.params.team.id;
+      activeTeam.set(team);
+    }
+  }, [activeTeam, route.params.team.id]);
 
   return (
     <>

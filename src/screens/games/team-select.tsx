@@ -1,9 +1,8 @@
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
-import {SelectList} from '../../components/core/select/list';
+import {SelectList, SelectListOption} from '../../components/core/select/list';
 import {useData} from '../../providers/data';
-import {Team} from '../../services/teams';
 import {GamesStackParamList} from '../../stacks/games';
 
 type Properties = {
@@ -12,20 +11,35 @@ type Properties = {
 };
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
-  const {teams} = useData();
+  const {ownerDashboard} = useData();
 
   return (
-    <SelectList<Team>
-      options={teams.items.sort((a: Team, b: Team) => {
-        return a.town.name > b.town.name ? 1 : -1;
-      })}
-      labelKey="nickname"
+    <SelectList
+      options={
+        ownerDashboard.item?.teams
+          .sort((a, b) => {
+            return a.town.name > b.town.name ? 1 : -1;
+          })
+          .map((team): SelectListOption => {
+            return {
+              id: team.id,
+              label: `${team.town.name} ${team.nickname}`,
+              filter: `${team.town.name}|${team.nickname}`,
+            };
+          }) || []
+      }
       isLoading={false}
-      selectedOption={route.params.selectedTeam}
-      onSelect={(option: Team) => {
+      selectedOptionId={route.params.selectedTeam?.id}
+      onSelect={(optionId: string) => {
         navigation.navigate({
           name: route.params.returnRoute,
-          params: {[route.params.returnParamKey]: option},
+          params: {
+            [route.params.returnParamKey]: ownerDashboard.item?.teams.filter(
+              team => {
+                return team.id === optionId;
+              },
+            )[0],
+          },
           merge: true,
         });
       }}
