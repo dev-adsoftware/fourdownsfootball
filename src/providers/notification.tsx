@@ -107,10 +107,12 @@ function NotificationProvider({children}: NotificationProviderProps) {
         },
       );
     } else {
-      updateDeviceRegistration(
-        deviceToken,
-        ownerDashboard.item?.owner.id as string,
-      );
+      if (ownerDashboard.item?.owner.id) {
+        updateDeviceRegistration(
+          deviceToken,
+          ownerDashboard.item.owner.id as string,
+        );
+      }
     }
   }, [deviceToken, updateDeviceRegistration, ownerDashboard.item?.owner.id]);
 

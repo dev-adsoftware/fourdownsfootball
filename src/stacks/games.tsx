@@ -1,6 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {useTheme} from '../providers/theme';
+import {GameDetailScreen} from '../screens/games/game-detail';
 import {GameRequestScreen} from '../screens/games/game-request';
 import {GameRSVPScreen} from '../screens/games/game-rsvp';
 import {GamesScreen} from '../screens/games/games';
@@ -12,7 +13,6 @@ import {
   OwnerDashboardExtendedGameInviteDto,
   OwnerDashboardExtendedTeamDto,
 } from '../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
-import {GameDetailTabStack} from './game-detail';
 
 type Properties = {};
 
@@ -50,7 +50,7 @@ const GamesStack: React.FC<Properties> = ({}) => {
         contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Games" component={GamesScreen} />
-      <Stack.Screen name="Game Detail Stack" component={GameDetailTabStack} />
+      <Stack.Screen name="Game Detail Stack" component={GameDetailScreen} />
       <Stack.Screen name="Game Request" component={GameRequestScreen} />
       <Stack.Screen name="Game RSVP" component={GameRSVPScreen} />
       <Stack.Screen

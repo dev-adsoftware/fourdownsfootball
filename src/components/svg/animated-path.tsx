@@ -21,7 +21,7 @@ const Component: React.FC<Properties> = props => {
 
   React.useEffect(() => {
     strokeDashoffset.addListener(animatedValue => {
-      if (pathRef) {
+      if (pathRef && pathRef.current) {
         (pathRef as any).current.setNativeProps({
           strokeDashoffset: animatedValue.value,
         });

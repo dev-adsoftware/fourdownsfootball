@@ -36,7 +36,7 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
   return (
     <SelectList
       options={owners.map((owner: OwnerDto): SelectListOption => {
-        return {id: owner.id, label: owner.name, filter: owner.name};
+        return {id: owner.id, label: owner.email, filter: owner.name};
       })}
       isLoading={isLoading}
       searchPlaceholder="Search Owners"

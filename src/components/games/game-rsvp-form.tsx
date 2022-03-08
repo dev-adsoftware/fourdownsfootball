@@ -9,12 +9,13 @@ import {SelectTrigger} from '../core/select/trigger';
 
 interface Properties extends InjectedThemeProps {
   team?: OwnerDashboardExtendedTeamDto;
+  isProcessing?: boolean;
   onSubmit: (team: OwnerDashboardExtendedTeamDto) => Promise<void>;
   navigation: NativeStackNavigationProp<GamesStackParamList>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {team, onSubmit, navigation, theme} = props;
+  const {team, isProcessing = false, onSubmit, navigation, theme} = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {marginTop: 20},
@@ -99,6 +100,7 @@ const Component: React.FC<Properties> = props => {
         <Button
           text="Accept Invitation"
           activeColor={theme.colors.green}
+          isLoading={isProcessing}
           disabled={!team}
           onPress={async () => {
             if (team) {

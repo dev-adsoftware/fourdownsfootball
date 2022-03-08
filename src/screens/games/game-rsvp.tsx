@@ -14,14 +14,17 @@ type Properties = {
 };
 
 const GameRSVPScreen: React.FC<Properties> = ({route, navigation}) => {
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const {ownerDashboard} = useData();
 
   return (
     <GameRSVPForm
       team={route.params?.team}
+      isProcessing={isProcessing}
       onSubmit={async (team: OwnerDashboardExtendedTeamDto) => {
+        setIsProcessing(true);
         const currentGameInvite = new GameInviteDto().init({
-          ...route.params.gameInvite.toPlainObject(),
+          ...route.params.gameInvite,
         });
 
         await new GameInvitesService().updateGameInvite(
@@ -32,6 +35,8 @@ const GameRSVPScreen: React.FC<Properties> = ({route, navigation}) => {
         );
 
         await ownerDashboard.refresh();
+        setIsProcessing(false);
+        navigation.goBack();
       }}
       navigation={navigation}
     />

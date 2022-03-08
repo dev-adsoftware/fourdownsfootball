@@ -1,6 +1,7 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -15,6 +16,7 @@ import {
   OwnerDashboardExtendedTeamRequestDto,
 } from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {TeamsStackParamList} from '../../stacks/teams';
+import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
@@ -149,10 +151,6 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const getAvatarAbbreviation = (team: OwnerDashboardExtendedTeamDto) => {
-    return `${team.town.name.slice(0, 1)}${team.nickname.slice(0, 1)}`;
-  };
-
   const renderItem = ({
     item,
   }: {
@@ -188,7 +186,10 @@ const Component: React.FC<Properties> = props => {
                       },
                     ]}>
                     <Text style={[styles.itemAvatarText]}>
-                      {getAvatarAbbreviation(groupItem)}
+                      {TeamAvatarMaker.getAvatarAbbreviation(
+                        groupItem.town,
+                        groupItem,
+                      )}
                     </Text>
                   </View>
                   <View
@@ -268,22 +269,30 @@ const Component: React.FC<Properties> = props => {
       }
       ListEmptyComponent={
         <View style={[styles.emptyContainer]}>
-          <View style={[styles.oopsCircle]}>
-            <FontAwesome5Icon
-              style={[styles.oopsIcon]}
-              name="exclamation"
-              color={theme.colors.error}
-              size={24}
-            />
-          </View>
-          <Text style={[styles.oopsText]}>Oops! You don't own any teams.</Text>
-          <Button
-            text="Request Team"
-            iconLeft="plus"
-            onPress={() => {
-              navigation.navigate('Team Request', {});
-            }}
-          />
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              <View style={[styles.oopsCircle]}>
+                <FontAwesome5Icon
+                  style={[styles.oopsIcon]}
+                  name="exclamation"
+                  color={theme.colors.error}
+                  size={24}
+                />
+              </View>
+              <Text style={[styles.oopsText]}>
+                Oops! You don't own any teams.
+              </Text>
+              <Button
+                text="Request Team"
+                iconLeft="plus"
+                onPress={() => {
+                  navigation.navigate('Team Request', {});
+                }}
+              />
+            </>
+          )}
         </View>
       }
       ListFooterComponent={<View style={[styles.footerPadding]} />}

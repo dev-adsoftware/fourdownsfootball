@@ -1,13 +1,7 @@
-import {RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {TempScreen} from '../screens/temp';
-import {GamesStackParamList} from './games';
-import {GameDetailScoreboard} from '../components/games/game-detail-scoreboard';
-import {useData} from '../providers/data';
 import {GamePlayScreen} from '../screens/games/game-play';
-import {GameDetailQueryResponseDto} from '../services/dtos';
 
 export type GameDetailTabParamList = {
   'Game Play': undefined;
@@ -18,31 +12,11 @@ export type GameDetailTabParamList = {
 
 const Tab = createMaterialTopTabNavigator<GameDetailTabParamList>();
 
-type Properties = {
-  route: RouteProp<GamesStackParamList, 'Game Detail Stack'>;
-  navigation: NativeStackNavigationProp<GamesStackParamList>;
-};
+type Properties = {};
 
-const GameDetailTabStack: React.FC<Properties> = ({route, navigation}) => {
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: `${route.params.game.awayTeam?.nickname} @ ${route.params.game.homeTeam?.nickname}`,
-    });
-  });
-
-  const {activeGame} = useData();
-
-  React.useEffect(() => {
-    if (route.params.game.id !== activeGame.item?.id) {
-      const game = new GameDetailQueryResponseDto();
-      game.id = route.params.game.id;
-      activeGame.set(game);
-    }
-  }, [activeGame, route.params.game.id]);
-
+const GameDetailTabStack: React.FC<Properties> = ({}) => {
   return (
     <>
-      <GameDetailScoreboard activeGame={activeGame} />
       <Tab.Navigator
         screenOptions={{
           tabBarScrollEnabled: true,

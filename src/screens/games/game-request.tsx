@@ -14,13 +14,16 @@ type Properties = {
 };
 
 const GameRequestScreen: React.FC<Properties> = ({route, navigation}) => {
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const {ownerDashboard} = useData();
 
   return (
     <GameRequestForm
       team={route.params?.team}
       owner={route.params?.owner}
+      isProcessing={isProcessing}
       onSubmit={async (team, owner) => {
+        setIsProcessing(true);
         const gameRequest = new GameRequestDto();
         gameRequest.id = uuid.v4() as string;
         gameRequest.ownerId = ownerDashboard.item?.owner.id as string;
@@ -30,6 +33,7 @@ const GameRequestScreen: React.FC<Properties> = ({route, navigation}) => {
 
         await new GameRequestsService().createGameRequest(gameRequest);
         await ownerDashboard.refresh();
+        setIsProcessing(false);
         navigation.goBack();
       }}
       navigation={navigation}

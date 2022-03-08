@@ -114,9 +114,11 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   }, [activeTeam?.id]);
 
   const clearAll = React.useCallback(() => {
+    setIsOwnerDashboardLoading(true);
     setOwnerDashboard(undefined);
     setActiveGame(undefined);
     setActiveTeam(undefined);
+    setIsOwnerDashboardLoading(false);
   }, []);
 
   React.useEffect(() => {

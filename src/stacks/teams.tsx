@@ -4,12 +4,12 @@ import {useTheme} from '../providers/theme';
 import {NationSelectScreen} from '../screens/teams/nation-select';
 import {TeamPlayerDetailScreen} from '../screens/teams/player-detail';
 import {StateSelectScreen} from '../screens/teams/state-select';
+import {TeamDetailScreen} from '../screens/teams/team-detail';
 import {TeamRequestScreen} from '../screens/teams/team-request';
 import {TeamsScreen} from '../screens/teams/teams';
 import {TownSelectScreen} from '../screens/teams/town-select';
 import {NationDto, PlayerDto, StateDto, TownDto} from '../services/dtos';
 import {OwnerDashboardExtendedTeamDto} from '../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
-import {TeamDetailTabStack} from './team-detail';
 
 type Properties = {};
 
@@ -55,7 +55,7 @@ const TeamsStack: React.FC<Properties> = ({}) => {
         contentStyle: {backgroundColor: theme.colors.secondaryBackground},
       }}>
       <Stack.Screen name="Teams" component={TeamsScreen} />
-      <Stack.Screen name="Team Detail Stack" component={TeamDetailTabStack} />
+      <Stack.Screen name="Team Detail Stack" component={TeamDetailScreen} />
       <Stack.Screen
         name="Team Player Detail"
         component={TeamPlayerDetailScreen}

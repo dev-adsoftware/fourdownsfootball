@@ -1,6 +1,7 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -15,9 +16,9 @@ import {
   OwnerDashboardExtendedGameInviteDto,
   OwnerDashboardExtendedGameParticipantDto,
   OwnerDashboardExtendedGameRequestDto,
-  OwnerDashboardExtendedTeamDto,
 } from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GamesStackParamList} from '../../stacks/games';
+import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
@@ -177,16 +178,6 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const getAvatarAbbreviation = (team?: OwnerDashboardExtendedTeamDto) => {
-    if (!team) {
-      return '?';
-    }
-
-    return `${team.town.name.slice(0, 1).toUpperCase()}${team.nickname
-      .slice(0, 1)
-      .toUpperCase()}`;
-  };
-
   const renderGameRequest = (game: OwnerDashboardExtendedGameDto) => {
     return (
       <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
@@ -194,21 +185,27 @@ const Component: React.FC<Properties> = props => {
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemAvatar]}>
               <Text style={[styles.itemAvatarText]}>
-                {getAvatarAbbreviation(game.awayTeam)}
+                {TeamAvatarMaker.getAvatarAbbreviation(
+                  game.awayTeam?.town,
+                  game.awayTeam,
+                )}
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.awayTeam.nickname || 'TBD'}
+              {game.awayTeam?.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemAvatar]}>
               <Text style={[styles.itemAvatarText]}>
-                {getAvatarAbbreviation(game.homeTeam)}
+                {TeamAvatarMaker.getAvatarAbbreviation(
+                  game.homeTeam.town,
+                  game.homeTeam,
+                )}
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.homeTeam.nickname || 'TBD'}
+              {game.homeTeam?.nickname || 'TBD'}
             </Text>
           </View>
         </View>
@@ -226,21 +223,27 @@ const Component: React.FC<Properties> = props => {
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemAvatar]}>
               <Text style={[styles.itemAvatarText]}>
-                {getAvatarAbbreviation(game.awayTeam)}
+                {TeamAvatarMaker.getAvatarAbbreviation(
+                  game.awayTeam?.town,
+                  game.awayTeam,
+                )}
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.awayTeam.nickname || 'TBD'}
+              {game.awayTeam?.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemAvatar]}>
               <Text style={[styles.itemAvatarText]}>
-                {getAvatarAbbreviation(game.homeTeam)}
+                {TeamAvatarMaker.getAvatarAbbreviation(
+                  game.homeTeam.town,
+                  game.homeTeam,
+                )}
               </Text>
             </View>
             <Text style={[styles.itemTeamNameText]}>
-              {game.homeTeam.nickname || 'TBD'}
+              {game.homeTeam?.nickname || 'TBD'}
             </Text>
           </View>
         </View>
@@ -281,7 +284,10 @@ const Component: React.FC<Properties> = props => {
             <View style={[styles.itemTeamRowInProgress]}>
               <View style={[styles.itemAvatar]}>
                 <Text style={[styles.itemAvatarText]}>
-                  {getAvatarAbbreviation(game.awayTeam)}
+                  {TeamAvatarMaker.getAvatarAbbreviation(
+                    game.awayTeam.town,
+                    game.awayTeam,
+                  )}
                 </Text>
               </View>
               {game.actingTeamId === game.awayTeamId ? (
@@ -329,7 +335,10 @@ const Component: React.FC<Properties> = props => {
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemAvatar]}>
               <Text style={[styles.itemAvatarText]}>
-                {getAvatarAbbreviation(game.homeTeam)}
+                {TeamAvatarMaker.getAvatarAbbreviation(
+                  game.homeTeam.town,
+                  game.homeTeam,
+                )}
               </Text>
             </View>
             {game.actingTeamId === game.homeTeamId ? (
@@ -438,6 +447,7 @@ const Component: React.FC<Properties> = props => {
                       const game = new OwnerDashboardExtendedGameDto();
                       game.id = gameRequest.id;
                       game.homeTeamId = gameRequest.teamId;
+                      game.homeTeam = gameRequest.team;
                       game.state = gameRequest.status;
                       return game;
                     },
@@ -455,7 +465,9 @@ const Component: React.FC<Properties> = props => {
                       const game = new OwnerDashboardExtendedGameDto();
                       game.id = gameInvite.id;
                       game.homeTeamId = gameInvite.gameRequest.teamId;
+                      game.homeTeam = gameInvite.gameRequest.team;
                       game.awayTeamId = gameInvite.teamId as string;
+                      game.awayTeam = gameInvite.team;
                       game.state = gameInvite.status;
                       return game;
                     },
@@ -487,24 +499,30 @@ const Component: React.FC<Properties> = props => {
       }
       ListEmptyComponent={
         <View style={[styles.emptyContainer]}>
-          <View style={[styles.oopsCircle]}>
-            <FontAwesome5Icon
-              style={[styles.oopsIcon]}
-              name="exclamation"
-              color={theme.colors.error}
-              size={24}
-            />
-          </View>
-          <Text style={[styles.oopsText]}>
-            Oops! You don't have any recent games.
-          </Text>
-          <Button
-            text="Request Game"
-            iconLeft="plus"
-            onPress={() => {
-              navigation.navigate('Game Request', {});
-            }}
-          />
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              <View style={[styles.oopsCircle]}>
+                <FontAwesome5Icon
+                  style={[styles.oopsIcon]}
+                  name="exclamation"
+                  color={theme.colors.error}
+                  size={24}
+                />
+              </View>
+              <Text style={[styles.oopsText]}>
+                Oops! You don't have any recent games.
+              </Text>
+              <Button
+                text="Request Game"
+                iconLeft="plus"
+                onPress={() => {
+                  navigation.navigate('Game Request', {});
+                }}
+              />
+            </>
+          )}
         </View>
       }
       ListFooterComponent={<View style={[styles.footerPadding]} />}

@@ -3,10 +3,11 @@ import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {DataItemSegment} from '../../providers/data';
-import {GameDto} from '../../services/dtos';
+import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
 
 interface Properties extends InjectedThemeProps {
-  activeGame: DataItemSegment<GameDto>;
+  activeGame: DataItemSegment<GameDetailQueryResponseDto>;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -97,10 +98,15 @@ const Component: React.FC<Properties> = props => {
       <View style={[styles.teamLogoGrid]}>
         <View style={[styles.teamLogoColumn]}>
           <View style={[styles.avatar]}>
-            <Text style={[styles.avatarText]}>CC</Text>
+            <Text style={[styles.avatarText]}>
+              {TeamAvatarMaker.getAvatarAbbreviation(
+                activeGame.item?.awayTeam.town,
+                activeGame.item?.awayTeam,
+              )}
+            </Text>
           </View>
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item?.awayTeamId}
+            {activeGame.item?.awayTeam.nickname}
           </Text>
         </View>
       </View>
@@ -184,10 +190,15 @@ const Component: React.FC<Properties> = props => {
       <View style={[styles.teamLogoGridLast]}>
         <View style={[styles.teamLogoColumn]}>
           <View style={[styles.avatar]}>
-            <Text style={[styles.avatarText]}>EE</Text>
+            <Text style={[styles.avatarText]}>
+              {TeamAvatarMaker.getAvatarAbbreviation(
+                activeGame.item?.homeTeam.town,
+                activeGame.item?.homeTeam,
+              )}
+            </Text>
           </View>
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item?.homeTeamId}
+            {activeGame.item?.homeTeam.nickname}
           </Text>
         </View>
       </View>

@@ -11,6 +11,7 @@ import {SelectTrigger} from '../core/select/trigger';
 interface Properties extends InjectedThemeProps {
   team?: OwnerDashboardExtendedTeamDto;
   owner?: OwnerDto;
+  isProcessing?: boolean;
   onSubmit: (
     team: OwnerDashboardExtendedTeamDto,
     owner: OwnerDto,
@@ -19,7 +20,14 @@ interface Properties extends InjectedThemeProps {
 }
 
 const Component: React.FC<Properties> = props => {
-  const {team, owner, onSubmit, navigation, theme} = props;
+  const {
+    team,
+    owner,
+    isProcessing = false,
+    onSubmit,
+    navigation,
+    theme,
+  } = props;
 
   const styles = StyleSheet.create({
     loadingContainer: {marginTop: 20},
@@ -102,7 +110,7 @@ const Component: React.FC<Properties> = props => {
       <View style={[styles.itemSeparator]} />
       <SelectTrigger
         label="Opponent"
-        value={owner?.name}
+        value={owner?.email}
         required
         onSelect={() => {
           navigation.navigate('Owner Select', {
@@ -118,6 +126,7 @@ const Component: React.FC<Properties> = props => {
           text="Submit Game Request"
           activeColor={theme.colors.green}
           disabled={!team || !owner}
+          isLoading={isProcessing}
           onPress={async () => {
             if (team && owner) {
               await onSubmit(team, owner);
