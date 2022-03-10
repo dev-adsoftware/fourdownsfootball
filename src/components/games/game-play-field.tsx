@@ -38,7 +38,7 @@ const Component: React.FC<Properties> = props => {
     container: {
       width: '100%',
       height: 100,
-      backgroundColor: theme.colors.secondaryBackground,
+      backgroundColor: theme.colors.background,
       padding: 10,
     },
     yardMarkerContainer: {

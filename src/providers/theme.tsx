@@ -39,6 +39,7 @@ export class Theme {
     gray: string;
     black: string;
     white: string;
+    silver: string;
   };
   public typography: {
     largeTitle: TextStyle;
@@ -85,6 +86,7 @@ export class Theme {
       gray: resolveColorSync(PlatformColor('systemGray')),
       black: 'black',
       white: 'white',
+      silver: 'silver',
     };
     this.typography = {
       largeTitle: {fontSize: 34, color: this.colors.text},

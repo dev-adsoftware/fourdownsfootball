@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`given: missing data when: I initialize then: error matched snapshot 1`] = `[Error: Dto: gameId must be a string, actingTeamId must be a string, action must be a string, data must be a json string, data must be a string, id must be a string, sequence must be a number string, lastUpdatedBy must be a string, lastUpdateDate must be a string]`;

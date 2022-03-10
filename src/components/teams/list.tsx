@@ -16,7 +16,7 @@ import {
   OwnerDashboardExtendedTeamRequestDto,
 } from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {TeamsStackParamList} from '../../stacks/teams';
-import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
+import {TeamAvatar} from '../core/avatars/team-avatar';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
@@ -104,20 +104,6 @@ const Component: React.FC<Properties> = props => {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    itemAvatar: {
-      borderWidth: 1,
-      borderColor: theme.colors.black,
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      alignItems: 'center',
-      paddingTop: 14,
-      marginRight: 10,
-    },
-    itemAvatarText: {
-      ...theme.typography.body,
-      color: theme.colors.white,
-    },
     itemTeamIdentifier: {
       height: 50,
       justifyContent: 'center',
@@ -176,22 +162,11 @@ const Component: React.FC<Properties> = props => {
                   onPress={() => {
                     navigation.navigate('Team Detail Stack', {team: groupItem});
                   }}>
-                  <View
-                    style={[
-                      styles.itemAvatar,
-                      {
-                        backgroundColor: (
-                          theme.colors as {[x: string]: string}
-                        )[groupItem.primaryColor.toLowerCase()],
-                      },
-                    ]}>
-                    <Text style={[styles.itemAvatarText]}>
-                      {TeamAvatarMaker.getAvatarAbbreviation(
-                        groupItem.town,
-                        groupItem,
-                      )}
-                    </Text>
-                  </View>
+                  <TeamAvatar
+                    town={groupItem.town}
+                    team={groupItem}
+                    size={50}
+                  />
                   <View
                     style={[
                       styles.itemTeamIdentifier,

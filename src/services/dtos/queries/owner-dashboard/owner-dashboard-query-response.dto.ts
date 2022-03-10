@@ -11,6 +11,7 @@ import {
   StateDto,
   TeamDto,
   TeamRequestDto,
+  TeamSnapshotDto,
   TownDto,
 } from '../..';
 import {Dto} from '../../dto';
@@ -21,6 +22,23 @@ export class OwnerDashboardExtendedTownDto extends TownDto {
   state: StateDto;
 }
 export class OwnerDashboardExtendedTeamDto extends TeamDto {
+  @IsObject()
+  @ValidateNested()
+  @Type(() => LeagueDto)
+  league: LeagueDto;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => OwnerDto)
+  owner: OwnerDto;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => OwnerDashboardExtendedTownDto)
+  town: OwnerDashboardExtendedTownDto;
+}
+
+export class OwnerDashboardExtendedTeamSnapshotDto extends TeamSnapshotDto {
   @IsObject()
   @ValidateNested()
   @Type(() => LeagueDto)
@@ -48,6 +66,7 @@ export class OwnerDashboardExtendedTeamRequestDto extends TeamRequestDto {
   @Type(() => OwnerDashboardExtendedTownDto)
   town: OwnerDashboardExtendedTownDto;
 }
+
 export class OwnerDashboardExtendedGameRequestDto extends GameRequestDto {
   @IsObject()
   @ValidateNested()
@@ -87,13 +106,13 @@ export class OwnerDashboardExtendedGameInviteDto extends GameInviteDto {
 export class OwnerDashboardExtendedGameDto extends GameDto {
   @IsObject()
   @ValidateNested()
-  @Type(() => OwnerDashboardExtendedTeamDto)
-  homeTeam: OwnerDashboardExtendedTeamDto;
+  @Type(() => OwnerDashboardExtendedTeamSnapshotDto)
+  homeTeam: OwnerDashboardExtendedTeamSnapshotDto;
 
   @IsObject()
   @ValidateNested()
-  @Type(() => OwnerDashboardExtendedTeamDto)
-  awayTeam: OwnerDashboardExtendedTeamDto;
+  @Type(() => OwnerDashboardExtendedTeamSnapshotDto)
+  awayTeam: OwnerDashboardExtendedTeamSnapshotDto;
 }
 
 export class OwnerDashboardExtendedGameParticipantDto extends GameParticipantDto {

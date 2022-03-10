@@ -6,7 +6,7 @@ class Dto extends SequencedDto {
   gameId: string;
 
   @IsString()
-  property: string;
+  message: string;
 }
 
 export {Dto as GameLogDto};

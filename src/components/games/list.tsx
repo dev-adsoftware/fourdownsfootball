@@ -16,9 +16,10 @@ import {
   OwnerDashboardExtendedGameInviteDto,
   OwnerDashboardExtendedGameParticipantDto,
   OwnerDashboardExtendedGameRequestDto,
+  OwnerDashboardExtendedTeamSnapshotDto,
 } from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GamesStackParamList} from '../../stacks/games';
-import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
+import {TeamAvatar} from '../core/avatars/team-avatar';
 import {Button} from '../core/buttons/button';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
@@ -133,6 +134,8 @@ const Component: React.FC<Properties> = props => {
     },
     itemPlayIcon: {
       width: 15,
+      textAlign: 'right',
+      paddingRight: 3,
     },
     itemPossessionIcon: {
       marginLeft: 5,
@@ -183,27 +186,21 @@ const Component: React.FC<Properties> = props => {
       <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
         <View style={[styles.itemTeamsContainer]}>
           <View style={[styles.itemTeamRow]}>
-            <View style={[styles.itemAvatar]}>
-              <Text style={[styles.itemAvatarText]}>
-                {TeamAvatarMaker.getAvatarAbbreviation(
-                  game.awayTeam?.town,
-                  game.awayTeam,
-                )}
-              </Text>
-            </View>
+            <TeamAvatar
+              town={game.awayTeam?.town}
+              team={game.awayTeam}
+              size={24}
+            />
             <Text style={[styles.itemTeamNameText]}>
               {game.awayTeam?.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
-            <View style={[styles.itemAvatar]}>
-              <Text style={[styles.itemAvatarText]}>
-                {TeamAvatarMaker.getAvatarAbbreviation(
-                  game.homeTeam.town,
-                  game.homeTeam,
-                )}
-              </Text>
-            </View>
+            <TeamAvatar
+              town={game.homeTeam?.town}
+              team={game.homeTeam}
+              size={24}
+            />
             <Text style={[styles.itemTeamNameText]}>
               {game.homeTeam?.nickname || 'TBD'}
             </Text>
@@ -221,27 +218,21 @@ const Component: React.FC<Properties> = props => {
       <Pressable style={[styles.itemContentRow]} onPress={() => {}}>
         <View style={[styles.itemTeamsContainer]}>
           <View style={[styles.itemTeamRow]}>
-            <View style={[styles.itemAvatar]}>
-              <Text style={[styles.itemAvatarText]}>
-                {TeamAvatarMaker.getAvatarAbbreviation(
-                  game.awayTeam?.town,
-                  game.awayTeam,
-                )}
-              </Text>
-            </View>
+            <TeamAvatar
+              town={game.awayTeam?.town}
+              team={game.awayTeam}
+              size={24}
+            />
             <Text style={[styles.itemTeamNameText]}>
               {game.awayTeam?.nickname || 'TBD'}
             </Text>
           </View>
           <View style={[styles.itemTeamRow]}>
-            <View style={[styles.itemAvatar]}>
-              <Text style={[styles.itemAvatarText]}>
-                {TeamAvatarMaker.getAvatarAbbreviation(
-                  game.homeTeam.town,
-                  game.homeTeam,
-                )}
-              </Text>
-            </View>
+            <TeamAvatar
+              town={game.homeTeam?.town}
+              team={game.homeTeam}
+              size={24}
+            />
             <Text style={[styles.itemTeamNameText]}>
               {game.homeTeam?.nickname || 'TBD'}
             </Text>
@@ -282,14 +273,11 @@ const Component: React.FC<Properties> = props => {
         <View style={[styles.itemTeamsContainer]}>
           <View style={[styles.itemTeamRow]}>
             <View style={[styles.itemTeamRowInProgress]}>
-              <View style={[styles.itemAvatar]}>
-                <Text style={[styles.itemAvatarText]}>
-                  {TeamAvatarMaker.getAvatarAbbreviation(
-                    game.awayTeam.town,
-                    game.awayTeam,
-                  )}
-                </Text>
-              </View>
+              <TeamAvatar
+                town={game.awayTeam?.town}
+                team={game.awayTeam}
+                size={24}
+              />
               {game.actingTeamId === game.awayTeamId ? (
                 <FontAwesome5Icon
                   style={[styles.itemPlayIcon]}
@@ -333,14 +321,11 @@ const Component: React.FC<Properties> = props => {
             </View>
           </View>
           <View style={[styles.itemTeamRow]}>
-            <View style={[styles.itemAvatar]}>
-              <Text style={[styles.itemAvatarText]}>
-                {TeamAvatarMaker.getAvatarAbbreviation(
-                  game.homeTeam.town,
-                  game.homeTeam,
-                )}
-              </Text>
-            </View>
+            <TeamAvatar
+              town={game.homeTeam?.town}
+              team={game.homeTeam}
+              size={24}
+            />
             {game.actingTeamId === game.homeTeamId ? (
               <FontAwesome5Icon
                 style={[styles.itemPlayIcon]}
@@ -447,7 +432,13 @@ const Component: React.FC<Properties> = props => {
                       const game = new OwnerDashboardExtendedGameDto();
                       game.id = gameRequest.id;
                       game.homeTeamId = gameRequest.teamId;
-                      game.homeTeam = gameRequest.team;
+                      game.homeTeam =
+                        new OwnerDashboardExtendedTeamSnapshotDto().init({
+                          ...gameRequest.team,
+                          gameId: '',
+                          originalTeamId: '',
+                          originalSequence: '',
+                        });
                       game.state = gameRequest.status;
                       return game;
                     },
@@ -465,9 +456,21 @@ const Component: React.FC<Properties> = props => {
                       const game = new OwnerDashboardExtendedGameDto();
                       game.id = gameInvite.id;
                       game.homeTeamId = gameInvite.gameRequest.teamId;
-                      game.homeTeam = gameInvite.gameRequest.team;
+                      game.homeTeam =
+                        new OwnerDashboardExtendedTeamSnapshotDto().init({
+                          ...gameInvite.gameRequest.team,
+                          gameId: '',
+                          originalTeamId: '',
+                          originalSequence: '',
+                        });
                       game.awayTeamId = gameInvite.teamId as string;
-                      game.awayTeam = gameInvite.team;
+                      game.awayTeam =
+                        new OwnerDashboardExtendedTeamSnapshotDto().init({
+                          ...gameInvite.team,
+                          gameId: '',
+                          originalTeamId: '',
+                          originalSequence: '',
+                        });
                       game.state = gameInvite.status;
                       return game;
                     },

@@ -4,7 +4,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {DataItemSegment} from '../../providers/data';
 import {GameDetailQueryResponseDto} from '../../services/dtos';
-import {TeamAvatarMaker} from '../../utilities/team-avatar-maker';
+import {TeamAvatar} from '../core/avatars/team-avatar';
 
 interface Properties extends InjectedThemeProps {
   activeGame: DataItemSegment<GameDetailQueryResponseDto>;
@@ -33,21 +33,6 @@ const Component: React.FC<Properties> = props => {
       alignItems: 'flex-start',
     },
     teamLogoColumn: {alignItems: 'center'},
-    avatar: {
-      borderWidth: 1,
-      borderColor: theme.colors.separator,
-      width: 34,
-      height: 34,
-      borderRadius: 17,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 3,
-      backgroundColor: theme.colors.green,
-    },
-    avatarText: {
-      ...theme.typography.caption2,
-      color: theme.colors.white,
-    },
     teamLogoNameText: {
       ...theme.typography.caption2,
     },
@@ -97,14 +82,10 @@ const Component: React.FC<Properties> = props => {
     <View style={[styles.container]}>
       <View style={[styles.teamLogoGrid]}>
         <View style={[styles.teamLogoColumn]}>
-          <View style={[styles.avatar]}>
-            <Text style={[styles.avatarText]}>
-              {TeamAvatarMaker.getAvatarAbbreviation(
-                activeGame.item?.awayTeam.town,
-                activeGame.item?.awayTeam,
-              )}
-            </Text>
-          </View>
+          <TeamAvatar
+            town={activeGame.item?.awayTeam.town}
+            team={activeGame.item?.awayTeam}
+          />
           <Text style={[styles.teamLogoNameText]}>
             {activeGame.item?.awayTeam.nickname}
           </Text>
@@ -189,14 +170,10 @@ const Component: React.FC<Properties> = props => {
       </View>
       <View style={[styles.teamLogoGridLast]}>
         <View style={[styles.teamLogoColumn]}>
-          <View style={[styles.avatar]}>
-            <Text style={[styles.avatarText]}>
-              {TeamAvatarMaker.getAvatarAbbreviation(
-                activeGame.item?.homeTeam.town,
-                activeGame.item?.homeTeam,
-              )}
-            </Text>
-          </View>
+          <TeamAvatar
+            town={activeGame.item?.homeTeam.town}
+            team={activeGame.item?.homeTeam}
+          />
           <Text style={[styles.teamLogoNameText]}>
             {activeGame.item?.homeTeam.nickname}
           </Text>

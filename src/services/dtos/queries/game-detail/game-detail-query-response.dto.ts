@@ -1,13 +1,22 @@
 import {Type} from 'class-transformer';
-import {IsObject, ValidateNested} from 'class-validator';
-import {GameDto, LeagueDto, OwnerDto, StateDto, TeamDto, TownDto} from '../..';
+import {IsArray, IsObject, ValidateNested} from 'class-validator';
+import {
+  GameDto,
+  GameLogDto,
+  LeagueDto,
+  OwnerDto,
+  PlayerSnapshotDto,
+  StateDto,
+  TeamSnapshotDto,
+  TownDto,
+} from '../..';
 
 export class GameDetailExtendedTownDto extends TownDto {
   @ValidateNested()
   @Type(() => StateDto)
   state: StateDto;
 }
-export class GameDetailExtendedTeamDto extends TeamDto {
+export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   @IsObject()
   @ValidateNested()
   @Type(() => LeagueDto)
@@ -22,15 +31,26 @@ export class GameDetailExtendedTeamDto extends TeamDto {
   @ValidateNested()
   @Type(() => GameDetailExtendedTownDto)
   town: GameDetailExtendedTownDto;
+
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => PlayerSnapshotDto)
+  players: PlayerSnapshotDto[];
 }
+
 export class GameDetailQueryResponseDto extends GameDto {
   @IsObject()
   @ValidateNested()
-  @Type(() => GameDetailExtendedTeamDto)
-  homeTeam: GameDetailExtendedTeamDto;
+  @Type(() => GameDetailExtendedTeamSnapshotDto)
+  homeTeam: GameDetailExtendedTeamSnapshotDto;
 
   @IsObject()
   @ValidateNested()
-  @Type(() => GameDetailExtendedTeamDto)
-  awayTeam: GameDetailExtendedTeamDto;
+  @Type(() => GameDetailExtendedTeamSnapshotDto)
+  awayTeam: GameDetailExtendedTeamSnapshotDto;
+
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => GameLogDto)
+  logs: GameLogDto[];
 }
