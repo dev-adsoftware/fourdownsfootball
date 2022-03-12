@@ -14,6 +14,7 @@ import {NotificationsStackParamList} from '../../stacks/notifications';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {NotificationDto} from '../../services/dtos';
+import {Card} from '../core/cards/card';
 
 interface Properties extends InjectedThemeProps {
   notifications: NotificationDto[];
@@ -60,49 +61,10 @@ const Component: React.FC<Properties> = props => {
     listContainer: {
       backgroundColor: theme.colors.secondaryBackground,
     },
-    groupContainer: {
-      backgroundColor: theme.colors.background,
-      marginTop: 5,
-      marginHorizontal: 3,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: theme.colors.separator,
-      shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      shadowOffset: {width: 0, height: 3},
-      elevation: 3,
-      padding: 15,
-    },
-    groupHeader: {
-      paddingBottom: 10,
-      marginBottom: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.separator,
-    },
-    groupHeaderText: {
-      ...theme.typography.footnote,
-      fontWeight: 'bold',
-      letterSpacing: 1,
-    },
     itemContentRow: {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    // itemAvatar: {
-    //   borderWidth: 1,
-    //   borderColor: theme.colors.black,
-    //   width: 50,
-    //   height: 50,
-    //   borderRadius: 25,
-    //   alignItems: 'center',
-    //   paddingTop: 14,
-    //   marginRight: 10,
-    // },
-    // itemAvatarText: {
-    //   color: theme.colors.white,
-    //   ...theme.typography.body,
-    // },
     itemTeamIdentifierBorder: {
       borderRightWidth: 1,
       borderRightColor: theme.colors.separator,
@@ -134,10 +96,7 @@ const Component: React.FC<Properties> = props => {
     item: {groupHeader: string; groupItems: NotificationDto[]};
   }) => {
     return (
-      <View style={[styles.groupContainer]}>
-        <View style={[styles.groupHeader]}>
-          <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
-        </View>
+      <Card heading={item.groupHeader}>
         {item.groupItems.map((groupItem: NotificationDto, index: number) => {
           return (
             <View key={`${item.groupHeader}-${groupItem.id}-${index}`}>
@@ -171,7 +130,7 @@ const Component: React.FC<Properties> = props => {
             </View>
           );
         })}
-      </View>
+      </Card>
     );
   };
 

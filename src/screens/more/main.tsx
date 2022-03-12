@@ -2,6 +2,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, Text, Pressable, View, FlatList} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {Card} from '../../components/core/cards/card';
 import {SectionListItemSeparator} from '../../components/core/section-list/sectionlist-item-separator';
 import {useTheme} from '../../providers/theme';
 import {MoreStackParamList} from '../../stacks/more';
@@ -31,31 +32,6 @@ const Component: React.FC<Properties> = ({navigation}) => {
   const styles = StyleSheet.create({
     listContainer: {
       backgroundColor: theme.colors.secondaryBackground,
-    },
-    groupContainer: {
-      backgroundColor: theme.colors.background,
-      marginTop: 5,
-      marginHorizontal: 3,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: theme.colors.separator,
-      shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      shadowOffset: {width: 0, height: 3},
-      elevation: 3,
-      padding: 15,
-    },
-    groupHeader: {
-      paddingBottom: 10,
-      marginBottom: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.separator,
-    },
-    groupHeaderText: {
-      ...theme.typography.footnote,
-      fontWeight: 'bold',
-      letterSpacing: 1,
     },
     itemContentRow: {
       flexDirection: 'row',
@@ -108,10 +84,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
     };
   }) => {
     return (
-      <View style={[styles.groupContainer]}>
-        <View style={[styles.groupHeader]}>
-          <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
-        </View>
+      <Card heading={item.groupHeader}>
         {item.groupItems.map(
           (
             groupItem: {heading: string; option: keyof MoreStackParamList},
@@ -145,7 +118,7 @@ const Component: React.FC<Properties> = ({navigation}) => {
             );
           },
         )}
-      </View>
+      </Card>
     );
   };
 

@@ -1,7 +1,7 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
-import {GameCoinTossAction} from '../../components/games/game-coin-toss-action';
+import {GameActionDecoder} from '../../components/games/game-action-decoder';
 import {GameLogList} from '../../components/games/game-log-list';
 import {GamePlayField} from '../../components/games/game-play-field';
 import {useData} from '../../providers/data';
@@ -67,14 +67,10 @@ const GamePlayScreen: React.FC<Properties> = () => {
               lastPlay={{gainLoss: 15, playType: 'run'}}
             />
             <GameLogList
-              logs={activeGame.item.logs
-                .slice(-3)
-                .concat(activeGame.item.logs.slice(-3))
-                .concat(activeGame.item.logs.slice(-3))}
+              logs={activeGame.item.logs.slice(-3)}
+              minimumRows={3}
             />
-            <GameCoinTossAction
-              actingTeam={GameEngine.getActingTeam(activeGame.item)}
-            />
+            <GameActionDecoder game={activeGame.item} />
           </View>
         )
       ) : (

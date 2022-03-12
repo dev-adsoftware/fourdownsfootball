@@ -18,6 +18,7 @@ import {
 import {TeamsStackParamList} from '../../stacks/teams';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 import {Button} from '../core/buttons/button';
+import {Card} from '../core/cards/card';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 
 interface Properties extends InjectedThemeProps {
@@ -74,32 +75,6 @@ const Component: React.FC<Properties> = props => {
     listContainer: {
       backgroundColor: theme.colors.secondaryBackground,
     },
-    groupContainer: {
-      backgroundColor: theme.colors.background,
-      marginTop: 5,
-      marginHorizontal: 3,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: theme.colors.separator,
-      shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      shadowOffset: {width: 0, height: 3},
-      elevation: 3,
-      padding: 15,
-    },
-    groupHeader: {
-      paddingBottom: 10,
-      marginBottom: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.separator,
-    },
-    groupHeaderText: {
-      ...theme.typography.footnote,
-      color: theme.colors.text,
-      fontWeight: 'bold',
-      letterSpacing: 1,
-    },
     itemContentRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -146,10 +121,7 @@ const Component: React.FC<Properties> = props => {
     };
   }) => {
     return (
-      <View style={[styles.groupContainer]}>
-        <View style={[styles.groupHeader]}>
-          <Text style={[styles.groupHeaderText]}>{item.groupHeader}</Text>
-        </View>
+      <Card heading={item.groupHeader}>
         {item.groupItems.map(
           (
             groupItem: OwnerDashboardExtendedTeamDto & {status?: string},
@@ -200,7 +172,7 @@ const Component: React.FC<Properties> = props => {
             );
           },
         )}
-      </View>
+      </Card>
     );
   };
 
