@@ -66,7 +66,8 @@ const TempScreen: React.FC<Properties> = ({navigation}) => {
               color: '#00EE00',
             },
           ]}
-          size={200}
+          arrowDegrees={90}
+          size={50}
         />
       </View>
     </>

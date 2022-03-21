@@ -1,6 +1,12 @@
 import React from 'react';
 import {Animated, Easing, StyleSheet} from 'react-native';
-import Svg, {Path, PathProps} from 'react-native-svg';
+import Svg, {
+  Defs,
+  Marker,
+  MarkerUnits,
+  Path,
+  PathProps,
+} from 'react-native-svg';
 
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {MathExtra} from '../../utilities/math-extra';
@@ -12,11 +18,12 @@ export interface PieSlice {
 }
 interface Properties extends InjectedThemeProps {
   slices: PieSlice[];
+  arrowDegrees?: number;
   size: number;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {slices, size} = props;
+  const {slices, arrowDegrees, size} = props;
 
   const animationPercent = React.useRef(new Animated.Value(0)).current;
   const pathRef1 = React.useRef<React.Component<PathProps, any, any> | null>(
@@ -31,6 +38,13 @@ const Component: React.FC<Properties> = props => {
   const pathRef4 = React.useRef<React.Component<PathProps, any, any> | null>(
     null,
   );
+
+  const animationArrow = React.useRef(new Animated.Value(0)).current;
+  const arrowPathRef = React.useRef<React.Component<
+    PathProps,
+    any,
+    any
+  > | null>(null);
 
   const getCoordinatesForPercent = (percent: number) => {
     const x = MathExtra.round(Math.cos(2 * Math.PI * percent), 5);
@@ -98,15 +112,40 @@ const Component: React.FC<Properties> = props => {
       }
     });
 
-    Animated.timing(animationPercent, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-      easing: Easing.linear,
-    }).start(() => {
+    animationArrow.setValue(0);
+    animationArrow.addListener(animatedValue => {
+      if (arrowPathRef && arrowPathRef.current) {
+        const arrowCoordinates = getCoordinatesForPercent(animatedValue.value);
+        (arrowPathRef as any).current.setNativeProps({
+          d: `M 0 0 L ${0.7 * arrowCoordinates[0]} ${
+            0.7 * arrowCoordinates[1]
+          }`,
+        });
+      }
+    });
+
+    Animated.sequence([
+      Animated.timing(animationPercent, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      ...(arrowDegrees
+        ? [
+            Animated.timing(animationArrow, {
+              toValue: 2 + arrowDegrees / 360,
+              duration: 500,
+              useNativeDriver: true,
+              easing: Easing.linear,
+              delay: 500,
+            }),
+          ]
+        : []),
+    ]).start(() => {
       animationPercent.removeAllListeners();
     });
-  }, [animationPercent, calcPathData, slices]);
+  }, [animationPercent, calcPathData, slices, animationArrow, arrowDegrees]);
 
   const styles = StyleSheet.create({
     circle: {
@@ -120,16 +159,41 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
+  const startArrowCoordinates = getCoordinatesForPercent(0);
+
   return (
     <>
       <Svg viewBox="-1 -1 2 2" style={[styles.circle]}>
+        <Defs>
+          <Marker
+            id="Triangle"
+            viewBox="0 0 20 10"
+            refX="0"
+            refY="5"
+            markerUnits={'strokeWidth' as MarkerUnits}
+            markerWidth="10"
+            // markerHeight="3"
+            orient="auto">
+            <Path d="M 0 0 L 20 5 L 0 10 z" fill="context-stroke" />
+          </Marker>
+        </Defs>
         <Path ref={pathRef1} fill={slices[0].color} />
         <Path ref={pathRef2} fill={slices[1].color} />
         <Path ref={pathRef3} fill={slices[2].color} />
         <Path ref={pathRef4} fill={slices[3].color} />
-      </Svg>
-      <Svg viewBox="0 0 200 200" style={{backgroundColor: 'gray'}}>
-        <Path d="M 0 0 L 10 0" strokeWidth="5" />
+        {arrowDegrees ? (
+          <Path
+            ref={arrowPathRef}
+            d={`M 0 0 L ${0.7 * startArrowCoordinates[0]} ${
+              0.7 * startArrowCoordinates[1]
+            }`}
+            stroke="black"
+            strokeWidth={String(size / (size <= 50 ? 1000 : 1800))}
+            markerEnd="url(#Triangle)"
+          />
+        ) : (
+          <></>
+        )}
       </Svg>
     </>
   );
