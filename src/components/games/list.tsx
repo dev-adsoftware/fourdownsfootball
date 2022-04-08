@@ -436,13 +436,15 @@ const Component: React.FC<Properties> = props => {
                           originalSequence: '',
                         });
                       game.awayTeamId = gameInvite.teamId as string;
-                      game.awayTeam =
-                        new OwnerDashboardExtendedTeamSnapshotDto().init({
-                          ...gameInvite.team,
-                          gameId: '',
-                          originalTeamId: '',
-                          originalSequence: '',
-                        });
+                      if (gameInvite.teamId) {
+                        game.awayTeam =
+                          new OwnerDashboardExtendedTeamSnapshotDto().init({
+                            ...gameInvite.team,
+                            gameId: '',
+                            originalTeamId: '',
+                            originalSequence: '',
+                          });
+                      }
                       game.state = gameInvite.status;
                       return game;
                     },

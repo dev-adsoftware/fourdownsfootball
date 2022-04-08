@@ -5,6 +5,9 @@ import {
   GameParticipantDto,
   LeagueDto,
   OwnerDto,
+  PlaybookPlayDto,
+  PlayChanceDto,
+  PlayDto,
   PlayerDto,
   StateDto,
   TeamDto,
@@ -53,6 +56,20 @@ export class TeamDetailExtendedGameParticipantDto extends GameParticipantDto {
   game: TeamDetailExtendedGameDto;
 }
 
+export class TeamDetailExtendedPlayDto extends PlayDto {
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => PlayChanceDto)
+  playChances: PlayChanceDto[];
+}
+
+export class TeamDetailExtendedPlaybookPlayDto extends PlaybookPlayDto {
+  @IsObject()
+  @ValidateNested()
+  @Type(() => TeamDetailExtendedPlayDto)
+  play: TeamDetailExtendedPlayDto;
+}
+
 export class TeamDetailQueryResponseDto extends TeamDto {
   @IsObject()
   @ValidateNested()
@@ -78,4 +95,9 @@ export class TeamDetailQueryResponseDto extends TeamDto {
   @ValidateNested({each: true})
   @Type(() => PlayerDto)
   players: PlayerDto[];
+
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => TeamDetailExtendedPlaybookPlayDto)
+  playbookPlays: TeamDetailExtendedPlaybookPlayDto[];
 }

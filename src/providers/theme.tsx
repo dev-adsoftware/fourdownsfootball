@@ -40,6 +40,7 @@ export class Theme {
     black: string;
     white: string;
     silver: string;
+    grass: string;
   };
   public typography: {
     largeTitle: TextStyle;
@@ -87,6 +88,7 @@ export class Theme {
       black: 'black',
       white: 'white',
       silver: 'silver',
+      grass: '#00AA00',
     };
     this.typography = {
       largeTitle: {fontSize: 34, color: this.colors.text},

@@ -143,6 +143,7 @@ const Component: React.FC<Properties> = props => {
           ]
         : []),
     ]).start(() => {
+      animationArrow.removeAllListeners();
       animationPercent.removeAllListeners();
     });
   }, [animationPercent, calcPathData, slices, animationArrow, arrowDegrees]);

@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import {Position} from '../types/position';
 import {SequencedDto} from '../sequenced-dto';
+import {SpecialSkill} from '../types/special-skill';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -78,43 +79,19 @@ class Dto extends SequencedDto {
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  quickness: number;
+  shortPassing: number;
 
   @IsNumber()
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  passingStrength: number;
+  mediumPassing: number;
 
   @IsNumber()
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  shortPassAccuracy: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  mediumPassAccuracy: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  longPassAccuracy: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  scramblingPassAccuracy: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  scrambling: number;
+  longPassing: number;
 
   @IsNumber()
   @IsDivisibleBy(1)
@@ -132,12 +109,6 @@ class Dto extends SequencedDto {
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  breakingTackles: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
   routeRunning: number;
 
   @IsNumber()
@@ -145,24 +116,6 @@ class Dto extends SequencedDto {
   @Min(0)
   @Max(100)
   catching: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  spectacularCatching: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  catchingInTraffic: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  jumping: number;
 
   @IsNumber()
   @IsDivisibleBy(1)
@@ -210,12 +163,6 @@ class Dto extends SequencedDto {
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  intelligence: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
   clutch: number;
 
   @IsNumber()
@@ -235,12 +182,6 @@ class Dto extends SequencedDto {
   @Min(0)
   @Max(100)
   fragility: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
-  toughness: number;
 
   @IsNumber()
   @IsDivisibleBy(1)
@@ -282,12 +223,6 @@ class Dto extends SequencedDto {
   @IsDivisibleBy(1)
   @Min(0)
   @Max(100)
-  riskTaking: number;
-
-  @IsNumber()
-  @IsDivisibleBy(1)
-  @Min(0)
-  @Max(100)
   sportsmanship: number;
 
   @IsNumber()
@@ -301,6 +236,10 @@ class Dto extends SequencedDto {
   @Min(0)
   @Max(100)
   leadership: number;
+
+  @IsOptional()
+  @IsEnum(SpecialSkill)
+  specialSkill?: SpecialSkill;
 }
 
 export {Dto as PlayerDto};

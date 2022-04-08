@@ -1,5 +1,9 @@
-import {IsIn, IsOptional, IsString} from 'class-validator';
+import {IsEnum, IsOptional, IsString} from 'class-validator';
 import {SequencedDto} from '../sequenced-dto';
+import {DefenseStyle} from '../types/defense-style';
+import {OffenseStyle} from '../types/offense-style';
+import {TeamEmphasis} from '../types/team-emphasis';
+import {TeamRequestStatus} from '../types/team-request-status';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -22,28 +26,17 @@ class Dto extends SequencedDto {
   @IsString()
   stripeColor?: string;
 
-  @IsIn(['Balanced', 'Defense', 'Offense'])
+  @IsEnum(TeamEmphasis)
   teamEmphasis: string;
 
-  @IsIn([
-    'Balanced',
-    'Balanced Passing',
-    'Deep Passing',
-    'Short Passing',
-    'Rushing',
-  ])
+  @IsEnum(OffenseStyle)
   offenseStyle: string;
 
-  @IsIn(['Balanced', 'Pass Coverage', 'Pass Rush', 'Run Stop'])
+  @IsEnum(DefenseStyle)
   defenseStyle: string;
 
   @IsOptional()
-  @IsIn([
-    'Processing',
-    'Building Roster',
-    'Finding League Assignment',
-    'Complete',
-  ])
+  @IsEnum(TeamRequestStatus)
   status?: string;
 }
 

@@ -15,7 +15,7 @@ const Component: React.FC<Properties> = props => {
 
   const styles = StyleSheet.create({
     container: {
-      height: 100,
+      height: 80,
       width: '100%',
       backgroundColor: theme.colors.background,
       borderBottomWidth: 1,

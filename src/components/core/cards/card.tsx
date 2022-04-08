@@ -12,16 +12,15 @@ const Component: React.FC<Properties> = props => {
   const styles = StyleSheet.create({
     cardContainer: {
       backgroundColor: theme.colors.background,
-      marginTop: 5,
-      marginHorizontal: 5,
+      marginTop: 10,
+      marginHorizontal: 8,
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: theme.colors.separator,
+      borderColor: theme.colors.background || theme.colors.separator,
       shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      shadowOffset: {width: 0, height: 3},
-      elevation: 3,
+      shadowOpacity: 0.9,
+      shadowRadius: 5,
+      shadowOffset: {width: 3, height: 3},
       padding: 15,
     },
     cardHeader: {
@@ -40,9 +39,13 @@ const Component: React.FC<Properties> = props => {
 
   return (
     <View style={[styles.cardContainer]}>
-      <View style={[styles.cardHeader]}>
-        <Text style={[styles.cardHeaderText]}>{heading}</Text>
-      </View>
+      {heading.length > 0 ? (
+        <View style={[styles.cardHeader]}>
+          <Text style={[styles.cardHeaderText]}>{heading}</Text>
+        </View>
+      ) : (
+        <></>
+      )}
       {children}
     </View>
   );

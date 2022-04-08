@@ -11,6 +11,26 @@ export class GameEngine {
     return game.awayTeam;
   }
 
+  public static getOwnerTeam(
+    game: GameDetailQueryResponseDto,
+    ownerId: string,
+  ): GameDetailExtendedTeamSnapshotDto {
+    if (game.homeTeam.ownerId === ownerId) {
+      return game.homeTeam;
+    }
+    return game.awayTeam;
+  }
+
+  public static getOpposingTeam(
+    game: GameDetailQueryResponseDto,
+    ownerId: string,
+  ): GameDetailExtendedTeamSnapshotDto {
+    if (game.homeTeam.ownerId === ownerId) {
+      return game.awayTeam;
+    }
+    return game.homeTeam;
+  }
+
   public static getTeamAbbreviation(team: GameDetailExtendedTeamSnapshotDto) {
     if (!team) {
       return '?';
