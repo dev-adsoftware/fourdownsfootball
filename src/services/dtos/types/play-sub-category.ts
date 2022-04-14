@@ -3,5 +3,10 @@ export enum PlaySubCategory {
   Pass = 'pass',
   Punt = 'punt',
   FieldGoal = 'fg',
-  Kickoff = 'kickoff',
+  Kickoff = 'kick',
+  Balanced = 'bal',
+  Blitz = 'blitz',
+  CoinToss = 'coin toss',
+  KickDecision = 'kickoff decision',
+  DirectionDecision = 'direction decision',
 }

@@ -16,37 +16,57 @@ import {useTheme} from '../../providers/theme';
 import {GameDetailTabParamList} from '../../stacks/game-detail';
 import {GameEngine} from '../../utilities/game-engine';
 import {GamePlayerCarousel} from '../../components/games/game-player-carousel';
+import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
 };
 
 const GamePlayScreen: React.FC<Properties> = () => {
-  const [playbookOpacity, setPlaybookOpacity] = React.useState(0);
+  const {activeGame, ownerDashboard} = useData();
+  const opposingTeam = GameEngine.getOpposingTeam(
+    activeGame.item as GameDetailQueryResponseDto,
+    ownerDashboard.item?.owner.id as string,
+  );
+
+  const ownerTeam = GameEngine.getOwnerTeam(
+    activeGame.item as GameDetailQueryResponseDto,
+    ownerDashboard.item?.owner.id as string,
+  );
+
+  const actingTeam = GameEngine.getActingTeam(
+    activeGame.item as GameDetailQueryResponseDto,
+  );
+
+  const offenseTeam = GameEngine.getOffenseTeam(
+    activeGame.item as GameDetailQueryResponseDto,
+  );
+
+  const [isPlaybookOpen, setIsPlaybookOpen] = React.useState(false);
+  const [selectedPlaybookPlay, setSelectedPlaybookPlay] = React.useState(
+    ownerTeam.playbookPlays[0],
+  );
 
   const animationPlaybookOpacity = React.useRef(new Animated.Value(0)).current;
   const fadePlaybook = React.useCallback(
     (inOut: 'in' | 'out') => {
-      console.log('fading playbook');
-      if (!animationPlaybookOpacity.hasListeners()) {
-        animationPlaybookOpacity.setValue(inOut === 'in' ? 0 : 1);
-        animationPlaybookOpacity.addListener(animatedValue => {
-          setPlaybookOpacity(animatedValue.value);
-        });
-        Animated.timing(animationPlaybookOpacity, {
-          toValue: inOut === 'in' ? 1 : 0,
-          duration: 50,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        }).start(() => {
-          animationPlaybookOpacity.removeAllListeners();
-        });
-      }
+      animationPlaybookOpacity.setValue(inOut === 'in' ? 0 : 1);
+      Animated.timing(animationPlaybookOpacity, {
+        toValue: inOut === 'in' ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }).start(() => {
+        if (inOut === 'out') {
+          setIsPlaybookOpen(false);
+        }
+      });
     },
     [animationPlaybookOpacity],
   );
 
-  const {activeGame, ownerDashboard} = useData();
   const theme = useTheme();
   const styles = StyleSheet.create({
     container: {
@@ -169,25 +189,22 @@ const GamePlayScreen: React.FC<Properties> = () => {
   return (
     <>
       {activeGame.item ? (
-        activeGame.item?.state === 'loading' ? (
+        activeGame.isLoading ? (
           <ActivityIndicator />
         ) : (
           <View style={[styles.container]}>
             <GameMomentumBar
-              teamName={
-                GameEngine.getOpposingTeam(
-                  activeGame.item,
-                  ownerDashboard.item.id,
-                ).nickname
+              teamName={opposingTeam.nickname}
+              teamPrimaryColor={opposingTeam.primaryColor}
+              momentum={
+                activeGame.item.momentum < 0
+                  ? Math.abs(activeGame.item.momentum)
+                  : 0
               }
-              teamPrimaryColor={
-                GameEngine.getOpposingTeam(
-                  activeGame.item,
-                  ownerDashboard.item.id,
-                ).primaryColor
-              }
-              momentum={27}
-              timeRemaining={2 * 24 * 60 * 60 + 22 * 60 * 60 + 4 * 60 + 4}
+              timeRemaining={GameEngine.getTimeRemaining(
+                activeGame.item,
+                opposingTeam.id,
+              )}
               actionIconName="user-friends"
               onActionPressed={async () => {
                 console.log('checking opponent roster');
@@ -195,65 +212,87 @@ const GamePlayScreen: React.FC<Properties> = () => {
             />
             <View style={[styles.gameFieldContainer]}>
               <GameField
-                ballOn={50}
-                opponentTeamName={
-                  GameEngine.getOpposingTeam(
-                    activeGame.item,
-                    ownerDashboard.item.id,
-                  ).nickname
-                }
-                opponentTeamPrimaryColor={
-                  GameEngine.getOpposingTeam(
-                    activeGame.item,
-                    ownerDashboard.item.id,
-                  ).primaryColor
-                }
-                myTeamName={
-                  GameEngine.getOwnerTeam(
-                    activeGame.item,
-                    ownerDashboard.item.id,
-                  ).nickname
-                }
-                myTeamPrimaryColor={
-                  GameEngine.getOwnerTeam(
-                    activeGame.item,
-                    ownerDashboard.item.id,
-                  ).primaryColor
-                }
+                ballOn={activeGame.item.ballOn}
+                opponentTeamName={opposingTeam.nickname}
+                opponentTeamPrimaryColor={opposingTeam.primaryColor}
+                myTeamName={ownerTeam.nickname}
+                myTeamPrimaryColor={ownerTeam.primaryColor}
+                assignments={selectedPlaybookPlay.play.assignments}
+                defendingView={offenseTeam.id !== ownerTeam.id}
               />
               <View style={[styles.overlayContainer]}>
                 <View style={[styles.controlPanelContainer]}>
-                  <GameControlPanel
-                    onPressPlaybook={() => fadePlaybook('in')}
-                  />
+                  {actingTeam.id === ownerTeam.id ? (
+                    <GameControlPanel
+                      selectedPlaybookPlay={selectedPlaybookPlay}
+                      onPressPlaybook={() => {
+                        setIsPlaybookOpen(true);
+                        fadePlaybook('in');
+                      }}
+                    />
+                  ) : (
+                    <GameWaitingPanel />
+                  )}
                 </View>
-                <GamePlayerCarousel />
+                <GamePlayerCarousel
+                  players={selectedPlaybookPlay.play.assignments.map(
+                    assignment => {
+                      return ownerTeam.players.filter(player => {
+                        return (
+                          player.position === assignment.depthChartPosition &&
+                          player.depthChartSlot === assignment.depthChartSlot
+                        );
+                      })[0];
+                    },
+                  )}
+                />
               </View>
             </View>
             <GameMomentumBar
-              teamName={
-                GameEngine.getOwnerTeam(activeGame.item, ownerDashboard.item.id)
-                  .nickname
+              teamName={ownerTeam.nickname}
+              teamPrimaryColor={ownerTeam.primaryColor}
+              momentum={
+                activeGame.item.momentum > 0
+                  ? Math.abs(activeGame.item.momentum)
+                  : 0
               }
-              teamPrimaryColor={
-                GameEngine.getOwnerTeam(activeGame.item, ownerDashboard.item.id)
-                  .primaryColor
-              }
-              momentum={0}
-              timeRemaining={2 * 24 * 60 * 60 + 5 * 60 * 60 + 34 * 60 + 15}
+              timeRemaining={GameEngine.getTimeRemaining(
+                activeGame.item,
+                ownerTeam.id,
+              )}
               actionIconName="cog"
               onActionPressed={async () => {
                 console.log('checking settings');
               }}
             />
-            {playbookOpacity > 0 ? (
-              <View
+            {isPlaybookOpen ? (
+              <Animated.View
                 style={[
                   styles.playbookOverlayContainer,
-                  {opacity: playbookOpacity},
+                  {opacity: animationPlaybookOpacity},
                 ]}>
-                <GamePlaybook onClose={() => fadePlaybook('out')} />
-              </View>
+                <GamePlaybook
+                  plays={ownerTeam.playbookPlays}
+                  onSelect={(playbookPlayId: string) => {
+                    const filteredPlaybookPlay = ownerTeam.playbookPlays.filter(
+                      (
+                        playbookPlay: GameDetailExtendedPlaybookPlaySnapshotDto,
+                      ) => {
+                        return playbookPlay.id === playbookPlayId;
+                      },
+                    )[0];
+
+                    console.log(
+                      `selected play ${filteredPlaybookPlay.play.name}`,
+                    );
+
+                    setSelectedPlaybookPlay(filteredPlaybookPlay);
+                  }}
+                  onClose={() => {
+                    fadePlaybook('out');
+                  }}
+                />
+              </Animated.View>
             ) : (
               <></>
             )}

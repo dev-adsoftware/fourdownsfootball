@@ -1,16 +1,52 @@
+import {Type} from 'class-transformer';
 import {
+  IsArray,
+  IsBoolean,
   IsDivisibleBy,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
+  Min,
+  ValidateNested,
 } from 'class-validator';
+import {Dto} from '../dto';
 import {SequencedDto} from '../sequenced-dto';
+import {Alignment} from '../types/alignment';
+import {Assignment} from '../types/assignment';
 import {PlayCategory} from '../types/play-category';
 import {PlaySubCategory} from '../types/play-sub-category';
 import {Position} from '../types/position';
 
-class Dto extends SequencedDto {
+export class AssignmentDto extends Dto {
+  @IsEnum(Alignment)
+  alignment: Alignment;
+
+  @IsEnum(Assignment)
+  assignment: Assignment = Assignment.None;
+
+  @IsNumber()
+  @IsDivisibleBy(1)
+  @Min(0)
+  passRoutePriority = 0;
+
+  @IsOptional()
+  @IsNumber()
+  @IsDivisibleBy(1)
+  @Min(0)
+  passDistributionPct = 0;
+
+  @IsEnum(Position)
+  depthChartPosition: Position;
+
+  @IsNumber()
+  depthChartSlot: number;
+
+  @IsBoolean()
+  useBoost = false;
+}
+
+export class PlayDto extends SequencedDto {
   // no indexes
 
   @IsString()
@@ -19,44 +55,22 @@ class Dto extends SequencedDto {
   @IsEnum(PlayCategory)
   category: PlayCategory;
 
-  @IsOptional()
+  @IsEnum(PlaySubCategory)
+  subCategory: PlaySubCategory;
+
   @IsString()
-  formationName?: string;
+  formationName: string;
 
-  @IsOptional()
-  @IsEnum(Position, {each: true})
-  formationMap?: Position[];
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => AssignmentDto)
+  assignments: AssignmentDto[];
 
-  @IsOptional()
-  @IsEnum(Position, {each: true})
-  skillPositionMap?: Position[];
-
-  @IsOptional()
-  @IsString()
-  subCategory?: PlaySubCategory;
-
-  @IsOptional()
-  @IsString()
-  ballCarrier?: Position;
-
-  @IsOptional()
-  @IsEnum(Position, {each: true})
-  passReceiversMap?: Position[];
-
-  @IsOptional()
-  @IsNumber(undefined, {each: true})
-  @IsDivisibleBy(1, {each: true})
-  passDistributionMap?: number[];
-
-  @IsOptional()
   @IsNumber()
   @IsDivisibleBy(1)
-  repetitionPenalty?: number;
+  repetitionPenalty: number;
 
-  @IsOptional()
   @IsNumber()
   @IsDivisibleBy(1)
-  repetitionRechargeRate?: number;
+  repetitionRechargeRate: number;
 }
-
-export {Dto as PlayDto};

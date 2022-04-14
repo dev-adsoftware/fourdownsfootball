@@ -5,7 +5,10 @@ import {
   GameLogDto,
   LeagueDto,
   OwnerDto,
+  PlaybookPlaySnapshotDto,
+  PlayChanceSnapshotDto,
   PlayerSnapshotDto,
+  PlaySnapshotDto,
   StateDto,
   TeamSnapshotDto,
   TownDto,
@@ -15,6 +18,20 @@ export class GameDetailExtendedTownDto extends TownDto {
   @ValidateNested()
   @Type(() => StateDto)
   state: StateDto;
+}
+
+export class GameDetailExtendedPlaySnapshotDto extends PlaySnapshotDto {
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => PlayChanceSnapshotDto)
+  playChances: PlayChanceSnapshotDto[];
+}
+
+export class GameDetailExtendedPlaybookPlaySnapshotDto extends PlaybookPlaySnapshotDto {
+  @IsObject()
+  @ValidateNested()
+  @Type(() => GameDetailExtendedPlaySnapshotDto)
+  play: GameDetailExtendedPlaySnapshotDto;
 }
 export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   @IsObject()
@@ -36,6 +53,11 @@ export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   @ValidateNested({each: true})
   @Type(() => PlayerSnapshotDto)
   players: PlayerSnapshotDto[];
+
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => GameDetailExtendedPlaybookPlaySnapshotDto)
+  playbookPlays: GameDetailExtendedPlaybookPlaySnapshotDto[];
 }
 
 export class GameDetailQueryResponseDto extends GameDto {

@@ -2,15 +2,20 @@ import React from 'react';
 import {Pressable, SectionList, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
+import {GameEngine} from '../../utilities/game-engine';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
-import {AnimatedPieChart} from '../svg/animated-pie-chart';
+import {AnimatedPieChart, PieSlice} from '../svg/animated-pie-chart';
 
 interface Properties extends InjectedThemeProps {
+  plays: GameDetailExtendedPlaybookPlaySnapshotDto[];
+  onSelect: (playbookPlayId: string) => void;
   onClose: () => void;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {onClose, theme} = props;
+  const {plays, onSelect, onClose, theme} = props;
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
@@ -32,7 +37,6 @@ const Component: React.FC<Properties> = props => {
     headerTitleContainer: {
       flex: 1,
       height: 25,
-      // flexDirection: 'row',
       backgroundColor: theme.colors.secondaryBackground,
       borderTopLeftRadius: 5,
       alignItems: 'center',
@@ -59,13 +63,10 @@ const Component: React.FC<Properties> = props => {
       marginRight: -6,
     },
     gridContainer: {
-      //   height: '100%',
-      //   height: 300,
       flex: 1,
       width: '100%',
       paddingHorizontal: 3,
       paddingBottom: 10,
-      //   backgroundColor: theme.colors.red,
     },
     sectionHeader: {
       width: '100%',
@@ -169,7 +170,6 @@ const Component: React.FC<Properties> = props => {
     },
     playContentBodyUnitsText: {
       ...theme.typography.caption2,
-      //   fontWeight: 'bold',
       paddingLeft: 2,
       marginBottom: 2,
     },
@@ -183,35 +183,65 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
-  const sections = [
-    {
-      title: 'coin toss',
-      data: [[{name: 'heads'}, {name: 'tails'}]],
-    },
-    {
-      title: 'special teams',
-      data: [
-        [{name: 'kickoff'}, {name: 'punt'}],
-        [{name: 'field goal'}, {name: 'qb kneel'}],
-      ],
-    },
-    {
-      title: 'single back',
-      data: [
-        [{name: 'dive'}, {name: 'off tackle'}],
-        [{name: 'y corner'}, {name: 'x streak'}],
-        [{name: 'curls'}, {name: 'toss sweep'}],
-      ],
-    },
-    {
-      title: 'i formation',
-      data: [
-        [{name: 'slam'}, {name: 'slant'}],
-        [{name: 'counter'}, {name: 'deep outs'}],
-        [{name: 'flood strong'}, {name: 'streaks'}],
-      ],
-    },
-  ];
+  const accumulator: {
+    title: string;
+    count: number;
+    data: {
+      playbookPlayId: string;
+      name: string;
+      subCategory: PlaySubCategory;
+      avgGain?: number;
+      showRepetitionPenalty: boolean;
+      currentRepetitionPenalty: number;
+      chances?: PieSlice[];
+    }[][];
+  }[] = [];
+
+  const playSections = plays.reduce((previousValue, currentValue) => {
+    const section = previousValue.filter(value => {
+      return value.title === currentValue.play.formationName;
+    });
+
+    if (section.length === 0) {
+      previousValue.push({
+        title: currentValue.play.formationName,
+        count: 0,
+        data: [],
+      });
+    }
+
+    const thisSection = previousValue.filter(value => {
+      return value.title === currentValue.play.formationName;
+    })[0];
+
+    if (thisSection.count % 2 === 1) {
+      thisSection.data[thisSection.data.length - 1].push({
+        playbookPlayId: currentValue.id,
+        name: currentValue.play.name,
+        subCategory: currentValue.play.subCategory,
+        showRepetitionPenalty: currentValue.play.repetitionPenalty > 0,
+        currentRepetitionPenalty: 100 - currentValue.currentRepetitionPenalty,
+        chances: GameEngine.reducePlayChances(currentValue.play.playChances),
+        avgGain: GameEngine.calcAvgGain(currentValue.play.playChances),
+      });
+    } else {
+      thisSection.data.push([
+        {
+          playbookPlayId: currentValue.id,
+          name: currentValue.play.name,
+          subCategory: currentValue.play.subCategory,
+          showRepetitionPenalty: currentValue.play.repetitionPenalty > 0,
+          currentRepetitionPenalty: 100 - currentValue.currentRepetitionPenalty,
+          chances: GameEngine.reducePlayChances(currentValue.play.playChances),
+          avgGain: GameEngine.calcAvgGain(currentValue.play.playChances),
+        },
+      ]);
+    }
+
+    thisSection.count += 1;
+
+    return previousValue;
+  }, accumulator);
 
   const getRedGreenGradient = (percent: number): string => {
     if (percent <= 50) {
@@ -221,14 +251,29 @@ const Component: React.FC<Properties> = props => {
   };
 
   const renderPlay = ({
+    playbookPlayId,
     categoryAbbr,
     name,
+    avgGain,
+    showRepetitionPenalty,
+    currentRepetitionPenalty,
+    slices,
   }: {
+    playbookPlayId: string;
     categoryAbbr: string;
     name: string;
+    avgGain?: number;
+    showRepetitionPenalty: boolean;
+    currentRepetitionPenalty: number;
+    slices: PieSlice[];
   }) => {
     return (
-      <View style={[styles.cell]}>
+      <Pressable
+        style={[styles.cell]}
+        onPress={() => {
+          onSelect(playbookPlayId);
+          onClose();
+        }}>
         <View style={[styles.playHeaderContainer]}>
           <View style={[styles.playHeaderCategoryContainer]}>
             <Text style={[styles.playHeaderCategoryText]}>{categoryAbbr}</Text>
@@ -243,48 +288,32 @@ const Component: React.FC<Properties> = props => {
             <View style={[styles.playContentCaptionContainer]}>
               <Text style={[styles.playContentCaptionText]}>AVG GAIN</Text>
               <View style={[styles.playContentBodyContainer]}>
-                <Text style={[styles.playContentBodyText]}>14.2</Text>
+                <Text style={[styles.playContentBodyText]}>
+                  {avgGain ? String(avgGain) : '---'}
+                </Text>
                 <Text style={[styles.playContentBodyUnitsText]}>YDS</Text>
               </View>
-              <View style={[styles.playContentRPBarContainer]}>
-                <View style={[styles.playContentRPBar]}>
-                  <ProgressBar
-                    percentComplete={100 - 0}
-                    filledColor={getRedGreenGradient(100 - 0)}
-                    unfilledColor={theme.colors.black}
-                    height={8}
-                  />
+              {showRepetitionPenalty ? (
+                <View style={[styles.playContentRPBarContainer]}>
+                  <View style={[styles.playContentRPBar]}>
+                    <ProgressBar
+                      percentComplete={100 - currentRepetitionPenalty}
+                      filledColor={getRedGreenGradient(
+                        100 - currentRepetitionPenalty,
+                      )}
+                      unfilledColor={theme.colors.black}
+                      height={8}
+                    />
+                  </View>
                 </View>
-              </View>
+              ) : (
+                <></>
+              )}
             </View>
           </View>
-          <AnimatedPieChart
-            slices={[
-              {
-                startDegrees: 30,
-                endDegrees: 30,
-                color: '#AA0000',
-              },
-              {
-                startDegrees: 130,
-                endDegrees: 130,
-                color: '#FF0000',
-              },
-              {
-                startDegrees: 150,
-                endDegrees: 150,
-                color: '#00BB00',
-              },
-              {
-                startDegrees: 0,
-                endDegrees: 0,
-                color: '#00EE00',
-              },
-            ]}
-            size={50}
-          />
+          <AnimatedPieChart slices={slices} size={50} animate={false} />
         </View>
-      </View>
+      </Pressable>
     );
   };
 
@@ -302,18 +331,28 @@ const Component: React.FC<Properties> = props => {
       </View>
       <View style={[styles.gridContainer]}>
         <SectionList
-          sections={sections}
+          sections={playSections}
           keyExtractor={(item, index) => `${item}-${index}`}
-          renderItem={({item, section}) => {
+          renderItem={({item}) => {
             return (
               <View style={[styles.row]}>
                 {renderPlay({
-                  categoryAbbr: section.title.toUpperCase().slice(0, 2),
+                  playbookPlayId: item[0].playbookPlayId,
+                  categoryAbbr: item[0].subCategory.toUpperCase(),
                   name: item[0].name.toUpperCase(),
+                  showRepetitionPenalty: item[0].showRepetitionPenalty,
+                  currentRepetitionPenalty: item[0].currentRepetitionPenalty,
+                  slices: item[0].chances || [],
+                  avgGain: item[0].avgGain,
                 })}
                 {renderPlay({
-                  categoryAbbr: section.title.toUpperCase().slice(0, 2),
+                  playbookPlayId: item[1].playbookPlayId,
+                  categoryAbbr: item[1].subCategory.toUpperCase(),
                   name: item[1].name.toUpperCase(),
+                  showRepetitionPenalty: item[1].showRepetitionPenalty,
+                  currentRepetitionPenalty: item[1].currentRepetitionPenalty,
+                  slices: item[1].chances || [],
+                  avgGain: item[0].avgGain,
                 })}
               </View>
             );
@@ -325,45 +364,8 @@ const Component: React.FC<Properties> = props => {
               </Text>
             </View>
           )}
+          stickySectionHeadersEnabled={false}
         />
-        {/* <View style={[styles.sectionHeader]}>
-          <Text style={[styles.sectionHeaderText]}>COIN TOSS</Text>
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.sectionHeader]}>
-          <Text style={[styles.sectionHeaderText]}>SPECIAL TEAMS</Text>
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.sectionHeader]}>
-          <Text style={[styles.sectionHeaderText]}>OFFENSE</Text>
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-        <View style={[styles.row]}>
-          <View style={[styles.cell]} />
-          <View style={[styles.cell]} />
-        </View>
-      </View> */}
       </View>
     </View>
   );

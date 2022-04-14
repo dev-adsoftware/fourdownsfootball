@@ -11,10 +11,8 @@ type Properties = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
 };
 
-const TempScreen: React.FC<Properties> = ({navigation}) => {
+const TempScreen: React.FC<Properties> = ({}) => {
   const [mod1, setMod1] = React.useState(0);
-  const [mod2, setMod2] = React.useState(0);
-  const [mod3, setMod3] = React.useState(0);
   const theme = useTheme();
 
   const styles = StyleSheet.create({

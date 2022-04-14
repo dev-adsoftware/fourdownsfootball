@@ -2,17 +2,21 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
+import {GameEngine} from '../../utilities/game-engine';
 import {StackedBar} from '../core/progress-indicators/stacked-bar';
 import {FullHeightDarkSeparator} from '../core/separators/full-height-dark-separator';
 import {FullWidthDarkSeparator} from '../core/separators/full-width-dark-separator';
 import {AnimatedPieChart} from '../svg/animated-pie-chart';
 
 interface Properties extends InjectedThemeProps {
+  selectedPlaybookPlay: GameDetailExtendedPlaybookPlaySnapshotDto;
   onPressPlaybook: () => void;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {onPressPlaybook, theme} = props;
+  const {selectedPlaybookPlay, onPressPlaybook, theme} = props;
   const styles = StyleSheet.create({
     container: {
       width: '100%',
@@ -123,17 +127,11 @@ const Component: React.FC<Properties> = props => {
       paddingLeft: 2,
       marginBottom: 2,
     },
-    playContentRPBarContainer: {
+    playContentRouteDistributionBarContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    playContentRPBarLabel: {
-      ...theme.typography.caption2,
-      //   fontWeight: 'bold',
-      marginRight: 5,
-      marginBottom: 1,
-    },
-    playContentRPBar: {
+    playContentRouteDistributionBar: {
       flex: 1,
       marginTop: 1,
     },
@@ -148,6 +146,10 @@ const Component: React.FC<Properties> = props => {
     },
   });
 
+  const reducePlayChances = React.useCallback(() => {
+    return GameEngine.reducePlayChances(selectedPlaybookPlay.play.playChances);
+  }, [selectedPlaybookPlay.play.playChances]);
+
   return (
     <>
       <View style={[styles.container]}>
@@ -160,11 +162,17 @@ const Component: React.FC<Properties> = props => {
         <View style={[styles.playContainer]}>
           <View style={[styles.playHeaderContainer]}>
             <View style={[styles.playHeaderCategoryContainer]}>
-              <Text style={[styles.playHeaderCategoryText]}>LP</Text>
+              <Text style={[styles.playHeaderCategoryText]}>
+                {GameEngine.getPlaySubCategoryAbbr(
+                  selectedPlaybookPlay.play.subCategory,
+                ).toUpperCase()}
+              </Text>
             </View>
             <View style={[styles.playHeaderCategorySlant]} />
             <View style={[styles.playHeaderNameContainer]}>
-              <Text style={[styles.playHeaderNameText]}>HB FLAT</Text>
+              <Text style={[styles.playHeaderNameText]}>
+                {selectedPlaybookPlay.play.name.toUpperCase()}
+              </Text>
             </View>
             <View style={[styles.playHeaderSettingsIconContainer]}>
               <FontAwesome5Icon name="cog" color={theme.colors.white} />
@@ -176,50 +184,36 @@ const Component: React.FC<Properties> = props => {
               <View style={[styles.playContentCaptionContainer]}>
                 <Text style={[styles.playContentCaptionText]}>AVG GAIN</Text>
                 <View style={[styles.playContentBodyContainer]}>
-                  <Text style={[styles.playContentBodyText]}>14.2</Text>
+                  <Text style={[styles.playContentBodyText]}>
+                    {String(
+                      GameEngine.calcAvgGain(
+                        selectedPlaybookPlay.play.playChances,
+                      ) || '---',
+                    )}
+                  </Text>
                   <Text style={[styles.playContentBodyUnitsText]}>YDS</Text>
                 </View>
-                <View style={[styles.playContentRPBarContainer]}>
-                  {/* <Text style={[styles.playContentRPBarLabel]}>RP</Text> */}
-                  <View style={[styles.playContentRPBar]}>
-                    <StackedBar
-                      sections={[
-                        {percent: 60, color: 'red'},
-                        {percent: 30, color: 'orange'},
-                        {percent: 10, color: 'purple'},
-                      ]}
-                      height={8}
-                    />
+                {selectedPlaybookPlay.play.subCategory ===
+                PlaySubCategory.Pass ? (
+                  <View
+                    style={[styles.playContentRouteDistributionBarContainer]}>
+                    <View style={[styles.playContentRouteDistributionBar]}>
+                      <StackedBar
+                        sections={[
+                          {percent: 60, color: 'red'},
+                          {percent: 30, color: 'orange'},
+                          {percent: 10, color: 'purple'},
+                        ]}
+                        height={8}
+                      />
+                    </View>
                   </View>
-                </View>
+                ) : (
+                  <></>
+                )}
               </View>
             </View>
-            <AnimatedPieChart
-              slices={[
-                {
-                  startDegrees: 0,
-                  endDegrees: 0,
-                  color: '#AA0000',
-                },
-                {
-                  startDegrees: 180,
-                  endDegrees: 210,
-                  color: '#FF0000',
-                },
-                {
-                  startDegrees: 180,
-                  endDegrees: 150,
-                  color: '#00BB00',
-                },
-                {
-                  startDegrees: 0,
-                  endDegrees: 0,
-                  color: '#00EE00',
-                },
-              ]}
-              size={50}
-              arrowDegrees={150}
-            />
+            <AnimatedPieChart slices={reducePlayChances()} size={50} />
           </View>
         </View>
         <FullHeightDarkSeparator />

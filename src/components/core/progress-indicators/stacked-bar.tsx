@@ -23,9 +23,10 @@ const Component: React.FC<Properties> = props => {
 
   return (
     <View style={[styles.progressBar]}>
-      {sections.map(section => {
+      {sections.map((section, index) => {
         return (
           <View
+            key={`${section}-${index}`}
             style={[
               styles.section,
               {

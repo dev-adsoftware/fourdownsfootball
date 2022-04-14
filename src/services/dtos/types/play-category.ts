@@ -1,8 +1,6 @@
 export enum PlayCategory {
-  CoinToss = 'coin-toss',
-  DirectionChoice = 'direction',
+  PreGame = 'pregame',
   Offense = 'offense',
   Defense = 'defense',
-  SpecialTeamsOffense = 'sp-offense',
-  SpecialTeamsDefense = 'sp-defense',
+  Kickoff = 'kickoff',
 }

@@ -41,6 +41,10 @@ export class Theme {
     white: string;
     silver: string;
     grass: string;
+    pieChartDarkRed: string;
+    pieChartRed: string;
+    pieChartGreen: string;
+    pieChartLightGreen: string;
   };
   public typography: {
     largeTitle: TextStyle;
@@ -89,6 +93,10 @@ export class Theme {
       white: 'white',
       silver: 'silver',
       grass: '#00AA00',
+      pieChartDarkRed: '#AA0000',
+      pieChartRed: '#FF0000',
+      pieChartGreen: '#00BB00',
+      pieChartLightGreen: '#00EE00',
     };
     this.typography = {
       largeTitle: {fontSize: 34, color: this.colors.text},

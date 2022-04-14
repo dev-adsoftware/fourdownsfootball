@@ -1,4 +1,4 @@
-import {IsArray, IsString} from 'class-validator';
+import {IsString} from 'class-validator';
 import {TeamDto} from './team.dto';
 
 class Dto extends TeamDto {

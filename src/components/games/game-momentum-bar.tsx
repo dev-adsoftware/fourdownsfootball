@@ -31,6 +31,7 @@ const Component: React.FC<Properties> = props => {
       justifyContent: 'space-between',
       paddingVertical: 5,
       backgroundColor: theme.colors.background,
+      zIndex: 5,
     },
     iconContainer: {
       alignItems: 'center',

@@ -14,16 +14,21 @@ import {MathExtra} from '../../utilities/math-extra';
 export interface PieSlice {
   startDegrees: number;
   endDegrees: number;
-  color: string;
 }
 interface Properties extends InjectedThemeProps {
   slices: PieSlice[];
   arrowDegrees?: number;
   size: number;
+  animate?: boolean;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {slices, arrowDegrees, size} = props;
+  const {slices, arrowDegrees, size, animate = true, theme} = props;
+
+  const [slice0, setSlice0] = React.useState<PieSlice>();
+  const [slice1, setSlice1] = React.useState<PieSlice>();
+  const [slice2, setSlice2] = React.useState<PieSlice>();
+  const [slice3, setSlice3] = React.useState<PieSlice>();
 
   const animationPercent = React.useRef(new Animated.Value(0)).current;
   const pathRef1 = React.useRef<React.Component<PathProps, any, any> | null>(
@@ -71,22 +76,28 @@ const Component: React.FC<Properties> = props => {
   );
 
   React.useEffect(() => {
-    animationPercent.setValue(0);
+    animationPercent.setValue(
+      animate &&
+        (slices[0].startDegrees !== slice0?.startDegrees ||
+          slices[1].startDegrees !== slice1?.startDegrees ||
+          slices[2].startDegrees !== slice2?.startDegrees ||
+          slices[3].startDegrees !== slice3?.startDegrees)
+        ? 0
+        : 1,
+    );
     animationPercent.addListener(animatedValue => {
       const start1 = 0;
-      const end1 =
-        slices[0].startDegrees +
-        (slices[0].endDegrees - slices[0].startDegrees) * animatedValue.value;
+      const end1 = slices[0].startDegrees * animatedValue.value;
+      // slices[0].startDegrees +
+      // (slices[0].endDegrees - slices[0].startDegrees) * animatedValue.value;
       const start2 = end1;
-      const end2 =
-        start2 +
-        slices[1].startDegrees +
-        (slices[1].endDegrees - slices[1].startDegrees) * animatedValue.value;
+      const end2 = start2 + slices[1].startDegrees * animatedValue.value;
+      // slices[1].startDegrees +
+      // (slices[1].endDegrees - slices[1].startDegrees) * animatedValue.value;
       const start3 = end2;
-      const end3 =
-        start3 +
-        slices[2].startDegrees +
-        (slices[2].endDegrees - slices[2].startDegrees) * animatedValue.value;
+      const end3 = start3 + +slices[2].startDegrees * animatedValue.value;
+      // slices[2].startDegrees +
+      // (slices[2].endDegrees - slices[2].startDegrees) * animatedValue.value;
       const start4 = end3;
       const end4 = 360;
 
@@ -142,11 +153,28 @@ const Component: React.FC<Properties> = props => {
             }),
           ]
         : []),
-    ]).start(() => {
+    ]).start(({finished}) => {
       animationArrow.removeAllListeners();
       animationPercent.removeAllListeners();
+      if (finished) {
+        setSlice0(slices[0]);
+        setSlice1(slices[1]);
+        setSlice2(slices[2]);
+        setSlice3(slices[3]);
+      }
     });
-  }, [animationPercent, calcPathData, slices, animationArrow, arrowDegrees]);
+  }, [
+    animationPercent,
+    calcPathData,
+    slices,
+    animationArrow,
+    arrowDegrees,
+    animate,
+    slice0,
+    slice1,
+    slice2,
+    slice3,
+  ]);
 
   const styles = StyleSheet.create({
     circle: {
@@ -173,15 +201,14 @@ const Component: React.FC<Properties> = props => {
             refY="5"
             markerUnits={'strokeWidth' as MarkerUnits}
             markerWidth="10"
-            // markerHeight="3"
             orient="auto">
             <Path d="M 0 0 L 20 5 L 0 10 z" fill="context-stroke" />
           </Marker>
         </Defs>
-        <Path ref={pathRef1} fill={slices[0].color} />
-        <Path ref={pathRef2} fill={slices[1].color} />
-        <Path ref={pathRef3} fill={slices[2].color} />
-        <Path ref={pathRef4} fill={slices[3].color} />
+        <Path ref={pathRef1} fill={theme.colors.pieChartDarkRed} />
+        <Path ref={pathRef2} fill={theme.colors.pieChartRed} />
+        <Path ref={pathRef3} fill={theme.colors.pieChartGreen} />
+        <Path ref={pathRef4} fill={theme.colors.pieChartLightGreen} />
         {arrowDegrees ? (
           <Path
             ref={arrowPathRef}

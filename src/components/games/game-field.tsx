@@ -15,6 +15,8 @@ import Svg, {
   TextPath,
 } from 'react-native-svg';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {AssignmentDto} from '../../services/dtos/resources/play.dto';
+import {Alignment} from '../../services/dtos/types/alignment';
 
 interface Properties extends InjectedThemeProps {
   ballOn?: number;
@@ -22,6 +24,8 @@ interface Properties extends InjectedThemeProps {
   opponentTeamPrimaryColor: string;
   myTeamName: string;
   myTeamPrimaryColor: string;
+  assignments: AssignmentDto[];
+  defendingView: boolean;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -31,6 +35,8 @@ const Component: React.FC<Properties> = props => {
     opponentTeamPrimaryColor,
     myTeamName,
     myTeamPrimaryColor,
+    assignments,
+    defendingView,
     theme,
   } = props;
 
@@ -41,6 +47,7 @@ const Component: React.FC<Properties> = props => {
     container: {
       width: '100%',
       aspectRatio: 0.25,
+      zIndex: 0,
     },
   });
 
@@ -50,7 +57,7 @@ const Component: React.FC<Properties> = props => {
 
   // 0 is the minimum, 170 is the maximum ... if ball is on 0 yard line, we need to show 25 yards of field ...
   const calculateViewBoxYPos = (yardLine: number) =>
-    Math.min(170, Math.max(0, 2 * (yardLine - 15)));
+    Math.min(170, Math.max(0, 2 * (yardLine - 12 + (defendingView ? 9 : 0))));
 
   React.useEffect(() => {
     if (viewBoxYardLine !== ballOn) {
@@ -290,70 +297,134 @@ const Component: React.FC<Properties> = props => {
     );
   };
 
-  const renderOffensePlayer = (alignment: string, yardLine: number) => {
+  const renderOffensePlayer = (alignment: Alignment, yardLine: number) => {
     let xPos = 50;
     let yPos = yardLine * 2 + 20;
 
-    if (alignment === 'c') {
+    if (alignment === Alignment.Center) {
       xPos = 50;
-    } else if (alignment === 'lg') {
-      xPos = 45;
-    } else if (alignment === 'lt') {
-      xPos = 40;
-    } else if (alignment === 'lte') {
-      xPos = 35;
-    } else if (alignment === 'lwr') {
-      xPos = 15;
-    } else if (alignment === 'lsl1') {
-      xPos = 15;
-      yPos += 3;
-    } else if (alignment === 'lsl2') {
-      xPos = 20;
-      yPos += 3;
-    } else if (alignment === 'lsl3') {
-      xPos = 25;
-      yPos += 3;
-    } else if (alignment === 'rg') {
-      xPos = 55;
-    } else if (alignment === 'rt') {
-      xPos = 60;
-    } else if (alignment === 'rte') {
-      xPos = 65;
-    } else if (alignment === 'rwr') {
-      xPos = 85;
-    } else if (alignment === 'rsl1') {
-      xPos = 85;
-      yPos += 3;
-    } else if (alignment === 'rsl2') {
-      xPos = 80;
-      yPos += 3;
-    } else if (alignment === 'rsl3') {
-      xPos = 75;
-      yPos += 3;
-    } else if (alignment === 'qbu') {
+    } else if (alignment === Alignment.LeftGuard) {
+      xPos -= 5 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.LeftTackle) {
+      xPos -= 10 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.YReceiver && false) {
+      xPos -= 15 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.XReceiver && false) {
+      xPos -= 35 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.ZReceiver && false) {
+      xPos += 35 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.ZReceiver) {
+      xPos -= 35 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.AReceiver) {
+      xPos -= 30 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.BReceiver && false) {
+      xPos += 25 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.BReceiver) {
+      xPos -= 25 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.RightGuard) {
+      xPos += 5 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.RightTackle) {
+      xPos += 10 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.YReceiver) {
+      xPos += 15 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.XReceiver) {
+      xPos += 35 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.CReceiver) {
+      xPos += 30 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.QBUnderCenter) {
       xPos = 50;
-      yPos += 5;
-    } else if (alignment === 'hb') {
+      yPos += 5 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HalfBack) {
       xPos = 50;
-      yPos += 17;
+      yPos += 17 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.OffenseCaptain) {
+      xPos -= 3 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.DefenseCaptain) {
+      xPos += 3 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
     }
 
     return (
       <>
         <Circle
+          key={`shadow-${alignment}`}
           stroke="transparent"
-          fill="rgba(0,0,0,0.2)"
-          x={`${xPos}.3`}
-          y={`${yPos}.3`}
-          r={2.3}
+          fill="rgba(0,0,0,0.9)"
+          x={`${xPos}.2`}
+          y={`${yPos}.2`}
+          r={2.2}
           strokeWidth="0.5"
         />
         <Circle
+          key={alignment}
           stroke="transparent"
-          fill="white"
+          fill={theme.colors.white}
           x={`${xPos}`}
           y={`${yPos}`}
           r={2}
+          strokeWidth="0.5"
+        />
+      </>
+    );
+  };
+
+  const renderDefensePlayer = (alignment: Alignment, yardLine: number) => {
+    let xPos = 50;
+    let yPos = yardLine * 2 + 20;
+
+    if (alignment === Alignment.MiddleLinebacker) {
+      xPos = 50;
+    } else if (alignment === Alignment.OffenseCaptain) {
+      xPos -= 3 * (!defendingView ? -1 : 1);
+      yPos += 3 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.DefenseCaptain) {
+      xPos += 3 * (!defendingView ? -1 : 1);
+      yPos += 3 * (!defendingView ? -1 : 1);
+    }
+
+    return (
+      <>
+        <Line
+          key={`shadow-${alignment}-x1`}
+          stroke="rgba(0, 0, 0, 0.9)"
+          x1={`${xPos - 1.6}`}
+          y1={`${yPos - 1.6}`}
+          x2={`${xPos + 2}`}
+          y2={`${yPos + 2}`}
+          strokeWidth="0.5"
+        />
+        <Line
+          key={`shadow-${alignment}-x2`}
+          stroke="rgba(0, 0, 0, 0.9)"
+          x1={`${xPos + 2}`}
+          y1={`${yPos - 1.6}`}
+          x2={`${xPos - 1.6}`}
+          y2={`${yPos + 2}`}
+          strokeWidth="0.5"
+        />
+        <Line
+          key={`${alignment}-x1`}
+          stroke={theme.colors.white}
+          x1={`${xPos - 1.8}`}
+          y1={`${yPos - 1.8}`}
+          x2={`${xPos + 1.8}`}
+          y2={`${yPos + 1.8}`}
+          strokeWidth="0.5"
+        />
+        <Line
+          key={`${alignment}-x2`}
+          stroke={theme.colors.white}
+          x1={`${xPos + 1.8}`}
+          y1={`${yPos - 1.8}`}
+          x2={`${xPos - 1.8}`}
+          y2={`${yPos + 1.8}`}
           strokeWidth="0.5"
         />
       </>
@@ -430,19 +501,12 @@ const Component: React.FC<Properties> = props => {
           {renderYardMarkers()}
 
           <G opacity={`${formationOpacity}`}>
-            {renderOffensePlayer('lwr', viewBoxYardLine)}
-            {renderOffensePlayer('lsl3', viewBoxYardLine)}
-            {renderOffensePlayer('lt', viewBoxYardLine)}
-            {renderOffensePlayer('lg', viewBoxYardLine)}
-            {renderOffensePlayer('c', viewBoxYardLine)}
-            {renderOffensePlayer('rg', viewBoxYardLine)}
-            {renderOffensePlayer('rt', viewBoxYardLine)}
-            {renderOffensePlayer('rte', viewBoxYardLine)}
-            {renderOffensePlayer('rsl1', viewBoxYardLine)}
-            {renderOffensePlayer('qbu', viewBoxYardLine)}
-            {renderOffensePlayer('hb', viewBoxYardLine)}
-
-            <Defs>
+            {assignments.map((assignment: AssignmentDto) => {
+              return renderOffensePlayer(assignment.alignment, viewBoxYardLine);
+            })}
+            {renderDefensePlayer(Alignment.OffenseCaptain, viewBoxYardLine)}
+            {renderDefensePlayer(Alignment.DefenseCaptain, viewBoxYardLine)}
+            {/* <Defs>
               <Marker
                 id="Triangle"
                 viewBox="0 0 10 10"
@@ -471,7 +535,7 @@ const Component: React.FC<Properties> = props => {
               markerEnd="url(#Triangle)"
               fill="none"
               d="M 65 117.5 L 65 110 L 80 110"
-            />
+            /> */}
           </G>
         </G>
       </Svg>
