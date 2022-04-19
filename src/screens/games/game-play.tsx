@@ -7,6 +7,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
+import uuid from 'react-native-uuid';
 import {GameControlPanel} from '../../components/games/game-control-panel';
 import {GameField} from '../../components/games/game-field';
 import {GameMomentumBar} from '../../components/games/game-momentum-bar';
@@ -16,9 +17,10 @@ import {useTheme} from '../../providers/theme';
 import {GameDetailTabParamList} from '../../stacks/game-detail';
 import {GameEngine} from '../../utilities/game-engine';
 import {GamePlayerCarousel} from '../../components/games/game-player-carousel';
-import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {GameActionDto, GameDetailQueryResponseDto} from '../../services/dtos';
 import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
+import {GameActionsService} from '../../services/game-actions';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
@@ -228,6 +230,24 @@ const GamePlayScreen: React.FC<Properties> = () => {
                       onPressPlaybook={() => {
                         setIsPlaybookOpen(true);
                         fadePlaybook('in');
+                      }}
+                      onSubmit={async () => {
+                        console.log('submitted game action');
+                        const gameAction = new GameActionDto();
+                        gameAction.id = uuid.v4() as string;
+                        gameAction.gameId = activeGame.item?.id || 'n/a';
+                        gameAction.actingTeamSnapshotId = ownerTeam.id;
+                        gameAction.playbookPlaySnapshotId =
+                          selectedPlaybookPlay.id;
+                        gameAction.flipped = false;
+                        gameAction.noHuddle = false;
+                        gameAction.hurryUp = false;
+                        gameAction.assignments = [
+                          ...selectedPlaybookPlay.play.assignments,
+                        ];
+                        await new GameActionsService().createGameAction(
+                          gameAction,
+                        );
                       }}
                     />
                   ) : (

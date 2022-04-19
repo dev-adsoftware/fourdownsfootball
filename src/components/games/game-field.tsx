@@ -352,9 +352,8 @@ const Component: React.FC<Properties> = props => {
     }
 
     return (
-      <>
+      <G key={alignment}>
         <Circle
-          key={`shadow-${alignment}`}
           stroke="transparent"
           fill="rgba(0,0,0,0.9)"
           x={`${xPos}.2`}
@@ -363,7 +362,6 @@ const Component: React.FC<Properties> = props => {
           strokeWidth="0.5"
         />
         <Circle
-          key={alignment}
           stroke="transparent"
           fill={theme.colors.white}
           x={`${xPos}`}
@@ -371,7 +369,7 @@ const Component: React.FC<Properties> = props => {
           r={2}
           strokeWidth="0.5"
         />
-      </>
+      </G>
     );
   };
 
@@ -390,7 +388,7 @@ const Component: React.FC<Properties> = props => {
     }
 
     return (
-      <>
+      <G key={alignment}>
         <Line
           key={`shadow-${alignment}-x1`}
           stroke="rgba(0, 0, 0, 0.9)"
@@ -427,7 +425,7 @@ const Component: React.FC<Properties> = props => {
           y2={`${yPos + 1.8}`}
           strokeWidth="0.5"
         />
-      </>
+      </G>
     );
   };
 

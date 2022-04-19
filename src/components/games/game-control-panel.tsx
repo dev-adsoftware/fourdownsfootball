@@ -13,10 +13,11 @@ import {AnimatedPieChart} from '../svg/animated-pie-chart';
 interface Properties extends InjectedThemeProps {
   selectedPlaybookPlay: GameDetailExtendedPlaybookPlaySnapshotDto;
   onPressPlaybook: () => void;
+  onSubmit: () => Promise<void>;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {selectedPlaybookPlay, onPressPlaybook, theme} = props;
+  const {selectedPlaybookPlay, onPressPlaybook, onSubmit, theme} = props;
   const styles = StyleSheet.create({
     container: {
       width: '100%',
@@ -217,13 +218,13 @@ const Component: React.FC<Properties> = props => {
           </View>
         </View>
         <FullHeightDarkSeparator />
-        <View style={[styles.submitContainer]}>
+        <Pressable style={[styles.submitContainer]} onPress={onSubmit}>
           <FontAwesome5Icon
             name="arrow-right"
             color={theme.colors.white}
             size={54}
           />
-        </View>
+        </Pressable>
       </View>
     </>
   );
