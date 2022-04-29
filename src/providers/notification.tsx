@@ -6,7 +6,7 @@ import {
   RegistrationError as RNRegistrationError,
 } from 'react-native-notifications';
 import {DeviceRegistrationsService} from '../services/device-registrations';
-import {DeviceRegistrationDto} from '../services/dtos';
+import {DeviceRegistrationDto, NotificationDto} from '../services/dtos';
 import {useData} from './data';
 
 interface Notification {}
@@ -21,8 +21,9 @@ type NotificationProviderProps = {
 
 function NotificationProvider({children}: NotificationProviderProps) {
   const [deviceToken, setDeviceToken] = React.useState<string>();
+  const [isRegistered, setIsRegistered] = React.useState(false);
 
-  const {ownerDashboard} = useData();
+  const {ownerDashboard, queueNotification} = useData();
 
   const getOrCreateDeviceRegistration = async (
     id: string,
@@ -65,7 +66,9 @@ function NotificationProvider({children}: NotificationProviderProps) {
   );
 
   React.useEffect(() => {
-    if (!deviceToken) {
+    if (!isRegistered) {
+      setIsRegistered(true);
+
       RNNotifications.registerRemoteNotifications();
 
       RNNotifications.events().registerRemoteNotificationsRegistered(
@@ -90,6 +93,11 @@ function NotificationProvider({children}: NotificationProviderProps) {
               2,
             )}`,
           );
+          queueNotification(
+            new NotificationDto().init(
+              JSON.parse(notification.payload.notification),
+            ),
+          );
           completion({alert: false, sound: false, badge: false});
         },
       );
@@ -104,15 +112,19 @@ function NotificationProvider({children}: NotificationProviderProps) {
             )}`,
           );
           completion();
+          console.log('completed opened notification');
         },
       );
-    } else {
-      if (ownerDashboard.item?.owner.id) {
-        updateDeviceRegistration(
-          deviceToken,
-          ownerDashboard.item.owner.id as string,
-        );
-      }
+    }
+  }, [isRegistered, queueNotification]);
+
+  React.useEffect(() => {
+    if (ownerDashboard.item?.owner.id && deviceToken) {
+      console.log('updating device registration');
+      updateDeviceRegistration(
+        deviceToken,
+        ownerDashboard.item.owner.id as string,
+      );
     }
   }, [deviceToken, updateDeviceRegistration, ownerDashboard.item?.owner.id]);
 

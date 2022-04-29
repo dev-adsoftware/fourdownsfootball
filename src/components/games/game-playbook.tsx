@@ -2,15 +2,15 @@ import React from 'react';
 import {Pressable, SectionList, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
 import {GameEngine} from '../../utilities/game-engine';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
 import {AnimatedPieChart, PieSlice} from '../svg/animated-pie-chart';
 
 interface Properties extends InjectedThemeProps {
-  plays: GameDetailExtendedPlaybookPlaySnapshotDto[];
-  onSelect: (playbookPlayId: string) => void;
+  plays: GameDetailExtendedPlaySnapshotDto[];
+  onSelect: (playId: string) => void;
   onClose: () => void;
 }
 
@@ -187,7 +187,7 @@ const Component: React.FC<Properties> = props => {
     title: string;
     count: number;
     data: {
-      playbookPlayId: string;
+      playId: string;
       name: string;
       subCategory: PlaySubCategory;
       avgGain?: number;
@@ -199,41 +199,43 @@ const Component: React.FC<Properties> = props => {
 
   const playSections = plays.reduce((previousValue, currentValue) => {
     const section = previousValue.filter(value => {
-      return value.title === currentValue.play.formationName;
+      return value.title === currentValue.formationName;
     });
 
     if (section.length === 0) {
       previousValue.push({
-        title: currentValue.play.formationName,
+        title: currentValue.formationName,
         count: 0,
         data: [],
       });
     }
 
     const thisSection = previousValue.filter(value => {
-      return value.title === currentValue.play.formationName;
+      return value.title === currentValue.formationName;
     })[0];
 
     if (thisSection.count % 2 === 1) {
       thisSection.data[thisSection.data.length - 1].push({
-        playbookPlayId: currentValue.id,
-        name: currentValue.play.name,
-        subCategory: currentValue.play.subCategory,
-        showRepetitionPenalty: currentValue.play.repetitionPenalty > 0,
-        currentRepetitionPenalty: 100 - currentValue.currentRepetitionPenalty,
-        chances: GameEngine.reducePlayChances(currentValue.play.playChances),
-        avgGain: GameEngine.calcAvgGain(currentValue.play.playChances),
+        playId: currentValue.id,
+        name: currentValue.name,
+        subCategory: currentValue.subCategory,
+        showRepetitionPenalty: currentValue.repetitionPenalty > 0,
+        currentRepetitionPenalty:
+          100 - currentValue.playAptitude.currentRepetitionPenalty,
+        chances: GameEngine.reducePlayChances(currentValue.playChances),
+        avgGain: GameEngine.calcAvgGain(currentValue.playChances),
       });
     } else {
       thisSection.data.push([
         {
-          playbookPlayId: currentValue.id,
-          name: currentValue.play.name,
-          subCategory: currentValue.play.subCategory,
-          showRepetitionPenalty: currentValue.play.repetitionPenalty > 0,
-          currentRepetitionPenalty: 100 - currentValue.currentRepetitionPenalty,
-          chances: GameEngine.reducePlayChances(currentValue.play.playChances),
-          avgGain: GameEngine.calcAvgGain(currentValue.play.playChances),
+          playId: currentValue.id,
+          name: currentValue.name,
+          subCategory: currentValue.subCategory,
+          showRepetitionPenalty: currentValue.repetitionPenalty > 0,
+          currentRepetitionPenalty:
+            100 - currentValue.playAptitude.currentRepetitionPenalty,
+          chances: GameEngine.reducePlayChances(currentValue.playChances),
+          avgGain: GameEngine.calcAvgGain(currentValue.playChances),
         },
       ]);
     }
@@ -251,7 +253,7 @@ const Component: React.FC<Properties> = props => {
   };
 
   const renderPlay = ({
-    playbookPlayId,
+    playId,
     categoryAbbr,
     name,
     avgGain,
@@ -259,7 +261,7 @@ const Component: React.FC<Properties> = props => {
     currentRepetitionPenalty,
     slices,
   }: {
-    playbookPlayId: string;
+    playId: string;
     categoryAbbr: string;
     name: string;
     avgGain?: number;
@@ -271,7 +273,7 @@ const Component: React.FC<Properties> = props => {
       <Pressable
         style={[styles.cell]}
         onPress={() => {
-          onSelect(playbookPlayId);
+          onSelect(playId);
           onClose();
         }}>
         <View style={[styles.playHeaderContainer]}>
@@ -337,7 +339,7 @@ const Component: React.FC<Properties> = props => {
             return (
               <View style={[styles.row]}>
                 {renderPlay({
-                  playbookPlayId: item[0].playbookPlayId,
+                  playId: item[0].playId,
                   categoryAbbr: item[0].subCategory.toUpperCase(),
                   name: item[0].name.toUpperCase(),
                   showRepetitionPenalty: item[0].showRepetitionPenalty,
@@ -346,7 +348,7 @@ const Component: React.FC<Properties> = props => {
                   avgGain: item[0].avgGain,
                 })}
                 {renderPlay({
-                  playbookPlayId: item[1].playbookPlayId,
+                  playId: item[1].playId,
                   categoryAbbr: item[1].subCategory.toUpperCase(),
                   name: item[1].name.toUpperCase(),
                   showRepetitionPenalty: item[1].showRepetitionPenalty,

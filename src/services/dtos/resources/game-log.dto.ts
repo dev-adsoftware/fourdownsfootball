@@ -1,16 +1,39 @@
-import {IsNumber, IsOptional, IsString} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from "class-validator";
+import { SequencedDto } from "../sequenced-dto";
+import { LogType } from "../types/log-type";
 
 class Dto extends SequencedDto {
   @IsString()
   gameId: string;
 
+  @IsEnum(LogType)
+  logType: LogType;
+
   @IsString()
-  message: string;
+  headline: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  details: string[];
+
+  @ValidateIf((o) => o.logType === LogType.Result)
+  @IsNumber()
+  chanceResult?: number;
 
   @IsOptional()
-  @IsNumber()
-  chance?: number;
+  @IsString()
+  initiatingGameActionId?: string;
+
+  @IsOptional()
+  @IsString()
+  completingGameActionId?: string;
 }
 
-export {Dto as GameLogDto};
+export { Dto as GameLogDto };

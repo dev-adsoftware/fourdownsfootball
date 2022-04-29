@@ -1,8 +1,12 @@
-import {IsNumber, IsString} from 'class-validator';
+import {IsNumber, IsOptional, IsString} from 'class-validator';
 import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   // no indexes
+
+  @IsOptional()
+  @IsString()
+  gameRequestId: string;
 
   @IsString()
   homeTeamId: string;

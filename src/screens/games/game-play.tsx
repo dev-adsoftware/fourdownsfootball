@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
+  Text,
+  Dimensions,
 } from 'react-native';
 import uuid from 'react-native-uuid';
 import {GameControlPanel} from '../../components/games/game-control-panel';
@@ -18,9 +20,10 @@ import {GameDetailTabParamList} from '../../stacks/game-detail';
 import {GameEngine} from '../../utilities/game-engine';
 import {GamePlayerCarousel} from '../../components/games/game-player-carousel';
 import {GameActionDto, GameDetailQueryResponseDto} from '../../services/dtos';
-import {GameDetailExtendedPlaybookPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
 import {GameActionsService} from '../../services/game-actions';
+import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {GamesService} from '../../services/games';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
@@ -47,9 +50,8 @@ const GamePlayScreen: React.FC<Properties> = () => {
   );
 
   const [isPlaybookOpen, setIsPlaybookOpen] = React.useState(false);
-  const [selectedPlaybookPlay, setSelectedPlaybookPlay] = React.useState(
-    ownerTeam.playbookPlays[0],
-  );
+  const [selectedPlay, setSelectedPlay] = React.useState(ownerTeam.plays[0]);
+  const [isControlPanelSplit, setIsControlPanelSplit] = React.useState(false);
 
   const animationPlaybookOpacity = React.useRef(new Animated.Value(0)).current;
   const fadePlaybook = React.useCallback(
@@ -69,6 +71,45 @@ const GamePlayScreen: React.FC<Properties> = () => {
     [animationPlaybookOpacity],
   );
 
+  const animationResultTranslate = React.useRef(new Animated.Value(0)).current;
+  const animationControlPanelOpacity = React.useRef(
+    new Animated.Value(0),
+  ).current;
+
+  // const fadeOutControlPanel = React.useCallback(() => {
+  //   Animated.timing(animationControlPanelOpacity, {
+  //     toValue: 0,
+  //     duration: 200,
+  //     useNativeDriver: true,
+  //     easing: Easing.linear,
+  //   }).start(() => {});
+  // }, [animationControlPanelOpacity]);
+
+  React.useEffect(() => {
+    console.log('in useEffect');
+    animationResultTranslate.setValue(1);
+    animationControlPanelOpacity.setValue(0);
+    Animated.sequence([
+      Animated.spring(animationResultTranslate, {
+        toValue: 0,
+        useNativeDriver: true,
+        friction: 5,
+        delay: 2000,
+      }),
+      Animated.spring(animationResultTranslate, {
+        toValue: -1,
+        useNativeDriver: true,
+        delay: 2000,
+      }),
+      Animated.timing(animationControlPanelOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+    ]).start(() => {});
+  }, [animationResultTranslate, animationControlPanelOpacity]);
+
   const theme = useTheme();
   const styles = StyleSheet.create({
     container: {
@@ -83,6 +124,42 @@ const GamePlayScreen: React.FC<Properties> = () => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'flex-start',
+    },
+    resultOverlayContainer: {
+      position: 'absolute',
+      top: 50,
+      left: 0,
+      height: 70,
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      // backgroundColor: 'red',
+      zIndex: 1,
+    },
+    resultTextContainer: {
+      backgroundColor: 'rgba(0,0,0,0.75)',
+      paddingHorizontal: 20,
+      paddingVertical: 5,
+      borderColor: 'white',
+      borderWidth: 3,
+      borderRadius: 10,
+      alignItems: 'center',
+      width: '80%',
+    },
+    resultText: {
+      ...theme.typography.title2,
+      color: theme.colors.yellow,
+      // fontSize: 40,
+      fontWeight: 'bold',
+      textShadowColor: theme.colors.black,
+      textShadowOffset: {width: 5, height: 5},
+      textShadowRadius: 5,
+    },
+    resultSubText: {
+      ...theme.typography.caption1,
+      color: theme.colors.white,
+      // fontSize: 40,
+      fontWeight: 'bold',
     },
     overlayContainer: {
       position: 'absolute',
@@ -219,35 +296,96 @@ const GamePlayScreen: React.FC<Properties> = () => {
                 opponentTeamPrimaryColor={opposingTeam.primaryColor}
                 myTeamName={ownerTeam.nickname}
                 myTeamPrimaryColor={ownerTeam.primaryColor}
-                assignments={selectedPlaybookPlay.play.assignments}
+                assignments={selectedPlay.assignments}
                 defendingView={offenseTeam.id !== ownerTeam.id}
+                suspendAnimation={true}
               />
-              <View style={[styles.overlayContainer]}>
-                <View style={[styles.controlPanelContainer]}>
+              <Animated.View
+                style={[
+                  styles.resultOverlayContainer,
+                  {
+                    transform: [
+                      {
+                        translateX: animationResultTranslate.interpolate({
+                          inputRange: [-1, 1],
+                          outputRange: [
+                            -Dimensions.get('screen').width,
+                            Dimensions.get('screen').width,
+                          ],
+                        }),
+                      },
+                    ],
+                  },
+                ]}>
+                <View style={[styles.resultTextContainer]}>
+                  <Text style={[styles.resultText]} numberOfLines={1}>
+                    {
+                      activeGame.item.logs[activeGame.item.logs.length - 1]
+                        .headline
+                    }
+                  </Text>
+                  {activeGame.item.logs[
+                    activeGame.item.logs.length - 1
+                  ].details.map((detail: string, index: number) => {
+                    return (
+                      <Text
+                        key={`${detail}-${index}`}
+                        style={[styles.resultSubText]}>
+                        {detail}
+                      </Text>
+                    );
+                  })}
+                </View>
+              </Animated.View>
+              <Animated.View
+                style={[
+                  styles.overlayContainer,
+                  {opacity: animationControlPanelOpacity},
+                ]}>
+                <View
+                  style={[
+                    styles.controlPanelContainer,
+                    {
+                      transform: [{translateY: 0}],
+                    },
+                  ]}>
                   {actingTeam.id === ownerTeam.id ? (
                     <GameControlPanel
-                      selectedPlaybookPlay={selectedPlaybookPlay}
+                      selectedPlay={selectedPlay}
+                      isSplit={false}
                       onPressPlaybook={() => {
                         setIsPlaybookOpen(true);
                         fadePlaybook('in');
                       }}
                       onSubmit={async () => {
                         console.log('submitted game action');
+                        // fadeOutControlPanel();
+                        // setIsControlPanelSplit(true);
+                        // return;
+
                         const gameAction = new GameActionDto();
                         gameAction.id = uuid.v4() as string;
                         gameAction.gameId = activeGame.item?.id || 'n/a';
                         gameAction.actingTeamSnapshotId = ownerTeam.id;
-                        gameAction.playbookPlaySnapshotId =
-                          selectedPlaybookPlay.id;
+                        gameAction.playSnapshotId = selectedPlay.id;
                         gameAction.flipped = false;
                         gameAction.noHuddle = false;
                         gameAction.hurryUp = false;
-                        gameAction.assignments = [
-                          ...selectedPlaybookPlay.play.assignments,
-                        ];
+                        gameAction.assignments = [...selectedPlay.assignments];
                         await new GameActionsService().createGameAction(
                           gameAction,
                         );
+
+                        const updatedSequence = String(
+                          Number(activeGame.item?.sequence) + 1,
+                        );
+                        console.log(`waiting for sequence ${updatedSequence}`);
+                        await new GamesService().waitForGameUpdate(
+                          activeGame.item?.id as string,
+                          updatedSequence,
+                        );
+
+                        await activeGame.refresh();
                       }}
                     />
                   ) : (
@@ -255,18 +393,16 @@ const GamePlayScreen: React.FC<Properties> = () => {
                   )}
                 </View>
                 <GamePlayerCarousel
-                  players={selectedPlaybookPlay.play.assignments.map(
-                    assignment => {
-                      return ownerTeam.players.filter(player => {
-                        return (
-                          player.position === assignment.depthChartPosition &&
-                          player.depthChartSlot === assignment.depthChartSlot
-                        );
-                      })[0];
-                    },
-                  )}
+                  players={selectedPlay.assignments.map(assignment => {
+                    return ownerTeam.players.filter(player => {
+                      return (
+                        player.position === assignment.depthChartPosition &&
+                        player.depthChartSlot === assignment.depthChartSlot
+                      );
+                    })[0];
+                  })}
                 />
-              </View>
+              </Animated.View>
             </View>
             <GameMomentumBar
               teamName={ownerTeam.nickname}
@@ -292,21 +428,29 @@ const GamePlayScreen: React.FC<Properties> = () => {
                   {opacity: animationPlaybookOpacity},
                 ]}>
                 <GamePlaybook
-                  plays={ownerTeam.playbookPlays}
-                  onSelect={(playbookPlayId: string) => {
-                    const filteredPlaybookPlay = ownerTeam.playbookPlays.filter(
-                      (
-                        playbookPlay: GameDetailExtendedPlaybookPlaySnapshotDto,
-                      ) => {
-                        return playbookPlay.id === playbookPlayId;
+                  plays={ownerTeam.plays.sort((a, b) => {
+                    if (a.formationName > b.formationName) {
+                      return 1;
+                    } else if (a.formationName === b.formationName) {
+                      if (a.name > b.name) {
+                        return 1;
+                      } else {
+                        return -1;
+                      }
+                    } else {
+                      return -1;
+                    }
+                  })}
+                  onSelect={(playId: string) => {
+                    const filteredPlay = ownerTeam.plays.filter(
+                      (play: GameDetailExtendedPlaySnapshotDto) => {
+                        return play.id === playId;
                       },
                     )[0];
 
-                    console.log(
-                      `selected play ${filteredPlaybookPlay.play.name}`,
-                    );
+                    console.log(`selected play ${filteredPlay.name}`);
 
-                    setSelectedPlaybookPlay(filteredPlaybookPlay);
+                    setSelectedPlay(filteredPlay);
                   }}
                   onClose={() => {
                     fadePlaybook('out');

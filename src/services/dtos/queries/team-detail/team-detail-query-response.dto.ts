@@ -5,7 +5,7 @@ import {
   GameParticipantDto,
   LeagueDto,
   OwnerDto,
-  PlaybookPlayDto,
+  PlayAptitudeDto,
   PlayChanceDto,
   PlayDto,
   PlayerDto,
@@ -61,15 +61,12 @@ export class TeamDetailExtendedPlayDto extends PlayDto {
   @ValidateNested({each: true})
   @Type(() => PlayChanceDto)
   playChances: PlayChanceDto[];
-}
 
-export class TeamDetailExtendedPlaybookPlayDto extends PlaybookPlayDto {
   @IsObject()
   @ValidateNested()
-  @Type(() => TeamDetailExtendedPlayDto)
-  play: TeamDetailExtendedPlayDto;
+  @Type(() => PlayAptitudeDto)
+  playAptitude: PlayAptitudeDto;
 }
-
 export class TeamDetailQueryResponseDto extends TeamDto {
   @IsObject()
   @ValidateNested()
@@ -98,6 +95,6 @@ export class TeamDetailQueryResponseDto extends TeamDto {
 
   @IsArray()
   @ValidateNested({each: true})
-  @Type(() => TeamDetailExtendedPlaybookPlayDto)
-  playbookPlays: TeamDetailExtendedPlaybookPlayDto[];
+  @Type(() => TeamDetailExtendedPlayDto)
+  plays: TeamDetailExtendedPlayDto[];
 }

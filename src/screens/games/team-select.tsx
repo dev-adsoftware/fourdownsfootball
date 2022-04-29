@@ -11,12 +11,13 @@ type Properties = {
 };
 
 const Component: React.FC<Properties> = ({route, navigation}) => {
-  const {ownerDashboard} = useData();
+  const {ownerDashboard, systemDashboard} = useData();
 
   return (
     <SelectList
       options={
         ownerDashboard.item?.teams
+          .concat(systemDashboard.item?.teams || [])
           .sort((a, b) => {
             return a.town.name > b.town.name ? 1 : -1;
           })
@@ -34,11 +35,11 @@ const Component: React.FC<Properties> = ({route, navigation}) => {
         navigation.navigate({
           name: route.params.returnRoute,
           params: {
-            [route.params.returnParamKey]: ownerDashboard.item?.teams.filter(
-              team => {
+            [route.params.returnParamKey]: ownerDashboard.item?.teams
+              .concat(systemDashboard.item?.teams || [])
+              .filter(team => {
                 return team.id === optionId;
-              },
-            )[0],
+              })[0],
           },
           merge: true,
         });

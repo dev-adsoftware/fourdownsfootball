@@ -411,6 +411,16 @@ const Component: React.FC<Properties> = props => {
                           originalTeamId: '',
                           originalSequence: '',
                         });
+                      if (gameRequest.invitedTeamId) {
+                        game.awayTeamId = gameRequest.invitedTeamId;
+                        game.awayTeam =
+                          new OwnerDashboardExtendedTeamSnapshotDto().init({
+                            ...gameRequest.invitedTeam,
+                            gameId: '',
+                            originalTeamId: '',
+                            originalSequence: '',
+                          });
+                      }
                       game.state = gameRequest.status;
                       return game;
                     },

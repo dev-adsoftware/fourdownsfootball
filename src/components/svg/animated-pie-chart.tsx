@@ -10,39 +10,47 @@ import Svg, {
 
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {MathExtra} from '../../utilities/math-extra';
-
-export interface PieSlice {
-  startDegrees: number;
-  endDegrees: number;
-}
 interface Properties extends InjectedThemeProps {
-  slices: PieSlice[];
+  slices: {
+    darkRedSlice: number;
+    redSlice: number;
+    greenSlice: number;
+    lightGreenSlice: number;
+  };
+  finalSlices?: {
+    darkRedSlice: number;
+    redSlice: number;
+    greenSlice: number;
+    lightGreenSlice: number;
+  };
   arrowDegrees?: number;
   size: number;
-  animate?: boolean;
 }
 
 const Component: React.FC<Properties> = props => {
-  const {slices, arrowDegrees, size, animate = true, theme} = props;
+  const {slices, finalSlices, arrowDegrees, size, theme} = props;
 
-  const [slice0, setSlice0] = React.useState<PieSlice>();
-  const [slice1, setSlice1] = React.useState<PieSlice>();
-  const [slice2, setSlice2] = React.useState<PieSlice>();
-  const [slice3, setSlice3] = React.useState<PieSlice>();
+  const [showArrow, setShowArrow] = React.useState(false);
 
   const animationPercent = React.useRef(new Animated.Value(0)).current;
-  const pathRef1 = React.useRef<React.Component<PathProps, any, any> | null>(
+  const darkRedPathRef = React.useRef<React.Component<
+    PathProps,
+    any,
+    any
+  > | null>(null);
+  const redPathRef = React.useRef<React.Component<PathProps, any, any> | null>(
     null,
   );
-  const pathRef2 = React.useRef<React.Component<PathProps, any, any> | null>(
-    null,
-  );
-  const pathRef3 = React.useRef<React.Component<PathProps, any, any> | null>(
-    null,
-  );
-  const pathRef4 = React.useRef<React.Component<PathProps, any, any> | null>(
-    null,
-  );
+  const greenPathRef = React.useRef<React.Component<
+    PathProps,
+    any,
+    any
+  > | null>(null);
+  const lightGreenPathRef = React.useRef<React.Component<
+    PathProps,
+    any,
+    any
+  > | null>(null);
 
   const animationArrow = React.useRef(new Animated.Value(0)).current;
   const arrowPathRef = React.useRef<React.Component<
@@ -76,104 +84,107 @@ const Component: React.FC<Properties> = props => {
   );
 
   React.useEffect(() => {
-    animationPercent.setValue(
-      animate &&
-        (slices[0].startDegrees !== slice0?.startDegrees ||
-          slices[1].startDegrees !== slice1?.startDegrees ||
-          slices[2].startDegrees !== slice2?.startDegrees ||
-          slices[3].startDegrees !== slice3?.startDegrees)
-        ? 0
-        : 1,
-    );
+    setShowArrow(false);
+    if (finalSlices) {
+      animationPercent.setValue(0);
+    } else {
+      animationPercent.setValue(1);
+    }
+
     animationPercent.addListener(animatedValue => {
       const start1 = 0;
-      const end1 = slices[0].startDegrees * animatedValue.value;
-      // slices[0].startDegrees +
-      // (slices[0].endDegrees - slices[0].startDegrees) * animatedValue.value;
+      const end1 =
+        slices.darkRedSlice +
+        ((finalSlices ? finalSlices.darkRedSlice : slices.darkRedSlice) -
+          slices.darkRedSlice) *
+          animatedValue.value;
       const start2 = end1;
-      const end2 = start2 + slices[1].startDegrees * animatedValue.value;
-      // slices[1].startDegrees +
-      // (slices[1].endDegrees - slices[1].startDegrees) * animatedValue.value;
+      const end2 =
+        start2 +
+        slices.redSlice +
+        ((finalSlices ? finalSlices.redSlice : slices.redSlice) -
+          slices.redSlice) *
+          animatedValue.value;
       const start3 = end2;
-      const end3 = start3 + +slices[2].startDegrees * animatedValue.value;
-      // slices[2].startDegrees +
-      // (slices[2].endDegrees - slices[2].startDegrees) * animatedValue.value;
+      const end3 =
+        start3 +
+        slices.greenSlice +
+        ((finalSlices ? finalSlices.greenSlice : slices.greenSlice) -
+          slices.greenSlice) *
+          animatedValue.value;
       const start4 = end3;
       const end4 = 360;
 
-      if (pathRef1 && pathRef1.current) {
-        (pathRef1 as any).current.setNativeProps({
+      if (darkRedPathRef && darkRedPathRef.current) {
+        (darkRedPathRef as any).current.setNativeProps({
           d: calcPathData(start1 / 360, end1 / 360),
         });
       }
-      if (pathRef2 && pathRef2.current) {
-        (pathRef2 as any).current.setNativeProps({
+      if (redPathRef && redPathRef.current) {
+        (redPathRef as any).current.setNativeProps({
           d: calcPathData(start2 / 360, end2 / 360),
         });
       }
-      if (pathRef3 && pathRef3.current) {
-        (pathRef3 as any).current.setNativeProps({
+      if (greenPathRef && greenPathRef.current) {
+        (greenPathRef as any).current.setNativeProps({
           d: calcPathData(start3 / 360, end3 / 360),
         });
       }
-      if (pathRef4 && pathRef4.current) {
-        (pathRef4 as any).current.setNativeProps({
+      if (lightGreenPathRef && lightGreenPathRef.current) {
+        (lightGreenPathRef as any).current.setNativeProps({
           d: calcPathData(start4 / 360, end4 / 360),
         });
       }
     });
 
-    animationArrow.setValue(0);
-    animationArrow.addListener(animatedValue => {
-      if (arrowPathRef && arrowPathRef.current) {
-        const arrowCoordinates = getCoordinatesForPercent(animatedValue.value);
-        (arrowPathRef as any).current.setNativeProps({
-          d: `M 0 0 L ${0.7 * arrowCoordinates[0]} ${
-            0.7 * arrowCoordinates[1]
-          }`,
-        });
-      }
-    });
+    if (arrowDegrees) {
+      animationArrow.setValue(0);
 
-    Animated.sequence([
-      Animated.timing(animationPercent, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      ...(arrowDegrees
-        ? [
+      animationArrow.addListener(animatedValue => {
+        if (arrowPathRef && arrowPathRef.current) {
+          const arrowCoordinates = getCoordinatesForPercent(
+            animatedValue.value,
+          );
+          (arrowPathRef as any).current.setNativeProps({
+            d: `M 0 0 L ${0.7 * arrowCoordinates[0]} ${
+              0.7 * arrowCoordinates[1]
+            }`,
+          });
+        }
+      });
+    }
+
+    Animated.timing(animationPercent, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+      easing: Easing.linear,
+    }).start(({finished}) => {
+      animationPercent.removeAllListeners();
+      if (finished) {
+        if (arrowDegrees) {
+          setTimeout(() => {
+            setShowArrow(true);
             Animated.timing(animationArrow, {
               toValue: 2 + arrowDegrees / 360,
               duration: 500,
               useNativeDriver: true,
               easing: Easing.linear,
               delay: 500,
-            }),
-          ]
-        : []),
-    ]).start(({finished}) => {
-      animationArrow.removeAllListeners();
-      animationPercent.removeAllListeners();
-      if (finished) {
-        setSlice0(slices[0]);
-        setSlice1(slices[1]);
-        setSlice2(slices[2]);
-        setSlice3(slices[3]);
+            }).start(() => {
+              animationArrow.removeAllListeners();
+            });
+          }, 1000);
+        }
       }
     });
   }, [
-    animationPercent,
-    calcPathData,
-    slices,
     animationArrow,
+    animationPercent,
+    slices,
+    finalSlices,
     arrowDegrees,
-    animate,
-    slice0,
-    slice1,
-    slice2,
-    slice3,
+    calcPathData,
   ]);
 
   const styles = StyleSheet.create({
@@ -205,11 +216,11 @@ const Component: React.FC<Properties> = props => {
             <Path d="M 0 0 L 20 5 L 0 10 z" fill="context-stroke" />
           </Marker>
         </Defs>
-        <Path ref={pathRef1} fill={theme.colors.pieChartDarkRed} />
-        <Path ref={pathRef2} fill={theme.colors.pieChartRed} />
-        <Path ref={pathRef3} fill={theme.colors.pieChartGreen} />
-        <Path ref={pathRef4} fill={theme.colors.pieChartLightGreen} />
-        {arrowDegrees ? (
+        <Path ref={darkRedPathRef} fill={theme.colors.pieChartDarkRed} />
+        <Path ref={redPathRef} fill={theme.colors.pieChartRed} />
+        <Path ref={greenPathRef} fill={theme.colors.pieChartGreen} />
+        <Path ref={lightGreenPathRef} fill={theme.colors.pieChartLightGreen} />
+        {showArrow ? (
           <Path
             ref={arrowPathRef}
             d={`M 0 0 L ${0.7 * startArrowCoordinates[0]} ${

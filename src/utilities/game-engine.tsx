@@ -71,53 +71,35 @@ export class GameEngine {
     return subCategory;
   }
 
-  public static reducePlayChances(
-    chances: PlayChanceSnapshotDto[],
-  ): PieSlice[] {
+  public static reducePlayChances(chances: PlayChanceSnapshotDto[]): {
+    darkRedSlice: number;
+    redSlice: number;
+    greenSlice: number;
+    lightGreenSlice: number;
+  } {
     return chances.reduce(
       (previousChancesValue, currentChancesValue) => {
         if (
           currentChancesValue.category === PlayChanceCategory.ExtremeNegative
         ) {
-          previousChancesValue[0].startDegrees += currentChancesValue.base;
-          previousChancesValue[0].endDegrees += currentChancesValue.base;
+          previousChancesValue.darkRedSlice += currentChancesValue.base;
         } else if (
           currentChancesValue.category === PlayChanceCategory.Negative
         ) {
-          previousChancesValue[1].startDegrees += currentChancesValue.base;
-          previousChancesValue[1].endDegrees += currentChancesValue.base;
+          previousChancesValue.redSlice += currentChancesValue.base;
         } else if (
           currentChancesValue.category === PlayChanceCategory.Positive
         ) {
-          previousChancesValue[2].startDegrees += currentChancesValue.base;
-          previousChancesValue[2].endDegrees += currentChancesValue.base;
+          previousChancesValue.greenSlice += currentChancesValue.base;
         } else if (
           currentChancesValue.category === PlayChanceCategory.ExtremePositive
         ) {
-          previousChancesValue[3].startDegrees += currentChancesValue.base;
-          previousChancesValue[3].endDegrees += currentChancesValue.base;
+          previousChancesValue.lightGreenSlice += currentChancesValue.base;
         }
 
         return previousChancesValue;
       },
-      [
-        {
-          startDegrees: 0,
-          endDegrees: 0,
-        },
-        {
-          startDegrees: 0,
-          endDegrees: 0,
-        },
-        {
-          startDegrees: 0,
-          endDegrees: 0,
-        },
-        {
-          startDegrees: 0,
-          endDegrees: 0,
-        },
-      ],
+      {darkRedSlice: 0, redSlice: 0, greenSlice: 0, lightGreenSlice: 0},
     );
   }
 

@@ -66,7 +66,7 @@ const Component: React.FC<Properties> = props => {
           {hideValue ? (
             <></>
           ) : (
-            <Text style={[styles.itemSelectText]}>
+            <Text style={[styles.itemSelectText]} numberOfLines={1}>
               {value || (required ? 'Required' : 'Optional')}
             </Text>
           )}

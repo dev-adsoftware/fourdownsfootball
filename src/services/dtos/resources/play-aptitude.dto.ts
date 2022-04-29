@@ -17,4 +17,4 @@ class Dto extends SequencedDto {
   experience: number;
 }
 
-export {Dto as PlaybookPlayDto};
+export {Dto as PlayAptitudeDto};

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   GameDetailQueryArgsDto,
   GameDetailQueryResponseDto,
+  NotificationDto,
   OwnerDashboardQueryArgsDto,
   OwnerDashboardQueryResponseDto,
   OwnerDto,
@@ -36,19 +37,51 @@ export interface DataItemWithSetterSegment<T> {
 
 interface Data {
   ownerDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
+  systemDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
   activeGame: DataItemWithSetterSegment<GameDetailQueryResponseDto>;
   activeTeam: DataItemWithSetterSegment<TeamDetailQueryResponseDto>;
   clearAll: () => void;
+  queueNotification: (notification: NotificationDto) => void;
 }
+
+type Action =
+  | {type: 'queue-notification'; payload: NotificationDto}
+  | {type: 'pop-notification'};
+
+const reducer = (
+  state: NotificationDto[],
+  action: Action,
+): NotificationDto[] => {
+  switch (action.type) {
+    case 'queue-notification':
+      const newState = [...state];
+      newState.push(action.payload);
+      return newState;
+    case 'pop-notification':
+      let poppedState = [...state];
+      poppedState = poppedState.slice(1);
+      return poppedState;
+  }
+};
 
 type Properties = {
   children: React.ReactNode;
 };
 
 const DataProvider: React.FC<Properties> = ({children}) => {
+  const [notificationQueueState, notificationQueueDispatch] = React.useReducer(
+    reducer,
+    [],
+  );
+
   const [ownerDashboard, setOwnerDashboard] =
     React.useState<OwnerDashboardQueryResponseDto>();
   const [isOwnerDashboardLoading, setIsOwnerDashboardLoading] =
+    React.useState(true);
+
+  const [systemDashboard, setSystemDashboard] =
+    React.useState<OwnerDashboardQueryResponseDto>();
+  const [isSystemDashboardLoading, setIsSystemDashboardLoading] =
     React.useState(true);
 
   const [activeGame, setActiveGame] =
@@ -61,57 +94,101 @@ const DataProvider: React.FC<Properties> = ({children}) => {
 
   const auth = useAuth();
 
-  const refreshOwnerDashboard = React.useCallback(async () => {
-    setIsOwnerDashboardLoading(true);
+  const refreshOwnerDashboard = React.useCallback(
+    async (showLoadingIndicator = true) => {
+      if (showLoadingIndicator) {
+        setIsOwnerDashboardLoading(true);
+      }
 
-    const service = new OwnersService();
-    if (!(await service.ownerExists(auth.user?.username as string))) {
-      const ownerDto = new OwnerDto();
-      ownerDto.id = auth.user?.username as string;
-      ownerDto.name = auth.user?.username as string;
-      ownerDto.email = auth.user?.email as string;
-      await service.createOwner(ownerDto);
-    }
+      const service = new OwnersService();
+      if (!(await service.ownerExists(auth.user?.username as string))) {
+        const ownerDto = new OwnerDto();
+        ownerDto.id = auth.user?.username as string;
+        ownerDto.name = auth.user?.username as string;
+        ownerDto.email = auth.user?.email as string;
+        await service.createOwner(ownerDto);
+      }
 
-    const fetchedOwnerDashboard = await service.queryOwnerDashboard(
-      new OwnerDashboardQueryArgsDto().init({
-        id: auth.user?.username as string,
-      }),
-    );
+      const fetchedOwnerDashboard = await service.queryOwnerDashboard(
+        new OwnerDashboardQueryArgsDto().init({
+          id: auth.user?.username as string,
+        }),
+      );
 
-    setOwnerDashboard(fetchedOwnerDashboard);
-    setIsOwnerDashboardLoading(false);
-  }, [auth.user]);
+      setOwnerDashboard(fetchedOwnerDashboard);
+      if (showLoadingIndicator) {
+        setIsOwnerDashboardLoading(false);
+      }
+    },
+    [auth.user],
+  );
 
-  const refreshActiveGame = React.useCallback(async () => {
-    if (!activeGame?.id) {
-      return;
-    }
+  const refreshSystemDashboard = React.useCallback(
+    async (showLoadingIndicator = true) => {
+      if (showLoadingIndicator) {
+        setIsSystemDashboardLoading(true);
+      }
 
-    setIsActiveGameLoading(true);
-    const gamesService = new GamesService();
-    setActiveGame(
-      await gamesService.queryGameDetail(
-        new GameDetailQueryArgsDto().init({id: activeGame?.id as string}),
-      ),
-    );
-    setIsActiveGameLoading(false);
-  }, [activeGame?.id]);
+      const service = new OwnersService();
+      const fetchedSystemDashboard = await service.queryOwnerDashboard(
+        new OwnerDashboardQueryArgsDto().init({
+          id: 'system',
+        }),
+      );
 
-  const refreshActiveTeam = React.useCallback(async () => {
-    if (!activeTeam?.id) {
-      return;
-    }
+      setSystemDashboard(fetchedSystemDashboard);
+      if (showLoadingIndicator) {
+        setIsSystemDashboardLoading(false);
+      }
+    },
+    [],
+  );
 
-    setIsActiveTeamLoading(true);
-    const teamsService = new TeamsService();
-    setActiveTeam(
-      await teamsService.queryTeamDetail(
-        new TeamDetailQueryArgsDto().init({id: activeTeam?.id as string}),
-      ),
-    );
-    setIsActiveTeamLoading(false);
-  }, [activeTeam?.id]);
+  const refreshActiveGame = React.useCallback(
+    async (showLoadingIndicator = true) => {
+      if (!activeGame?.id) {
+        return;
+      }
+
+      if (showLoadingIndicator) {
+        setIsActiveGameLoading(true);
+      }
+      const gamesService = new GamesService();
+      setActiveGame(
+        await gamesService.queryGameDetail(
+          new GameDetailQueryArgsDto().init({id: activeGame?.id as string}),
+        ),
+      );
+
+      if (showLoadingIndicator) {
+        setIsActiveGameLoading(false);
+      }
+    },
+    [activeGame?.id],
+  );
+
+  const refreshActiveTeam = React.useCallback(
+    async (showLoadingIndicator = true) => {
+      if (!activeTeam?.id) {
+        return;
+      }
+
+      if (showLoadingIndicator) {
+        setIsActiveTeamLoading(true);
+      }
+      const teamsService = new TeamsService();
+      setActiveTeam(
+        await teamsService.queryTeamDetail(
+          new TeamDetailQueryArgsDto().init({id: activeTeam?.id as string}),
+        ),
+      );
+
+      if (showLoadingIndicator) {
+        setIsActiveTeamLoading(false);
+      }
+    },
+    [activeTeam?.id],
+  );
 
   const clearAll = React.useCallback(() => {
     setIsOwnerDashboardLoading(true);
@@ -129,6 +206,12 @@ const DataProvider: React.FC<Properties> = ({children}) => {
 
   React.useEffect(() => {
     if (auth.user) {
+      refreshSystemDashboard();
+    }
+  }, [auth.user, refreshSystemDashboard]);
+
+  React.useEffect(() => {
+    if (auth.user) {
       refreshActiveGame();
     }
   }, [auth.user, refreshActiveGame]);
@@ -139,6 +222,37 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     }
   }, [auth.user, refreshActiveTeam]);
 
+  React.useEffect(() => {
+    if (notificationQueueState.length > 0) {
+      const notification = notificationQueueState[0];
+      notificationQueueDispatch({type: 'pop-notification'});
+
+      if (notification.recordType === 'games') {
+        if (activeGame?.id === notification.recordId) {
+          refreshActiveGame(false)
+            .then(() => console.log('refreshed active game'))
+            .catch(e => console.log(e));
+        }
+        refreshOwnerDashboard(false)
+          .then(() => console.log('refreshed owner dashboard'))
+          .catch(e => console.log(e));
+      } else if (notification.recordType === 'game-requests') {
+        refreshOwnerDashboard(false)
+          .then(() => console.log('refreshed owner dashboard'))
+          .catch(e => console.log(e));
+      } else if (notification.recordType === 'game-invites') {
+        refreshOwnerDashboard(false)
+          .then(() => console.log('refreshed owner dashboard'))
+          .catch(e => console.log(e));
+      }
+    }
+  }, [
+    notificationQueueState,
+    activeGame,
+    refreshActiveGame,
+    refreshOwnerDashboard,
+  ]);
+
   return (
     <DataContext.Provider
       value={{
@@ -146,6 +260,11 @@ const DataProvider: React.FC<Properties> = ({children}) => {
           item: ownerDashboard,
           isLoading: isOwnerDashboardLoading,
           refresh: refreshOwnerDashboard,
+        },
+        systemDashboard: {
+          item: systemDashboard,
+          isLoading: isSystemDashboardLoading,
+          refresh: refreshSystemDashboard,
         },
         activeGame: {
           item: activeGame,
@@ -160,6 +279,12 @@ const DataProvider: React.FC<Properties> = ({children}) => {
           refresh: refreshActiveTeam,
         },
         clearAll,
+        queueNotification: (notification: NotificationDto) => {
+          notificationQueueDispatch({
+            type: 'queue-notification',
+            payload: notification,
+          });
+        },
       }}>
       {children}
     </DataContext.Provider>

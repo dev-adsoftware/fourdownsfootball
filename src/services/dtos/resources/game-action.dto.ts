@@ -11,7 +11,7 @@ class Dto extends SequencedDto {
   actingTeamSnapshotId: string;
 
   @IsString()
-  playbookPlaySnapshotId: string;
+  playSnapshotId: string;
 
   @IsBoolean()
   flipped: boolean;

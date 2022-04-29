@@ -19,6 +19,14 @@ abstract class Dto {
     return JSON.stringify(this);
   }
 
+  public clone<
+    T extends {init(obj?: Record<string | number, unknown>): T},
+  >(): T {
+    const copy = new (this.constructor as ClassConstructor<T>)();
+    copy.init(this.toPlainObject());
+    return copy;
+  }
+
   private validate(whitelist: boolean): this {
     const errors = validateSync(this, {
       whitelist,

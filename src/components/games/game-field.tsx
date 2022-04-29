@@ -5,8 +5,6 @@ import Svg, {
   Defs,
   G,
   Line,
-  Marker,
-  MarkerUnits,
   Path,
   Polygon,
   Rect,
@@ -26,6 +24,7 @@ interface Properties extends InjectedThemeProps {
   myTeamPrimaryColor: string;
   assignments: AssignmentDto[];
   defendingView: boolean;
+  suspendAnimation?: boolean;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -37,6 +36,7 @@ const Component: React.FC<Properties> = props => {
     myTeamPrimaryColor,
     assignments,
     defendingView,
+    suspendAnimation = false,
     theme,
   } = props;
 
@@ -60,7 +60,7 @@ const Component: React.FC<Properties> = props => {
     Math.min(170, Math.max(0, 2 * (yardLine - 12 + (defendingView ? 9 : 0))));
 
   React.useEffect(() => {
-    if (viewBoxYardLine !== ballOn) {
+    if (viewBoxYardLine !== ballOn && !suspendAnimation) {
       if (!animationPercent.hasListeners()) {
         animationPercent.setValue(0);
         animationPercent.addListener(animatedValue => {
@@ -96,7 +96,13 @@ const Component: React.FC<Properties> = props => {
         });
       }
     }
-  }, [animationPercent, animationOpacity, viewBoxYardLine, ballOn]);
+  }, [
+    animationPercent,
+    animationOpacity,
+    viewBoxYardLine,
+    ballOn,
+    suspendAnimation,
+  ]);
 
   const renderHashMark = (yardLine: number) => {
     const yPos = String(20 + 2 * yardLine);

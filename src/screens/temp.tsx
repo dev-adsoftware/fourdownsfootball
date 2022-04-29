@@ -41,7 +41,7 @@ const TempScreen: React.FC<Properties> = ({}) => {
             setMod1(Math.round((Math.random() * 100) % 44) - 22);
           }}
         />
-        <AnimatedPieChart
+        {/* <AnimatedPieChart
           slices={[
             {
               startDegrees: 60,
@@ -66,7 +66,7 @@ const TempScreen: React.FC<Properties> = ({}) => {
           ]}
           arrowDegrees={90}
           size={50}
-        />
+        /> */}
       </View>
     </>
   );
