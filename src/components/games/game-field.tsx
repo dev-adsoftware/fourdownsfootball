@@ -24,7 +24,9 @@ interface Properties extends InjectedThemeProps {
   myTeamPrimaryColor: string;
   assignments: AssignmentDto[];
   defendingView: boolean;
-  suspendAnimation?: boolean;
+  animateFuncRef: React.MutableRefObject<
+    ((onAnimationFinished: () => void) => void) | undefined
+  >;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -36,11 +38,11 @@ const Component: React.FC<Properties> = props => {
     myTeamPrimaryColor,
     assignments,
     defendingView,
-    suspendAnimation = false,
+    animateFuncRef,
     theme,
   } = props;
 
-  const [viewBoxYardLine, setViewBoxYardLine] = React.useState(25);
+  const [viewBoxYardLine, setViewBoxYardLine] = React.useState(ballOn);
   const [formationOpacity, setFormationOpacity] = React.useState(0);
 
   const styles = StyleSheet.create({
@@ -59,8 +61,8 @@ const Component: React.FC<Properties> = props => {
   const calculateViewBoxYPos = (yardLine: number) =>
     Math.min(170, Math.max(0, 2 * (yardLine - 12 + (defendingView ? 9 : 0))));
 
-  React.useEffect(() => {
-    if (viewBoxYardLine !== ballOn && !suspendAnimation) {
+  const animateViewBox = React.useCallback(
+    (onFinished: () => void) => {
       if (!animationPercent.hasListeners()) {
         animationPercent.setValue(0);
         animationPercent.addListener(animatedValue => {
@@ -68,41 +70,60 @@ const Component: React.FC<Properties> = props => {
             viewBoxYardLine - animatedValue.value * (viewBoxYardLine - ballOn);
           setViewBoxYardLine(newYardLine);
         });
+      }
+
+      Animated.timing(animationPercent, {
+        toValue: 1,
+        duration: Math.abs(viewBoxYardLine - ballOn) * 10,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }).start(({finished}) => {
+        animationPercent.removeAllListeners();
+        if (finished) {
+          onFinished();
+        }
+      });
+    },
+    [animationPercent, viewBoxYardLine, ballOn],
+  );
+
+  const animateAssignments = React.useCallback(
+    (fadeInOut: 'in' | 'out', onFinished: () => void) => {
+      if (!animationOpacity.hasListeners()) {
         animationOpacity.addListener(animatedValue => {
           setFormationOpacity(animatedValue.value);
         });
-        Animated.sequence([
-          Animated.timing(animationOpacity, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-            easing: Easing.linear,
-          }),
-          Animated.timing(animationPercent, {
-            toValue: 1,
-            duration: Math.abs(viewBoxYardLine - ballOn) * 10,
-            useNativeDriver: true,
-            easing: Easing.linear,
-          }),
-          Animated.timing(animationOpacity, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-            easing: Easing.linear,
-          }),
-        ]).start(() => {
-          animationPercent.removeAllListeners();
-          animationOpacity.removeAllListeners();
-        });
       }
-    }
-  }, [
-    animationPercent,
-    animationOpacity,
-    viewBoxYardLine,
-    ballOn,
-    suspendAnimation,
-  ]);
+
+      Animated.timing(animationOpacity, {
+        toValue: fadeInOut === 'in' ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }).start(({finished}) => {
+        animationOpacity.removeAllListeners();
+        if (finished) {
+          onFinished();
+        }
+      });
+    },
+    [animationOpacity],
+  );
+
+  const animate = React.useCallback(
+    onAnimationFinished => {
+      animateAssignments('out', () => {
+        animateViewBox(() => {
+          animateAssignments('in', onAnimationFinished);
+        });
+      });
+    },
+    [animateAssignments, animateViewBox],
+  );
+
+  React.useEffect(() => {
+    animateFuncRef.current = animate;
+  }, [animate, animateFuncRef]);
 
   const renderHashMark = (yardLine: number) => {
     const yPos = String(20 + 2 * yardLine);
@@ -501,7 +522,7 @@ const Component: React.FC<Properties> = props => {
             return renderHashMark(index);
           })}
           {renderYardLine(viewBoxYardLine, theme.colors.blue)}
-          {renderYardLine(40, theme.colors.yellow)}
+          {/* {renderYardLine(40, theme.colors.yellow)} */}
           {renderYardMarkers()}
 
           <G opacity={`${formationOpacity}`}>

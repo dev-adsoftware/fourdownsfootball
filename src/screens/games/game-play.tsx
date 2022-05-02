@@ -24,6 +24,7 @@ import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
 import {GameActionsService} from '../../services/game-actions';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GamesService} from '../../services/games';
+import {LogType} from '../../services/dtos/types/log-type';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
@@ -49,9 +50,11 @@ const GamePlayScreen: React.FC<Properties> = () => {
     activeGame.item as GameDetailQueryResponseDto,
   );
 
+  const gameFieldAnimateFuncRef =
+    React.useRef<(onAnimationFinished: () => void) => void>();
+
   const [isPlaybookOpen, setIsPlaybookOpen] = React.useState(false);
   const [selectedPlay, setSelectedPlay] = React.useState(ownerTeam.plays[0]);
-  const [isControlPanelSplit, setIsControlPanelSplit] = React.useState(false);
 
   const animationPlaybookOpacity = React.useRef(new Animated.Value(0)).current;
   const fadePlaybook = React.useCallback(
@@ -76,39 +79,87 @@ const GamePlayScreen: React.FC<Properties> = () => {
     new Animated.Value(0),
   ).current;
 
-  // const fadeOutControlPanel = React.useCallback(() => {
-  //   Animated.timing(animationControlPanelOpacity, {
-  //     toValue: 0,
-  //     duration: 200,
-  //     useNativeDriver: true,
-  //     easing: Easing.linear,
-  //   }).start(() => {});
-  // }, [animationControlPanelOpacity]);
-
-  React.useEffect(() => {
-    console.log('in useEffect');
-    animationResultTranslate.setValue(1);
-    animationControlPanelOpacity.setValue(0);
-    Animated.sequence([
-      Animated.spring(animationResultTranslate, {
-        toValue: 0,
-        useNativeDriver: true,
-        friction: 5,
-        delay: 2000,
-      }),
-      Animated.spring(animationResultTranslate, {
-        toValue: -1,
-        useNativeDriver: true,
-        delay: 2000,
-      }),
+  const fadeControlPanel = React.useCallback(
+    (inOut: 'in' | 'out') => {
       Animated.timing(animationControlPanelOpacity, {
-        toValue: 1,
-        duration: 500,
+        toValue: inOut === 'in' ? 1 : 0,
+        duration: 200,
         useNativeDriver: true,
         easing: Easing.linear,
-      }),
-    ]).start(() => {});
-  }, [animationResultTranslate, animationControlPanelOpacity]);
+      }).start(() => {});
+    },
+    [animationControlPanelOpacity],
+  );
+
+  const animateResultBox = React.useCallback(
+    (onFinished: () => void) => {
+      animationResultTranslate.setValue(1);
+      Animated.sequence([
+        Animated.spring(animationResultTranslate, {
+          toValue: 0,
+          useNativeDriver: true,
+          friction: 5,
+          delay: 500,
+        }),
+        Animated.spring(animationResultTranslate, {
+          toValue: -1,
+          useNativeDriver: true,
+          delay: 2000,
+        }),
+      ]).start(({finished}) => {
+        if (finished) {
+          onFinished();
+        }
+      });
+    },
+    [animationResultTranslate],
+  );
+
+  const doAnimationSequence = React.useCallback(async () => {
+    // if not played, do the animation sequence:
+    // if result has chanceResult, show split control panel with animated arrow and fade out control panel
+    // scroll field view to ballOn
+
+    const localState = await activeGame.getLocalState();
+
+    animationResultTranslate.setValue(1);
+    animationControlPanelOpacity.setValue(0);
+    if (localState?.lastPlayedSequence !== activeGame.item?.sequence) {
+      if (
+        activeGame.item?.logs[Number(activeGame.item.sequence)].logType ===
+        LogType.Result
+      ) {
+        // setSuspendGameFieldAnimation(false);
+        if (gameFieldAnimateFuncRef.current) {
+          gameFieldAnimateFuncRef.current(() => {
+            animateResultBox(() => {
+              // Mark as 'played'
+              activeGame.setLocalState({
+                lastPlayedSequence: activeGame.item?.sequence,
+              });
+              fadeControlPanel('in');
+            });
+          });
+        }
+      }
+    } else {
+      if (gameFieldAnimateFuncRef.current) {
+        gameFieldAnimateFuncRef.current(() => {
+          fadeControlPanel('in');
+        });
+      }
+    }
+  }, [
+    activeGame,
+    animationResultTranslate,
+    animationControlPanelOpacity,
+    animateResultBox,
+    fadeControlPanel,
+  ]);
+
+  React.useEffect(() => {
+    doAnimationSequence();
+  }, [doAnimationSequence]);
 
   const theme = useTheme();
   const styles = StyleSheet.create({
@@ -298,7 +349,7 @@ const GamePlayScreen: React.FC<Properties> = () => {
                 myTeamPrimaryColor={ownerTeam.primaryColor}
                 assignments={selectedPlay.assignments}
                 defendingView={offenseTeam.id !== ownerTeam.id}
-                suspendAnimation={true}
+                animateFuncRef={gameFieldAnimateFuncRef}
               />
               <Animated.View
                 style={[

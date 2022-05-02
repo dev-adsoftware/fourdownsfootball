@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
   GameDetailQueryArgsDto,
@@ -28,20 +29,33 @@ export interface DataItemSegment<T> {
   refresh: () => Promise<void>;
 }
 
-export interface DataItemWithSetterSegment<T> {
-  item?: T;
-  isLoading: boolean;
+export interface WithSetter<T> {
   set: (item: T) => void;
-  refresh: () => Promise<void>;
 }
 
+export interface WithLocalState<L> {
+  setLocalState: (item: L) => Promise<void>;
+  getLocalState: () => Promise<L | undefined>;
+}
+
+export interface LocalGameState {
+  lastPlayedSequence?: string;
+}
 interface Data {
   ownerDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
   systemDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
-  activeGame: DataItemWithSetterSegment<GameDetailQueryResponseDto>;
-  activeTeam: DataItemWithSetterSegment<TeamDetailQueryResponseDto>;
+  activeGame: DataItemSegment<GameDetailQueryResponseDto> &
+    WithSetter<GameDetailQueryResponseDto> &
+    WithLocalState<LocalGameState>;
+  activeTeam: DataItemSegment<TeamDetailQueryResponseDto> &
+    WithSetter<TeamDetailQueryResponseDto>;
   clearAll: () => void;
   queueNotification: (notification: NotificationDto) => void;
+  localStore: {
+    get: <T>(key: string) => Promise<T | undefined>;
+    set: <T>(key: string, value: T) => Promise<void>;
+    clear: () => Promise<void>;
+  };
 }
 
 type Action =
@@ -84,8 +98,9 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   const [isSystemDashboardLoading, setIsSystemDashboardLoading] =
     React.useState(true);
 
-  const [activeGame, setActiveGame] =
-    React.useState<GameDetailQueryResponseDto>();
+  const [activeGame, setActiveGame] = React.useState<
+    GameDetailQueryResponseDto & LocalGameState
+  >();
   const [isActiveGameLoading, setIsActiveGameLoading] = React.useState(true);
 
   const [activeTeam, setActiveTeam] =
@@ -93,6 +108,25 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   const [isActiveTeamLoading, setIsActiveTeamLoading] = React.useState(true);
 
   const auth = useAuth();
+
+  const getLocalData = async <T,>(key: string): Promise<T | undefined> => {
+    const jsonValue = await AsyncStorage.getItem(`@fourd:${key}`);
+    return jsonValue != null ? (JSON.parse(jsonValue) as T) : undefined;
+  };
+
+  const setLocalData = async <T,>(key: string, value: T): Promise<void> => {
+    await AsyncStorage.setItem(`@fourd:${key}`, JSON.stringify(value));
+  };
+
+  const clearLocalData = async (): Promise<void> => {
+    const keys = (await AsyncStorage.getAllKeys()) as string[];
+    await AsyncStorage.multiRemove(
+      keys.filter(key => {
+        return key.startsWith('@fourd');
+      }),
+    );
+    setActiveGame(undefined);
+  };
 
   const refreshOwnerDashboard = React.useCallback(
     async (showLoadingIndicator = true) => {
@@ -153,12 +187,14 @@ const DataProvider: React.FC<Properties> = ({children}) => {
       if (showLoadingIndicator) {
         setIsActiveGameLoading(true);
       }
+
       const gamesService = new GamesService();
-      setActiveGame(
+      const game: GameDetailQueryResponseDto & LocalGameState =
         await gamesService.queryGameDetail(
           new GameDetailQueryArgsDto().init({id: activeGame?.id as string}),
-        ),
-      );
+        );
+
+      setActiveGame(game);
 
       if (showLoadingIndicator) {
         setIsActiveGameLoading(false);
@@ -271,6 +307,17 @@ const DataProvider: React.FC<Properties> = ({children}) => {
           isLoading: isActiveGameLoading,
           set: setActiveGame,
           refresh: refreshActiveGame,
+          getLocalState: async () => {
+            return await getLocalData<LocalGameState>(
+              `${activeGame?.id}-state`,
+            );
+          },
+          setLocalState: async (localState: LocalGameState) => {
+            await setLocalData<LocalGameState>(
+              `${activeGame?.id}-state`,
+              localState,
+            );
+          },
         },
         activeTeam: {
           item: activeTeam,
@@ -284,6 +331,11 @@ const DataProvider: React.FC<Properties> = ({children}) => {
             type: 'queue-notification',
             payload: notification,
           });
+        },
+        localStore: {
+          get: getLocalData,
+          set: setLocalData,
+          clear: clearLocalData,
         },
       }}>
       {children}

@@ -14,7 +14,7 @@ type Properties = {
 const Component: React.FC<Properties> = ({navigation}) => {
   const sections: {
     groupHeader: string;
-    groupItems: [{heading: string; option: keyof MoreStackParamList}];
+    groupItems: {heading: string; option: keyof MoreStackParamList}[];
   }[] = [
     {
       groupHeader: 'ACTIONS',
@@ -22,6 +22,10 @@ const Component: React.FC<Properties> = ({navigation}) => {
         {
           heading: 'Sign out',
           option: 'Sign Out',
+        },
+        {
+          heading: 'Clear local data',
+          option: 'Clear Local Data',
         },
       ],
     },

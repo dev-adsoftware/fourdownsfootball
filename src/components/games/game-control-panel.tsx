@@ -14,7 +14,6 @@ import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/gam
 import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
 import {GameEngine} from '../../utilities/game-engine';
 import {StackedBar} from '../core/progress-indicators/stacked-bar';
-import {FullHeightDarkSeparator} from '../core/separators/full-height-dark-separator';
 import {FullWidthDarkSeparator} from '../core/separators/full-width-dark-separator';
 import {AnimatedPieChart} from '../svg/animated-pie-chart';
 
@@ -62,7 +61,7 @@ const Component: React.FC<Properties> = props => {
         }),
       ]).start(finished => {
         if (finished) {
-          // onFinished();
+          onFinished();
         }
       });
     },
@@ -322,7 +321,11 @@ const Component: React.FC<Properties> = props => {
                 )}
               </View>
             </View>
-            <AnimatedPieChart slices={reducePlayChances()} size={50} />
+            <AnimatedPieChart
+              slices={reducePlayChances()}
+              size={50}
+              arrowDegrees={chanceResult}
+            />
           </View>
         </Animated.View>
         {/* <FullHeightDarkSeparator /> */}

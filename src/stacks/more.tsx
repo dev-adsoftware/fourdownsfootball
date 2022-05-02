@@ -6,6 +6,7 @@ import React from 'react';
 import {AppStackParamList} from '../../App';
 import {useTheme} from '../providers/theme';
 import {SignOutConfirmationScreen} from '../screens/auth/sign-out-confirmation';
+import {ClearLocalDataConfirmationScreen} from '../screens/more/clear-local-data-confirmation';
 import {MoreMainScreen} from '../screens/more/main';
 
 type Properties = {
@@ -15,6 +16,7 @@ type Properties = {
 export type MoreStackParamList = {
   More: undefined;
   'Sign Out': undefined;
+  'Clear Local Data': undefined;
 };
 
 const Stack = createNativeStackNavigator<MoreStackParamList>();
@@ -31,6 +33,10 @@ const MoreStack: React.FC<Properties> = ({}) => {
       }}>
       <Stack.Screen name="More" component={MoreMainScreen} />
       <Stack.Screen name="Sign Out" component={SignOutConfirmationScreen} />
+      <Stack.Screen
+        name="Clear Local Data"
+        component={ClearLocalDataConfirmationScreen}
+      />
     </Stack.Navigator>
   );
 };
