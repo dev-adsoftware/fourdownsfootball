@@ -82,4 +82,16 @@ export enum Alignment {
 
   OffenseCaptain,
   DefenseCaptain,
+
+  HuddlePlayCaller,
+  HuddleFront1,
+  HuddleFront2,
+  HuddleFront3,
+  HuddleFront4,
+  HuddleFront5,
+  HuddleBack1,
+  HuddleBack2,
+  HuddleBack3,
+  HuddleBack4,
+  HuddleBack5,
 }

@@ -3,10 +3,11 @@ import {Pressable, SectionList, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {Formation} from '../../services/dtos/types/formation';
 import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
 import {GameEngine} from '../../utilities/game-engine';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
-import {AnimatedPieChart, PieSlice} from '../svg/animated-pie-chart';
+import {AnimatedPieChart} from '../svg/animated-pie-chart';
 
 interface Properties extends InjectedThemeProps {
   plays: GameDetailExtendedPlaySnapshotDto[];
@@ -16,6 +17,8 @@ interface Properties extends InjectedThemeProps {
 
 const Component: React.FC<Properties> = props => {
   const {plays, onSelect, onClose, theme} = props;
+
+  console.log(plays);
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
@@ -93,6 +96,15 @@ const Component: React.FC<Properties> = props => {
       margin: 2,
       borderRadius: 5,
       backgroundColor: theme.colors.secondaryBackground,
+    },
+    emptyCell: {
+      flex: 1,
+      // borderWidth: 1,
+      // borderColor: theme.colors.separator,
+      height: '100%',
+      margin: 2,
+      // borderRadius: 5,
+      // backgroundColor: theme.colors.secondaryBackground,
     },
     playHeaderContainer: {
       width: '100%',
@@ -184,7 +196,7 @@ const Component: React.FC<Properties> = props => {
   });
 
   const accumulator: {
-    title: string;
+    title: Formation;
     count: number;
     data: {
       playId: string;
@@ -193,7 +205,12 @@ const Component: React.FC<Properties> = props => {
       avgGain?: number;
       showRepetitionPenalty: boolean;
       currentRepetitionPenalty: number;
-      chances?: PieSlice[];
+      chances?: {
+        darkRedSlice: number;
+        redSlice: number;
+        greenSlice: number;
+        lightGreenSlice: number;
+      };
     }[][];
   }[] = [];
 
@@ -267,7 +284,12 @@ const Component: React.FC<Properties> = props => {
     avgGain?: number;
     showRepetitionPenalty: boolean;
     currentRepetitionPenalty: number;
-    slices: PieSlice[];
+    slices: {
+      darkRedSlice: number;
+      redSlice: number;
+      greenSlice: number;
+      lightGreenSlice: number;
+    };
   }) => {
     return (
       <Pressable
@@ -313,7 +335,7 @@ const Component: React.FC<Properties> = props => {
               )}
             </View>
           </View>
-          <AnimatedPieChart slices={slices} size={50} animate={false} />
+          <AnimatedPieChart slices={slices} size={50} />
         </View>
       </Pressable>
     );
@@ -344,25 +366,39 @@ const Component: React.FC<Properties> = props => {
                   name: item[0].name.toUpperCase(),
                   showRepetitionPenalty: item[0].showRepetitionPenalty,
                   currentRepetitionPenalty: item[0].currentRepetitionPenalty,
-                  slices: item[0].chances || [],
+                  slices: item[0].chances || {
+                    darkRedSlice: 0,
+                    redSlice: 0,
+                    greenSlice: 0,
+                    lightGreenSlice: 0,
+                  },
                   avgGain: item[0].avgGain,
                 })}
-                {renderPlay({
-                  playId: item[1].playId,
-                  categoryAbbr: item[1].subCategory.toUpperCase(),
-                  name: item[1].name.toUpperCase(),
-                  showRepetitionPenalty: item[1].showRepetitionPenalty,
-                  currentRepetitionPenalty: item[1].currentRepetitionPenalty,
-                  slices: item[1].chances || [],
-                  avgGain: item[0].avgGain,
-                })}
+                {item.length > 1 ? (
+                  renderPlay({
+                    playId: item[1].playId,
+                    categoryAbbr: item[1].subCategory.toUpperCase(),
+                    name: item[1].name.toUpperCase(),
+                    showRepetitionPenalty: item[1].showRepetitionPenalty,
+                    currentRepetitionPenalty: item[1].currentRepetitionPenalty,
+                    slices: item[1].chances || {
+                      darkRedSlice: 0,
+                      redSlice: 0,
+                      greenSlice: 0,
+                      lightGreenSlice: 0,
+                    },
+                    avgGain: item[1].avgGain,
+                  })
+                ) : (
+                  <View style={[styles.emptyCell]} />
+                )}
               </View>
             );
           }}
           renderSectionHeader={({section: {title}}) => (
             <View style={[styles.sectionHeader]}>
               <Text style={styles.sectionHeaderText}>
-                {title.toUpperCase()}
+                {GameEngine.getFormationName(title).toUpperCase()}
               </Text>
             </View>
           )}

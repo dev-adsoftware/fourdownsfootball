@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
-import {Validator} from '../../globals/validator';
+import validate from 'validate.js';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {Button} from '../core/buttons/button';
 import {Form} from '../core/forms/form';
@@ -14,7 +14,7 @@ interface Properties extends InjectedThemeProps {
 }
 
 const Component: React.FC<Properties> = props => {
-  const {username, onSubmit} = props;
+  const {username, onSubmit, theme} = props;
 
   const [code, setCode] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -29,6 +29,9 @@ const Component: React.FC<Properties> = props => {
       justifyContent: 'flex-start',
       padding: 20,
     },
+    textInput: {
+      color: theme.colors.text,
+    },
   });
 
   return (
@@ -38,6 +41,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="next"
@@ -50,6 +54,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="done"
@@ -63,6 +68,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="done"
@@ -77,7 +83,7 @@ const Component: React.FC<Properties> = props => {
             <Button
               text="Reset Password"
               isLoading={isProcessing}
-              disabled={Validator.validate(
+              disabled={validate(
                 {code, password, password2},
                 {
                   code: {presence: {allowEmpty: false}},

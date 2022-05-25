@@ -19,12 +19,19 @@ import {useTheme} from '../../providers/theme';
 import {GameDetailTabParamList} from '../../stacks/game-detail';
 import {GameEngine} from '../../utilities/game-engine';
 import {GamePlayerCarousel} from '../../components/games/game-player-carousel';
-import {GameActionDto, GameDetailQueryResponseDto} from '../../services/dtos';
+import {
+  GameActionDto,
+  GameDetailQueryResponseDto,
+  PlayerSnapshotDto,
+} from '../../services/dtos';
 import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
 import {GameActionsService} from '../../services/game-actions';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GamesService} from '../../services/games';
 import {LogType} from '../../services/dtos/types/log-type';
+import {Alignment} from '../../services/dtos/types/alignment';
+import {FormationAssignments} from '../../services/data/formation-assignments';
+import {Formation} from '../../services/dtos/types/formation';
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
@@ -342,12 +349,22 @@ const GamePlayScreen: React.FC<Properties> = () => {
             />
             <View style={[styles.gameFieldContainer]}>
               <GameField
-                ballOn={activeGame.item.ballOn}
-                opponentTeamName={opposingTeam.nickname}
-                opponentTeamPrimaryColor={opposingTeam.primaryColor}
-                myTeamName={ownerTeam.nickname}
-                myTeamPrimaryColor={ownerTeam.primaryColor}
-                assignments={selectedPlay.assignments}
+                ballOn={
+                  offenseTeam.id === ownerTeam.id
+                    ? 100 - activeGame.item.ballOn
+                    : activeGame.item.ballOn
+                }
+                direction={activeGame.item.direction}
+                homeTeamName={activeGame.item.homeTeam.nickname}
+                homeTeamPrimaryColor={activeGame.item.homeTeam.primaryColor}
+                awayTeamName={activeGame.item.awayTeam.nickname}
+                awayTeamPrimaryColor={activeGame.item.awayTeam.primaryColor}
+                offenseAssignments={
+                  offenseTeam.id === ownerTeam.id
+                    ? selectedPlay.assignments
+                    : []
+                }
+                defenseAssignments={[]}
                 defendingView={offenseTeam.id !== ownerTeam.id}
                 animateFuncRef={gameFieldAnimateFuncRef}
               />
@@ -444,14 +461,39 @@ const GamePlayScreen: React.FC<Properties> = () => {
                   )}
                 </View>
                 <GamePlayerCarousel
-                  players={selectedPlay.assignments.map(assignment => {
-                    return ownerTeam.players.filter(player => {
-                      return (
-                        player.position === assignment.depthChartPosition &&
-                        player.depthChartSlot === assignment.depthChartSlot
-                      );
-                    })[0];
-                  })}
+                  players={
+                    actingTeam.id === ownerTeam.id
+                      ? selectedPlay.assignments.map(assignment => {
+                          const filteredPlayer: PlayerSnapshotDto & {
+                            alignment?: Alignment;
+                          } = ownerTeam.players.filter(player => {
+                            return (
+                              player.position ===
+                                assignment.depthChartPosition &&
+                              player.depthChartSlot ===
+                                assignment.depthChartSlot
+                            );
+                          })[0];
+                          filteredPlayer.alignment = assignment.alignment;
+                          return filteredPlayer;
+                        })
+                      : FormationAssignments[Formation.KickoffReturn].map(
+                          assignment => {
+                            const filteredPlayer: PlayerSnapshotDto & {
+                              alignment?: Alignment;
+                            } = ownerTeam.players.filter(player => {
+                              return (
+                                player.position ===
+                                  assignment.depthChartPosition &&
+                                player.depthChartSlot ===
+                                  assignment.depthChartSlot
+                              );
+                            })[0];
+                            filteredPlayer.alignment = assignment.alignment;
+                            return filteredPlayer;
+                          },
+                        )
+                  }
                 />
               </Animated.View>
             </View>

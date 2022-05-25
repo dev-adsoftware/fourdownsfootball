@@ -1,9 +1,11 @@
-import {PieSlice} from '../components/svg/animated-pie-chart';
 import {
   GameDetailQueryResponseDto,
   PlayChanceSnapshotDto,
 } from '../services/dtos';
 import {GameDetailExtendedTeamSnapshotDto} from '../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {Alignment} from '../services/dtos/types/alignment';
+import {Formation} from '../services/dtos/types/formation';
+import {GameState} from '../services/dtos/types/game-state';
 import {PlayChanceCategory} from '../services/dtos/types/play-chance-category';
 import {PlaySubCategory} from '../services/dtos/types/play-sub-category';
 
@@ -69,6 +71,46 @@ export class GameEngine {
       return 'CT';
     }
     return subCategory;
+  }
+
+  public static getAlignmentAbbr(alignment?: Alignment): string | undefined {
+    switch (alignment) {
+      case Alignment.KickoffKicker:
+        return 'K';
+      case Alignment.KickoffStreaker1:
+      case Alignment.KickoffStreaker2:
+      case Alignment.KickoffStreaker3:
+      case Alignment.KickoffStreaker4:
+      case Alignment.KickoffStreaker5:
+      case Alignment.KickoffStreaker6:
+      case Alignment.KickoffStreaker7:
+      case Alignment.KickoffStreaker8:
+      case Alignment.KickoffStreaker9:
+      case Alignment.KickoffStreaker10:
+        return 'ST';
+      default:
+        return undefined;
+    }
+  }
+
+  public static getGameStateName(gameState?: GameState): string {
+    if (gameState === GameState.Loading) {
+      return 'Loading';
+    } else if (gameState === GameState.Kickoff) {
+      return 'Kickoff';
+    } else {
+      return 'Active';
+    }
+  }
+
+  public static getFormationName(formation: Formation): string {
+    if (formation === Formation.Kickoff) {
+      return 'Kickoff';
+    } else if (formation === Formation.KickoffReturn) {
+      return 'Kick Return';
+    } else {
+      return 'None';
+    }
   }
 
   public static reducePlayChances(chances: PlayChanceSnapshotDto[]): {

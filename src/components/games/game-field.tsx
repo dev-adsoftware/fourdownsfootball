@@ -15,14 +15,31 @@ import Svg, {
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {AssignmentDto} from '../../services/dtos/resources/play.dto';
 import {Alignment} from '../../services/dtos/types/alignment';
+import {Direction} from '../../services/dtos/types/directions';
+
+const huddleAssignments = [
+  {alignment: Alignment.HuddlePlayCaller},
+  {alignment: Alignment.HuddleFront1},
+  {alignment: Alignment.HuddleFront2},
+  {alignment: Alignment.HuddleFront3},
+  {alignment: Alignment.HuddleFront4},
+  {alignment: Alignment.HuddleFront5},
+  {alignment: Alignment.HuddleBack1},
+  {alignment: Alignment.HuddleBack2},
+  {alignment: Alignment.HuddleBack3},
+  {alignment: Alignment.HuddleBack4},
+  {alignment: Alignment.HuddleBack5},
+];
 
 interface Properties extends InjectedThemeProps {
   ballOn?: number;
-  opponentTeamName: string;
-  opponentTeamPrimaryColor: string;
-  myTeamName: string;
-  myTeamPrimaryColor: string;
-  assignments: AssignmentDto[];
+  direction?: Direction;
+  homeTeamName: string;
+  homeTeamPrimaryColor: string;
+  awayTeamName: string;
+  awayTeamPrimaryColor: string;
+  offenseAssignments: AssignmentDto[];
+  defenseAssignments: AssignmentDto[];
   defendingView: boolean;
   animateFuncRef: React.MutableRefObject<
     ((onAnimationFinished: () => void) => void) | undefined
@@ -32,11 +49,13 @@ interface Properties extends InjectedThemeProps {
 const Component: React.FC<Properties> = props => {
   const {
     ballOn = 50,
-    opponentTeamName,
-    opponentTeamPrimaryColor,
-    myTeamName,
-    myTeamPrimaryColor,
-    assignments,
+    direction = Direction.North,
+    homeTeamName,
+    homeTeamPrimaryColor,
+    awayTeamName,
+    awayTeamPrimaryColor,
+    offenseAssignments,
+    defenseAssignments,
     defendingView,
     animateFuncRef,
     theme,
@@ -134,7 +153,7 @@ const Component: React.FC<Properties> = props => {
           x2="2"
           y1={yPos}
           y2={yPos}
-          stroke="white"
+          stroke={theme.colors.chalk}
           strokeWidth="0.5"
         />
         <Line
@@ -142,7 +161,7 @@ const Component: React.FC<Properties> = props => {
           x2="38"
           y1={yPos}
           y2={yPos}
-          stroke="white"
+          stroke={theme.colors.chalk}
           strokeWidth="0.5"
         />
         <Line
@@ -150,7 +169,7 @@ const Component: React.FC<Properties> = props => {
           x2="64"
           y1={yPos}
           y2={yPos}
-          stroke="white"
+          stroke={theme.colors.chalk}
           strokeWidth="0.5"
         />
         <Line
@@ -158,14 +177,14 @@ const Component: React.FC<Properties> = props => {
           x2="100"
           y1={yPos}
           y2={yPos}
-          stroke="white"
+          stroke={theme.colors.chalk}
           strokeWidth="0.5"
         />
       </G>
     );
   };
 
-  const renderYardLine = (yardLine: number, color = 'white') => {
+  const renderYardLine = (yardLine: number, color = theme.colors.chalk) => {
     const yPos = String(20 + 2 * yardLine);
     return (
       <Line
@@ -184,8 +203,8 @@ const Component: React.FC<Properties> = props => {
     return (
       <Text
         key={`yardmarkertext-${pathRef}`}
-        stroke="white"
-        fill="white"
+        stroke={theme.colors.chalk}
+        fill={theme.colors.chalk}
         strokeWidth="0.1"
         fontSize="6"
         textAnchor="start">
@@ -196,22 +215,22 @@ const Component: React.FC<Properties> = props => {
 
   const renderYardMarkerArrow = (
     yardLine: number,
-    direction: 'up' | 'down',
+    arrowDirection: 'up' | 'down',
   ) => {
-    if (direction === 'up') {
+    if (arrowDirection === 'up') {
       return (
         <>
           <Polygon
             points={`11,${20 + 2 * yardLine - 4.8} 13,${
               20 + 2 * yardLine - 4.8
             } 12,${20 + 2 * yardLine - 6.8}`}
-            fill="white"
+            fill={theme.colors.chalk}
           />
           <Polygon
             points={`89,${20 + 2 * yardLine - 4.8} 87,${
               20 + 2 * yardLine - 4.8
             } 88,${20 + 2 * yardLine - 6.8}`}
-            fill="white"
+            fill={theme.colors.chalk}
           />
         </>
       );
@@ -223,13 +242,13 @@ const Component: React.FC<Properties> = props => {
           points={`11,${20 + 2 * (100 - yardLine) + 4.8} 13,${
             20 + 2 * (100 - yardLine) + 4.8
           } 12,${20 + 2 * (100 - yardLine) + 6.8}`}
-          fill="white"
+          fill={theme.colors.chalk}
         />
         <Polygon
           points={`89,${20 + 2 * (100 - yardLine) + 4.8} 87,${
             20 + 2 * (100 - yardLine) + 4.8
           } 88,${20 + 2 * (100 - yardLine) + 6.8}`}
-          fill="white"
+          fill={theme.colors.chalk}
         />
       </>
     );
@@ -376,25 +395,88 @@ const Component: React.FC<Properties> = props => {
     } else if (alignment === Alignment.DefenseCaptain) {
       xPos += 3 * (defendingView ? -1 : 1);
       yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffKicker) {
+      yPos += 20 * (defendingView ? -1 : 1);
+      xPos -= 5 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker1) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos -= 10 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker2) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos -= 17 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker3) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos -= 24 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker4) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos -= 31 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker5) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos -= 38 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker6) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos += 10 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker7) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos += 17 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker8) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos += 24 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker9) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos += 31 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffStreaker10) {
+      yPos += 10 * (defendingView ? -1 : 1);
+      xPos += 38 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddlePlayCaller) {
+      yPos += 7 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront1) {
+      xPos -= 10 * (defendingView ? -1 : 1);
+      yPos += 13 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront2) {
+      xPos -= 5 * (defendingView ? -1 : 1);
+      yPos += 13 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront3) {
+      yPos += 13 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront4) {
+      xPos += 5 * (defendingView ? -1 : 1);
+      yPos += 13 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront5) {
+      xPos += 10 * (defendingView ? -1 : 1);
+      yPos += 13 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack1) {
+      xPos -= 10 * (defendingView ? -1 : 1);
+      yPos += 18 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack2) {
+      xPos -= 5 * (defendingView ? -1 : 1);
+      yPos += 18 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack3) {
+      yPos += 18 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack4) {
+      xPos += 5 * (defendingView ? -1 : 1);
+      yPos += 18 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack5) {
+      xPos += 10 * (defendingView ? -1 : 1);
+      yPos += 18 * (defendingView ? -1 : 1);
     }
 
     return (
       <G key={alignment}>
         <Circle
-          stroke="transparent"
-          fill="rgba(0,0,0,0.9)"
-          x={`${xPos}.2`}
-          y={`${yPos}.2`}
-          r={2.2}
-          strokeWidth="0.5"
+          stroke="rgba(0,0,0,0.7)"
+          fill="rgba(0,0,0,0.7)"
+          x={`${xPos}.5`}
+          y={`${yPos}.5`}
+          r={2.1}
+          strokeWidth="0.1"
         />
         <Circle
-          stroke="transparent"
-          fill={theme.colors.white}
+          stroke={defendingView ? theme.colors.white : theme.colors.blue}
+          fill={defendingView ? theme.colors.white : theme.colors.blue}
           x={`${xPos}`}
           y={`${yPos}`}
-          r={2}
-          strokeWidth="0.5"
+          r={2.1}
+          strokeWidth="0.1"
         />
       </G>
     );
@@ -412,6 +494,36 @@ const Component: React.FC<Properties> = props => {
     } else if (alignment === Alignment.DefenseCaptain) {
       xPos += 3 * (!defendingView ? -1 : 1);
       yPos += 3 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddlePlayCaller) {
+      yPos += 7 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront1) {
+      xPos -= 10 * (!defendingView ? -1 : 1);
+      yPos += 13 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront2) {
+      xPos -= 5 * (!defendingView ? -1 : 1);
+      yPos += 13 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront3) {
+      yPos += 13 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront4) {
+      xPos += 5 * (!defendingView ? -1 : 1);
+      yPos += 13 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleFront5) {
+      xPos += 10 * (!defendingView ? -1 : 1);
+      yPos += 13 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack1) {
+      xPos -= 10 * (!defendingView ? -1 : 1);
+      yPos += 18 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack2) {
+      xPos -= 5 * (!defendingView ? -1 : 1);
+      yPos += 18 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack3) {
+      yPos += 18 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack4) {
+      xPos += 5 * (!defendingView ? -1 : 1);
+      yPos += 18 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.HuddleBack5) {
+      xPos += 10 * (!defendingView ? -1 : 1);
+      yPos += 18 * (!defendingView ? -1 : 1);
     }
 
     return (
@@ -419,38 +531,38 @@ const Component: React.FC<Properties> = props => {
         <Line
           key={`shadow-${alignment}-x1`}
           stroke="rgba(0, 0, 0, 0.9)"
-          x1={`${xPos - 1.6}`}
-          y1={`${yPos - 1.6}`}
-          x2={`${xPos + 2}`}
-          y2={`${yPos + 2}`}
-          strokeWidth="0.5"
+          x1={`${xPos - 1.3}`}
+          y1={`${yPos - 1.3}`}
+          x2={`${xPos + 2.3}`}
+          y2={`${yPos + 2.3}`}
+          strokeWidth="1.0"
         />
         <Line
           key={`shadow-${alignment}-x2`}
           stroke="rgba(0, 0, 0, 0.9)"
-          x1={`${xPos + 2}`}
-          y1={`${yPos - 1.6}`}
-          x2={`${xPos - 1.6}`}
-          y2={`${yPos + 2}`}
-          strokeWidth="0.5"
+          x1={`${xPos + 2.3}`}
+          y1={`${yPos - 1.3}`}
+          x2={`${xPos - 1.3}`}
+          y2={`${yPos + 2.3}`}
+          strokeWidth="1.0"
         />
         <Line
           key={`${alignment}-x1`}
-          stroke={theme.colors.white}
+          stroke={defendingView ? theme.colors.blue : theme.colors.white}
           x1={`${xPos - 1.8}`}
           y1={`${yPos - 1.8}`}
           x2={`${xPos + 1.8}`}
           y2={`${yPos + 1.8}`}
-          strokeWidth="0.5"
+          strokeWidth="1.0"
         />
         <Line
           key={`${alignment}-x2`}
-          stroke={theme.colors.white}
+          stroke={defendingView ? theme.colors.blue : theme.colors.white}
           x1={`${xPos + 1.8}`}
           y1={`${yPos - 1.8}`}
           x2={`${xPos - 1.8}`}
           y2={`${yPos + 1.8}`}
-          strokeWidth="0.5"
+          strokeWidth="1.0"
         />
       </G>
     );
@@ -480,7 +592,15 @@ const Component: React.FC<Properties> = props => {
                 theme.colors as {
                   [x: string]: string;
                 }
-              )[opponentTeamPrimaryColor.toLowerCase()]
+              )[
+                defendingView
+                  ? direction === Direction.North
+                    ? homeTeamPrimaryColor.toLowerCase()
+                    : awayTeamPrimaryColor.toLowerCase()
+                  : direction === Direction.North
+                  ? awayTeamPrimaryColor.toLowerCase()
+                  : homeTeamPrimaryColor.toLowerCase()
+              ]
             }
           />
           <Text
@@ -490,7 +610,13 @@ const Component: React.FC<Properties> = props => {
             x="50"
             y="14"
             textAnchor="middle">
-            {opponentTeamName.toUpperCase()}
+            {defendingView
+              ? direction === Direction.North
+                ? homeTeamName.toUpperCase()
+                : awayTeamName.toUpperCase()
+              : direction === Direction.North
+              ? awayTeamName.toUpperCase()
+              : homeTeamName.toUpperCase()}
           </Text>
           <Rect
             x="0"
@@ -504,15 +630,29 @@ const Component: React.FC<Properties> = props => {
                 theme.colors as {
                   [x: string]: string;
                 }
-              )[myTeamPrimaryColor.toLowerCase()]
+              )[
+                defendingView
+                  ? direction === Direction.North
+                    ? awayTeamPrimaryColor.toLowerCase()
+                    : homeTeamPrimaryColor.toLowerCase()
+                  : direction === Direction.North
+                  ? homeTeamPrimaryColor.toLowerCase()
+                  : awayTeamPrimaryColor.toLowerCase()
+              ]
             }
           />
           <Defs>
-            <Path id="myTeamEndzone" d="M 100 226 L 0 226" />
+            <Path id="homeTeamEndzone" d="M 100 226 L 0 226" />
           </Defs>
           <Text fill="white" stroke="white" fontSize="12" textAnchor="middle">
-            <TextPath href={'#myTeamEndzone'} startOffset="50%">
-              {myTeamName.toUpperCase()}
+            <TextPath href={'#homeTeamEndzone'} startOffset="50%">
+              {defendingView
+                ? direction === Direction.North
+                  ? awayTeamName.toUpperCase()
+                  : homeTeamName.toUpperCase()
+                : direction === Direction.North
+                ? homeTeamName.toUpperCase()
+                : awayTeamName.toUpperCase()}
             </TextPath>
           </Text>
           {[...Array(20)].map((value: any, index: number) => {
@@ -526,11 +666,18 @@ const Component: React.FC<Properties> = props => {
           {renderYardMarkers()}
 
           <G opacity={`${formationOpacity}`}>
-            {assignments.map((assignment: AssignmentDto) => {
+            {(offenseAssignments.length > 0
+              ? offenseAssignments
+              : huddleAssignments
+            ).map((assignment: AssignmentDto | {alignment: Alignment}) => {
               return renderOffensePlayer(assignment.alignment, viewBoxYardLine);
             })}
-            {renderDefensePlayer(Alignment.OffenseCaptain, viewBoxYardLine)}
-            {renderDefensePlayer(Alignment.DefenseCaptain, viewBoxYardLine)}
+            {(defenseAssignments.length > 0
+              ? defenseAssignments
+              : huddleAssignments
+            ).map((assignment: AssignmentDto | {alignment: Alignment}) => {
+              return renderDefensePlayer(assignment.alignment, viewBoxYardLine);
+            })}
             {/* <Defs>
               <Marker
                 id="Triangle"

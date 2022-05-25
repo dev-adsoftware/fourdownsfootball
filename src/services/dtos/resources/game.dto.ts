@@ -1,5 +1,7 @@
-import {IsNumber, IsOptional, IsString} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { SequencedDto } from "../sequenced-dto";
+import { Direction } from "../types/directions";
+import { GameState } from "../types/game-state";
 
 class Dto extends SequencedDto {
   // no indexes
@@ -29,8 +31,8 @@ class Dto extends SequencedDto {
   @IsNumber()
   distance: number;
 
-  @IsString()
-  direction: string;
+  @IsEnum(Direction)
+  direction: Direction;
 
   @IsString()
   offenseTeamId: string;
@@ -38,8 +40,8 @@ class Dto extends SequencedDto {
   @IsString()
   actingTeamId: string;
 
-  @IsString()
-  state: string;
+  @IsEnum(GameState)
+  state: GameState;
 
   @IsNumber()
   seed: number;
@@ -60,4 +62,4 @@ class Dto extends SequencedDto {
   awayTeamTimeRemaining: number;
 }
 
-export {Dto as GameDto};
+export { Dto as GameDto };

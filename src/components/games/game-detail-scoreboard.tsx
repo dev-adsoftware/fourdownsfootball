@@ -4,6 +4,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {DataItemSegment} from '../../providers/data';
 import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {GameEngine} from '../../utilities/game-engine';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 
 interface Properties extends InjectedThemeProps {
@@ -129,7 +130,9 @@ const Component: React.FC<Properties> = props => {
         </View>
       </View>
       <View style={[styles.stateGrid]}>
-        <Text style={[styles.stateText]}>{activeGame.item?.state}</Text>
+        <Text style={[styles.stateText]}>
+          {GameEngine.getGameStateName(activeGame.item?.state)}
+        </Text>
       </View>
       <View style={[styles.stateIconsGrid]}>
         <View style={[styles.stateIconsColumn]}>

@@ -5,7 +5,6 @@ import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {TextInputBox} from '../core/input/text-input-box';
 import {ErrorSnackbar} from '../core/snackbar/error';
-import {TextInputColorStyle} from '../../styles/text-input-color';
 import {Button} from '../core/buttons/button';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 
@@ -29,6 +28,9 @@ const Component: React.FC<Properties> = props => {
       justifyContent: 'flex-start',
       padding: 20,
     },
+    textInput: {
+      color: theme.colors.text,
+    },
   });
 
   return (
@@ -38,7 +40,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
-                style={[TextInputColorStyle(theme)]}
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="next"
@@ -52,7 +54,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
-                style={[TextInputColorStyle(theme)]}
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="done"
@@ -66,7 +68,7 @@ const Component: React.FC<Properties> = props => {
           <FormRow>
             <TextInputBox>
               <TextInput
-                style={[TextInputColorStyle(theme)]}
+                style={[styles.textInput]}
                 textAlign="left"
                 autoCapitalize="none"
                 returnKeyType="done"

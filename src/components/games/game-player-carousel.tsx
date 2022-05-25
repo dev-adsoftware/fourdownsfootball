@@ -4,9 +4,11 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {PlayerSnapshotDto} from '../../services/dtos';
+import {Alignment} from '../../services/dtos/types/alignment';
+import {GameEngine} from '../../utilities/game-engine';
 
 interface Properties extends InjectedThemeProps {
-  players: PlayerSnapshotDto[];
+  players: (PlayerSnapshotDto & {alignment?: Alignment})[];
 }
 
 const Component: React.FC<Properties> = props => {
@@ -106,6 +108,7 @@ const Component: React.FC<Properties> = props => {
   }: {
     item: {
       id: string;
+      alignment?: Alignment;
       position: string;
       jerseyNumber: number;
       name: string;
@@ -128,7 +131,9 @@ const Component: React.FC<Properties> = props => {
             size={54}
           />
           <Text style={[styles.gamePlayPlayersOnFieldCarouselItemPositionText]}>
-            {item.position.toUpperCase()}
+            {(
+              GameEngine.getAlignmentAbbr(item.alignment) || item.position
+            ).toUpperCase()}
           </Text>
           <Text
             style={[styles.gamePlayPlayersOnFieldCarouselItemJerseyNumberText]}>
@@ -161,6 +166,7 @@ const Component: React.FC<Properties> = props => {
         data={players.map(player => {
           return {
             id: player.id,
+            alignment: player.alignment,
             position: player.position,
             jerseyNumber: player.jerseyNumber,
             health: player.stamina,
@@ -172,8 +178,8 @@ const Component: React.FC<Properties> = props => {
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={item => item.id}
-        bounces={false}
-        // decelerationRate={0}
+        bounces={true}
+        decelerationRate="normal"
       />
     </View>
   );

@@ -41,6 +41,7 @@ export class Theme {
     white: string;
     silver: string;
     grass: string;
+    chalk: string;
     pieChartDarkRed: string;
     pieChartRed: string;
     pieChartGreen: string;
@@ -92,7 +93,8 @@ export class Theme {
       black: 'black',
       white: 'white',
       silver: 'silver',
-      grass: '#00AA00',
+      grass: '#59A608',
+      chalk: 'rgba(255,255,255,0.9)',
       pieChartDarkRed: '#AA0000',
       pieChartRed: '#FF0000',
       pieChartGreen: '#00BB00',

@@ -7,6 +7,7 @@ import {useData} from '../../providers/data';
 import {GameDetailQueryResponseDto} from '../../services/dtos';
 import {GameDetailScoreboard} from '../../components/games/game-detail-scoreboard';
 import {GameDetailTabStack} from '../../stacks/game-detail';
+import {GameState} from '../../services/dtos/types/game-state';
 
 export type GameDetailTabParamList = {
   'Game Play': undefined;
@@ -33,7 +34,7 @@ const GameDetailScreen: React.FC<Properties> = ({route, navigation}) => {
     if (route.params.game.id !== activeGame.item?.id) {
       const game = new GameDetailQueryResponseDto();
       game.id = route.params.game.id;
-      game.state = 'loading';
+      game.state = GameState.Loading;
       activeGame.set(game);
     }
   }, [activeGame, route.params.game.id]);
@@ -51,7 +52,7 @@ const GameDetailScreen: React.FC<Properties> = ({route, navigation}) => {
     <>
       {!activeGame.item ||
       activeGame.isLoading ||
-      activeGame.item?.state === 'loading' ? (
+      activeGame.item?.state === GameState.Loading ? (
         <View style={[styles.emptyContainer]}>
           <ActivityIndicator />
         </View>
