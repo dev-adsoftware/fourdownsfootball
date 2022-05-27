@@ -362,7 +362,9 @@ const Component: React.FC<Properties> = props => {
               <View style={[styles.row]}>
                 {renderPlay({
                   playId: item[0].playId,
-                  categoryAbbr: item[0].subCategory.toUpperCase(),
+                  categoryAbbr: GameEngine.getPlaySubCategoryAbbr(
+                    item[0].subCategory,
+                  ),
                   name: item[0].name.toUpperCase(),
                   showRepetitionPenalty: item[0].showRepetitionPenalty,
                   currentRepetitionPenalty: item[0].currentRepetitionPenalty,

@@ -471,8 +471,12 @@ const Component: React.FC<Properties> = props => {
           strokeWidth="0.1"
         />
         <Circle
-          stroke={defendingView ? theme.colors.white : theme.colors.blue}
-          fill={defendingView ? theme.colors.white : theme.colors.blue}
+          stroke={
+            defendingView ? theme.colors.white : '#2E67F8' || theme.colors.blue
+          }
+          fill={
+            defendingView ? theme.colors.white : '#2E67F8' || theme.colors.blue
+          }
           x={`${xPos}`}
           y={`${yPos}`}
           r={2.1}
@@ -535,7 +539,7 @@ const Component: React.FC<Properties> = props => {
           y1={`${yPos - 1.3}`}
           x2={`${xPos + 2.3}`}
           y2={`${yPos + 2.3}`}
-          strokeWidth="1.0"
+          strokeWidth="1.2"
         />
         <Line
           key={`shadow-${alignment}-x2`}
@@ -544,25 +548,29 @@ const Component: React.FC<Properties> = props => {
           y1={`${yPos - 1.3}`}
           x2={`${xPos - 1.3}`}
           y2={`${yPos + 2.3}`}
-          strokeWidth="1.0"
+          strokeWidth="1.2"
         />
         <Line
           key={`${alignment}-x1`}
-          stroke={defendingView ? theme.colors.blue : theme.colors.white}
+          stroke={
+            defendingView ? '#2E67F8' || theme.colors.blue : theme.colors.white
+          }
           x1={`${xPos - 1.8}`}
           y1={`${yPos - 1.8}`}
           x2={`${xPos + 1.8}`}
           y2={`${yPos + 1.8}`}
-          strokeWidth="1.0"
+          strokeWidth="1.2"
         />
         <Line
           key={`${alignment}-x2`}
-          stroke={defendingView ? theme.colors.blue : theme.colors.white}
+          stroke={
+            defendingView ? '#2E67F8' || theme.colors.blue : theme.colors.white
+          }
           x1={`${xPos + 1.8}`}
           y1={`${yPos - 1.8}`}
           x2={`${xPos - 1.8}`}
           y2={`${yPos + 1.8}`}
-          strokeWidth="1.0"
+          strokeWidth="1.2"
         />
       </G>
     );

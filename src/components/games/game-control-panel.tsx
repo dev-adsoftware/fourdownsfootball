@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   Easing,
@@ -20,6 +21,7 @@ import {AnimatedPieChart} from '../svg/animated-pie-chart';
 interface Properties extends InjectedThemeProps {
   selectedPlay: GameDetailExtendedPlaySnapshotDto;
   isSplit: boolean;
+  isWaiting: boolean;
   chanceResult?: number;
   onPressPlaybook: () => void;
   onSubmit: () => Promise<void>;
@@ -29,6 +31,7 @@ const Component: React.FC<Properties> = props => {
   const {
     selectedPlay,
     isSplit = false,
+    isWaiting = false,
     chanceResult,
     onPressPlaybook,
     onSubmit,
@@ -225,6 +228,17 @@ const Component: React.FC<Properties> = props => {
       shadowRadius: 2,
       shadowOffset: {width: 3, height: 3},
     },
+    activityOverlayContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: '100%',
+      width: '100%',
+      opacity: 0.7,
+      backgroundColor: theme.colors.black,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });
 
   const reducePlayChances = React.useCallback(() => {
@@ -265,7 +279,7 @@ const Component: React.FC<Properties> = props => {
                 {
                   translateY: animationPlayContainerTranslate.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -100],
+                    outputRange: [0, -85],
                   }),
                 },
               ],
@@ -327,6 +341,13 @@ const Component: React.FC<Properties> = props => {
               arrowDegrees={chanceResult}
             />
           </View>
+          {isWaiting ? (
+            <View style={[styles.activityOverlayContainer]}>
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          ) : (
+            <></>
+          )}
         </Animated.View>
         {/* <FullHeightDarkSeparator /> */}
         <Animated.View
@@ -345,7 +366,8 @@ const Component: React.FC<Properties> = props => {
           ]}>
           <Pressable
             onPress={() => {
-              animateControlPanel(onSubmit);
+              onSubmit();
+              animateControlPanel(() => {});
             }}>
             <FontAwesome5Icon
               name="arrow-right"

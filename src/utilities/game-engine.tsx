@@ -69,6 +69,8 @@ export class GameEngine {
   public static getPlaySubCategoryAbbr(subCategory: PlaySubCategory): string {
     if (subCategory === PlaySubCategory.CoinToss) {
       return 'CT';
+    } else if (subCategory === PlaySubCategory.Kickoff) {
+      return 'K';
     }
     return subCategory;
   }

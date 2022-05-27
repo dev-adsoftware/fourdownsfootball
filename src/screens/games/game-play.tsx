@@ -62,6 +62,7 @@ const GamePlayScreen: React.FC<Properties> = () => {
 
   const [isPlaybookOpen, setIsPlaybookOpen] = React.useState(false);
   const [selectedPlay, setSelectedPlay] = React.useState(ownerTeam.plays[0]);
+  const [waitingForGameUpdate, setWaitingForGameUpdate] = React.useState(false);
 
   const animationPlaybookOpacity = React.useRef(new Animated.Value(0)).current;
   const fadePlaybook = React.useCallback(
@@ -82,6 +83,9 @@ const GamePlayScreen: React.FC<Properties> = () => {
   );
 
   const animationResultTranslate = React.useRef(new Animated.Value(0)).current;
+  const animationCarouselTranslate = React.useRef(
+    new Animated.Value(actingTeam.id === ownerTeam.id ? 0 : 1),
+  ).current;
   const animationControlPanelOpacity = React.useRef(
     new Animated.Value(0),
   ).current;
@@ -122,6 +126,24 @@ const GamePlayScreen: React.FC<Properties> = () => {
     [animationResultTranslate],
   );
 
+  const animateCarousel = React.useCallback(
+    (inOut: 'in' | 'out', onFinished: () => void) => {
+      Animated.sequence([
+        Animated.timing(animationCarouselTranslate, {
+          toValue: inOut === 'in' ? 0 : 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }),
+      ]).start(({finished}) => {
+        if (finished) {
+          onFinished();
+        }
+      });
+    },
+    [animationCarouselTranslate],
+  );
+
   const doAnimationSequence = React.useCallback(async () => {
     // if not played, do the animation sequence:
     // if result has chanceResult, show split control panel with animated arrow and fade out control panel
@@ -132,23 +154,23 @@ const GamePlayScreen: React.FC<Properties> = () => {
     animationResultTranslate.setValue(1);
     animationControlPanelOpacity.setValue(0);
     if (localState?.lastPlayedSequence !== activeGame.item?.sequence) {
-      if (
-        activeGame.item?.logs[Number(activeGame.item.sequence)].logType ===
-        LogType.Result
-      ) {
-        // setSuspendGameFieldAnimation(false);
-        if (gameFieldAnimateFuncRef.current) {
-          gameFieldAnimateFuncRef.current(() => {
-            animateResultBox(() => {
-              // Mark as 'played'
-              activeGame.setLocalState({
-                lastPlayedSequence: activeGame.item?.sequence,
-              });
-              fadeControlPanel('in');
+      // if (
+      //   activeGame.item?.logs[Number(activeGame.item.sequence)].logType ===
+      //   LogType.Result
+      // ) {
+      // setSuspendGameFieldAnimation(false);
+      if (gameFieldAnimateFuncRef.current) {
+        gameFieldAnimateFuncRef.current(() => {
+          animateResultBox(() => {
+            // Mark as 'played'
+            activeGame.setLocalState({
+              lastPlayedSequence: activeGame.item?.sequence,
             });
+            fadeControlPanel('in');
           });
-        }
+        });
       }
+      // }
     } else {
       if (gameFieldAnimateFuncRef.current) {
         gameFieldAnimateFuncRef.current(() => {
@@ -177,7 +199,7 @@ const GamePlayScreen: React.FC<Properties> = () => {
       alignItems: 'center',
     },
     gameFieldContainer: {
-      backgroundColor: theme.colors.grass,
+      backgroundColor: '#71A92C' || theme.colors.grass,
       width: '100%',
       flex: 1,
       alignItems: 'center',
@@ -229,6 +251,21 @@ const GamePlayScreen: React.FC<Properties> = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       zIndex: 1,
+    },
+    waitingForOpponentContainer: {
+      position: 'absolute',
+      // bottom: '50%',
+      bottom: 0,
+      padding: 10,
+      borderRadius: 5,
+      borderColor: theme.colors.yellow,
+      borderWidth: 3,
+      backgroundColor: 'rgba(0,0,0,.8)',
+      transform: [{translateY: -110 - 100 - 90}],
+    },
+    waitingforOpponentText: {
+      ...theme.typography.subheading,
+      color: theme.colors.white,
     },
     controlPanelContainer: {
       width: '80%',
@@ -345,6 +382,7 @@ const GamePlayScreen: React.FC<Properties> = () => {
               actionIconName="user-friends"
               onActionPressed={async () => {
                 console.log('checking opponent roster');
+                animateCarousel('out', () => {});
               }}
             />
             <View style={[styles.gameFieldContainer]}>
@@ -405,6 +443,21 @@ const GamePlayScreen: React.FC<Properties> = () => {
                   })}
                 </View>
               </Animated.View>
+              {actingTeam.id !== ownerTeam.id ? (
+                <Animated.View
+                  style={[
+                    styles.waitingForOpponentContainer,
+                    {
+                      opacity: animationControlPanelOpacity,
+                    },
+                  ]}>
+                  <Text style={[styles.waitingforOpponentText]}>
+                    Waiting for opponent
+                  </Text>
+                </Animated.View>
+              ) : (
+                <></>
+              )}
               <Animated.View
                 style={[
                   styles.overlayContainer,
@@ -413,23 +466,22 @@ const GamePlayScreen: React.FC<Properties> = () => {
                 <View
                   style={[
                     styles.controlPanelContainer,
-                    {
-                      transform: [{translateY: 0}],
-                    },
+                    // {
+                    //   transform: [{translateY: 0}],
+                    // },
                   ]}>
                   {actingTeam.id === ownerTeam.id ? (
                     <GameControlPanel
                       selectedPlay={selectedPlay}
                       isSplit={false}
+                      isWaiting={waitingForGameUpdate}
                       onPressPlaybook={() => {
                         setIsPlaybookOpen(true);
                         fadePlaybook('in');
                       }}
                       onSubmit={async () => {
-                        console.log('submitted game action');
-                        // fadeOutControlPanel();
-                        // setIsControlPanelSplit(true);
-                        // return;
+                        animateCarousel('out', () => {});
+                        setWaitingForGameUpdate(true);
 
                         const gameAction = new GameActionDto();
                         gameAction.id = uuid.v4() as string;
@@ -447,38 +499,44 @@ const GamePlayScreen: React.FC<Properties> = () => {
                         const updatedSequence = String(
                           Number(activeGame.item?.sequence) + 1,
                         );
-                        console.log(`waiting for sequence ${updatedSequence}`);
+
                         await new GamesService().waitForGameUpdate(
                           activeGame.item?.id as string,
                           updatedSequence,
                         );
 
+                        setWaitingForGameUpdate(false);
                         await activeGame.refresh();
                       }}
                     />
                   ) : (
-                    <GameWaitingPanel />
+                    <>
+                      <GameControlPanel
+                        selectedPlay={selectedPlay}
+                        isSplit={true}
+                        isWaiting={false}
+                        onPressPlaybook={() => {}}
+                        onSubmit={async () => {}}
+                      />
+                      {/* <GameWaitingPanel /> */}
+                    </>
                   )}
                 </View>
-                <GamePlayerCarousel
-                  players={
-                    actingTeam.id === ownerTeam.id
-                      ? selectedPlay.assignments.map(assignment => {
-                          const filteredPlayer: PlayerSnapshotDto & {
-                            alignment?: Alignment;
-                          } = ownerTeam.players.filter(player => {
-                            return (
-                              player.position ===
-                                assignment.depthChartPosition &&
-                              player.depthChartSlot ===
-                                assignment.depthChartSlot
-                            );
-                          })[0];
-                          filteredPlayer.alignment = assignment.alignment;
-                          return filteredPlayer;
-                        })
-                      : FormationAssignments[Formation.KickoffReturn].map(
-                          assignment => {
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        translateY: animationCarouselTranslate.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 400],
+                        }),
+                      },
+                    ],
+                  }}>
+                  <GamePlayerCarousel
+                    players={
+                      actingTeam.id === ownerTeam.id
+                        ? selectedPlay.assignments.map(assignment => {
                             const filteredPlayer: PlayerSnapshotDto & {
                               alignment?: Alignment;
                             } = ownerTeam.players.filter(player => {
@@ -491,10 +549,26 @@ const GamePlayScreen: React.FC<Properties> = () => {
                             })[0];
                             filteredPlayer.alignment = assignment.alignment;
                             return filteredPlayer;
-                          },
-                        )
-                  }
-                />
+                          })
+                        : FormationAssignments[Formation.KickoffReturn].map(
+                            assignment => {
+                              const filteredPlayer: PlayerSnapshotDto & {
+                                alignment?: Alignment;
+                              } = ownerTeam.players.filter(player => {
+                                return (
+                                  player.position ===
+                                    assignment.depthChartPosition &&
+                                  player.depthChartSlot ===
+                                    assignment.depthChartSlot
+                                );
+                              })[0];
+                              filteredPlayer.alignment = assignment.alignment;
+                              return filteredPlayer;
+                            },
+                          )
+                    }
+                  />
+                </Animated.View>
               </Animated.View>
             </View>
             <GameMomentumBar
@@ -512,6 +586,7 @@ const GamePlayScreen: React.FC<Properties> = () => {
               actionIconName="cog"
               onActionPressed={async () => {
                 console.log('checking settings');
+                animateCarousel('in', () => {});
               }}
             />
             {isPlaybookOpen ? (
