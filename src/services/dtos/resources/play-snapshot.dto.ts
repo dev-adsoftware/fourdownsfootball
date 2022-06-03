@@ -1,8 +1,9 @@
-import {IsString} from 'class-validator';
-import {PlayDto} from './play.dto';
+import { IsString } from 'class-validator';
+import { PlayDto } from './play.dto';
 
 class Dto extends PlayDto {
-  // no indexes
+  @IsString()
+  gameId: string;
 
   @IsString()
   originalPlayId: string;
@@ -11,4 +12,4 @@ class Dto extends PlayDto {
   originalSequence: string;
 }
 
-export {Dto as PlaySnapshotDto};
+export { Dto as PlaySnapshotDto };

@@ -1,4 +1,4 @@
 export enum LogType {
-  Result = "Result",
-  Deferred = "Deferred",
+  Result = 'Result',
+  Deferred = 'Deferred',
 }

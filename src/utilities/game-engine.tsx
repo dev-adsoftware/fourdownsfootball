@@ -95,8 +95,8 @@ export class GameEngine {
     }
   }
 
-  public static getGameStateName(gameState?: GameState): string {
-    if (gameState === GameState.Loading) {
+  public static getGameStateName(gameState?: GameState & -1): string {
+    if (gameState === -1) {
       return 'Loading';
     } else if (gameState === GameState.Kickoff) {
       return 'Kickoff';
@@ -111,7 +111,7 @@ export class GameEngine {
     } else if (formation === Formation.KickoffReturn) {
       return 'Kick Return';
     } else {
-      return 'None';
+      return `${formation}`;
     }
   }
 

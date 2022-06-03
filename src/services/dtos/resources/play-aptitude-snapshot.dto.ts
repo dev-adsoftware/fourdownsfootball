@@ -1,5 +1,5 @@
-import {IsNumber, IsString} from 'class-validator';
-import {PlayAptitudeDto} from './play-aptitude.dto';
+import { IsNumber, IsString } from 'class-validator';
+import { PlayAptitudeDto } from './play-aptitude.dto';
 
 class Dto extends PlayAptitudeDto {
   @IsString()
@@ -18,4 +18,4 @@ class Dto extends PlayAptitudeDto {
   currentRepetitionPenalty: number;
 }
 
-export {Dto as PlayAptitudeSnapshotDto};
+export { Dto as PlayAptitudeSnapshotDto };

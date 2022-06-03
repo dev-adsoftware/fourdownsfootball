@@ -1,5 +1,5 @@
-import {IsOptional, IsString} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
+import { IsOptional, IsString } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -26,4 +26,4 @@ class Dto extends SequencedDto {
   stripeColor?: string;
 }
 
-export {Dto as TeamDto};
+export { Dto as TeamDto };

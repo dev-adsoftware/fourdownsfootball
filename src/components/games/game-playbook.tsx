@@ -18,7 +18,6 @@ interface Properties extends InjectedThemeProps {
 const Component: React.FC<Properties> = props => {
   const {plays, onSelect, onClose, theme} = props;
 
-  console.log(plays);
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
@@ -216,19 +215,19 @@ const Component: React.FC<Properties> = props => {
 
   const playSections = plays.reduce((previousValue, currentValue) => {
     const section = previousValue.filter(value => {
-      return value.title === currentValue.formationName;
+      return value.title === currentValue.formation;
     });
 
     if (section.length === 0) {
       previousValue.push({
-        title: currentValue.formationName,
+        title: currentValue.formation,
         count: 0,
         data: [],
       });
     }
 
     const thisSection = previousValue.filter(value => {
-      return value.title === currentValue.formationName;
+      return value.title === currentValue.formation;
     })[0];
 
     if (thisSection.count % 2 === 1) {

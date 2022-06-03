@@ -1,7 +1,7 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { SequencedDto } from "../sequenced-dto";
-import { Direction } from "../types/directions";
-import { GameState } from "../types/game-state";
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
+import { Direction } from '../types/directions';
+import { GameState } from '../types/game-state';
 
 class Dto extends SequencedDto {
   // no indexes

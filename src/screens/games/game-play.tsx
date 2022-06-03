@@ -24,11 +24,9 @@ import {
   GameDetailQueryResponseDto,
   PlayerSnapshotDto,
 } from '../../services/dtos';
-import {GameWaitingPanel} from '../../components/games/game-waiting-panel';
 import {GameActionsService} from '../../services/game-actions';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GamesService} from '../../services/games';
-import {LogType} from '../../services/dtos/types/log-type';
 import {Alignment} from '../../services/dtos/types/alignment';
 import {FormationAssignments} from '../../services/data/formation-assignments';
 import {Formation} from '../../services/dtos/types/formation';
@@ -360,6 +358,8 @@ const GamePlayScreen: React.FC<Properties> = () => {
     },
   });
 
+  console.log(activeGame.item?.logs[activeGame.item.logs.length - 1]);
+
   return (
     <>
       {activeGame.item ? (
@@ -511,13 +511,17 @@ const GamePlayScreen: React.FC<Properties> = () => {
                     />
                   ) : (
                     <>
-                      <GameControlPanel
-                        selectedPlay={selectedPlay}
-                        isSplit={true}
-                        isWaiting={false}
-                        onPressPlaybook={() => {}}
-                        onSubmit={async () => {}}
-                      />
+                      {offenseTeam.id === ownerTeam.id ? (
+                        <GameControlPanel
+                          selectedPlay={selectedPlay}
+                          isSplit={true}
+                          isWaiting={false}
+                          onPressPlaybook={() => {}}
+                          onSubmit={async () => {}}
+                        />
+                      ) : (
+                        <></>
+                      )}
                       {/* <GameWaitingPanel /> */}
                     </>
                   )}
@@ -597,9 +601,9 @@ const GamePlayScreen: React.FC<Properties> = () => {
                 ]}>
                 <GamePlaybook
                   plays={ownerTeam.plays.sort((a, b) => {
-                    if (a.formationName > b.formationName) {
+                    if (a.formation > b.formation) {
                       return 1;
-                    } else if (a.formationName === b.formationName) {
+                    } else if (a.formation === b.formation) {
                       if (a.name > b.name) {
                         return 1;
                       } else {
@@ -615,8 +619,6 @@ const GamePlayScreen: React.FC<Properties> = () => {
                         return play.id === playId;
                       },
                     )[0];
-
-                    console.log(`selected play ${filteredPlay.name}`);
 
                     setSelectedPlay(filteredPlay);
                   }}

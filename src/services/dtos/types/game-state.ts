@@ -1,5 +1,8 @@
 export enum GameState {
-  Loading = -1,
   Kickoff,
-  AwaitingDefensePlayCall,
+  KickoffReturn,
+  Offense,
+  Defense,
+  PuntDefense,
+  FGDefense,
 }

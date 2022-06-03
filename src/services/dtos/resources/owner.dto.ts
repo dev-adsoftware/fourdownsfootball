@@ -1,5 +1,5 @@
-import {IsEmail, IsString} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
+import { IsEmail, IsString } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   // no indexes
@@ -11,4 +11,4 @@ class Dto extends SequencedDto {
   email: string;
 }
 
-export {Dto as OwnerDto};
+export { Dto as OwnerDto };

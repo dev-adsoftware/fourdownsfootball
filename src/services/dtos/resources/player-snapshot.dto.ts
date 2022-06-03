@@ -1,5 +1,5 @@
-import {IsString} from 'class-validator';
-import {PlayerDto} from './player.dto';
+import { IsString } from 'class-validator';
+import { PlayerDto } from './player.dto';
 
 class Dto extends PlayerDto {
   @IsString()
@@ -15,4 +15,4 @@ class Dto extends PlayerDto {
   originalSequence: string;
 }
 
-export {Dto as PlayerSnapshotDto};
+export { Dto as PlayerSnapshotDto };

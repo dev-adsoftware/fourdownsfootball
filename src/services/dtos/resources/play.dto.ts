@@ -1,4 +1,4 @@
-import { Type } from "class-transformer";
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -9,15 +9,15 @@ import {
   IsString,
   Min,
   ValidateNested,
-} from "class-validator";
-import { Dto } from "../dto";
-import { SequencedDto } from "../sequenced-dto";
-import { Alignment } from "../types/alignment";
-import { Assignment } from "../types/assignment";
-import { Formation } from "../types/formation";
-import { PlayCategory } from "../types/play-category";
-import { PlaySubCategory } from "../types/play-sub-category";
-import { Position } from "../types/position";
+} from 'class-validator';
+import { Dto } from '../dto';
+import { SequencedDto } from '../sequenced-dto';
+import { Alignment } from '../types/alignment';
+import { Assignment } from '../types/assignment';
+import { Formation } from '../types/formation';
+import { PlayCategory } from '../types/play-category';
+import { PlaySubCategory } from '../types/play-sub-category';
+import { Position } from '../types/position';
 
 export class AssignmentDto extends Dto {
   @IsEnum(Alignment)
@@ -60,7 +60,7 @@ export class PlayDto extends SequencedDto {
   subCategory: PlaySubCategory;
 
   @IsEnum(Formation)
-  formationName: Formation;
+  formation: Formation;
 
   @IsArray()
   @ValidateNested({ each: true })

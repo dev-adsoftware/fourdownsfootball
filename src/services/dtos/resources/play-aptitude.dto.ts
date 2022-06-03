@@ -1,5 +1,5 @@
-import {IsDivisibleBy, IsNumber, IsString} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
+import { IsDivisibleBy, IsNumber, IsString } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -17,4 +17,4 @@ class Dto extends SequencedDto {
   experience: number;
 }
 
-export {Dto as PlayAptitudeDto};
+export { Dto as PlayAptitudeDto };
