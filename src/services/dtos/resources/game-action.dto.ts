@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import {Type} from 'class-transformer';
 import {
   IsString,
   IsBoolean,
@@ -6,12 +6,15 @@ import {
   ValidateNested,
   IsOptional,
 } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
-import { AssignmentDto } from './play.dto';
+import {SequencedDto} from '../sequenced-dto';
+import {AssignmentDto} from './play.dto';
 
 class Dto extends SequencedDto {
   @IsString()
   gameId: string;
+
+  @IsString()
+  gameSequence: string;
 
   @IsString()
   actingTeamSnapshotId: string;
@@ -33,9 +36,9 @@ class Dto extends SequencedDto {
   hurryUp: boolean;
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => AssignmentDto)
   assignments: AssignmentDto[];
 }
 
-export { Dto as GameActionDto };
+export {Dto as GameActionDto};

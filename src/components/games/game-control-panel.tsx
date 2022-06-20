@@ -335,11 +335,15 @@ const Component: React.FC<Properties> = props => {
                 )}
               </View>
             </View>
-            <AnimatedPieChart
-              slices={reducePlayChances()}
-              size={50}
-              arrowDegrees={chanceResult}
-            />
+            {selectedPlay.playChances.length > 0 ? (
+              <AnimatedPieChart
+                slices={reducePlayChances()}
+                size={50}
+                arrowDegrees={chanceResult}
+              />
+            ) : (
+              <></>
+            )}
           </View>
           {isWaiting ? (
             <View style={[styles.activityOverlayContainer]}>

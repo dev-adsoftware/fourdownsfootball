@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -12,4 +12,4 @@ class Dto extends SequencedDto {
   abbr: string;
 }
 
-export { Dto as StateDto };
+export {Dto as StateDto};

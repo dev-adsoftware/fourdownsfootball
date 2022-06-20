@@ -238,7 +238,10 @@ const Component: React.FC<Properties> = props => {
         showRepetitionPenalty: currentValue.repetitionPenalty > 0,
         currentRepetitionPenalty:
           100 - currentValue.playAptitude.currentRepetitionPenalty,
-        chances: GameEngine.reducePlayChances(currentValue.playChances),
+        chances:
+          currentValue.playChances.length > 0
+            ? GameEngine.reducePlayChances(currentValue.playChances)
+            : undefined,
         avgGain: GameEngine.calcAvgGain(currentValue.playChances),
       });
     } else {
@@ -250,7 +253,10 @@ const Component: React.FC<Properties> = props => {
           showRepetitionPenalty: currentValue.repetitionPenalty > 0,
           currentRepetitionPenalty:
             100 - currentValue.playAptitude.currentRepetitionPenalty,
-          chances: GameEngine.reducePlayChances(currentValue.playChances),
+          chances:
+            currentValue.playChances.length > 0
+              ? GameEngine.reducePlayChances(currentValue.playChances)
+              : undefined,
           avgGain: GameEngine.calcAvgGain(currentValue.playChances),
         },
       ]);
@@ -283,7 +289,7 @@ const Component: React.FC<Properties> = props => {
     avgGain?: number;
     showRepetitionPenalty: boolean;
     currentRepetitionPenalty: number;
-    slices: {
+    slices?: {
       darkRedSlice: number;
       redSlice: number;
       greenSlice: number;
@@ -334,7 +340,7 @@ const Component: React.FC<Properties> = props => {
               )}
             </View>
           </View>
-          <AnimatedPieChart slices={slices} size={50} />
+          {slices ? <AnimatedPieChart slices={slices} size={50} /> : <></>}
         </View>
       </Pressable>
     );
@@ -367,12 +373,7 @@ const Component: React.FC<Properties> = props => {
                   name: item[0].name.toUpperCase(),
                   showRepetitionPenalty: item[0].showRepetitionPenalty,
                   currentRepetitionPenalty: item[0].currentRepetitionPenalty,
-                  slices: item[0].chances || {
-                    darkRedSlice: 0,
-                    redSlice: 0,
-                    greenSlice: 0,
-                    lightGreenSlice: 0,
-                  },
+                  slices: item[0].chances,
                   avgGain: item[0].avgGain,
                 })}
                 {item.length > 1 ? (
@@ -382,12 +383,7 @@ const Component: React.FC<Properties> = props => {
                     name: item[1].name.toUpperCase(),
                     showRepetitionPenalty: item[1].showRepetitionPenalty,
                     currentRepetitionPenalty: item[1].currentRepetitionPenalty,
-                    slices: item[1].chances || {
-                      darkRedSlice: 0,
-                      redSlice: 0,
-                      greenSlice: 0,
-                      lightGreenSlice: 0,
-                    },
+                    slices: item[1].chances,
                     avgGain: item[1].avgGain,
                   })
                 ) : (

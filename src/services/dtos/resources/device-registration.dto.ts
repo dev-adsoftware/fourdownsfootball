@@ -1,5 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsOptional, IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -13,4 +13,4 @@ class Dto extends SequencedDto {
   endpointArn?: string;
 }
 
-export { Dto as DeviceRegistrationDto };
+export {Dto as DeviceRegistrationDto};

@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import {Type} from 'class-transformer';
 import {
   IsArray,
   IsDivisibleBy,
@@ -9,11 +9,11 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Dto } from '../dto';
-import { SequencedDto } from '../sequenced-dto';
-import { Alignment } from '../types/alignment';
-import { AttributeKey } from '../types/attribute-key';
-import { PlayChanceCategory } from '../types/play-chance-category';
+import {Dto} from '../dto';
+import {SequencedDto} from '../sequenced-dto';
+import {Alignment} from '../types/alignment';
+import {AttributeKey} from '../types/attribute-key';
+import {PlayChanceCategory} from '../types/play-chance-category';
 
 export class WeightDto extends Dto {
   @IsEnum(Alignment)
@@ -62,4 +62,4 @@ class PlayChanceDto extends SequencedDto {
   counterweights: WeightDto[];
 }
 
-export { PlayChanceDto };
+export {PlayChanceDto};

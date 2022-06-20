@@ -11,12 +11,12 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { Position } from '../types/position';
-import { SequencedDto } from '../sequenced-dto';
-import { SpecialSkill } from '../types/special-skill';
-import { Dto } from '../dto';
-import { AttributeKey } from '../types/attribute-key';
+import {Type} from 'class-transformer';
+import {Position} from '../types/position';
+import {SequencedDto} from '../sequenced-dto';
+import {SpecialSkill} from '../types/special-skill';
+import {Dto} from '../dto';
+import {AttributeKey} from '../types/attribute-key';
 
 export class AttributeDto extends Dto {
   @IsEnum(AttributeKey)
@@ -271,7 +271,7 @@ export class PlayerDto extends SequencedDto {
   specialSkill?: SpecialSkill;
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => AttributeDto)
   attributes: AttributeDto[];
 }

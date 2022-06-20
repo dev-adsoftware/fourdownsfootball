@@ -18,7 +18,9 @@ import {
   OwnerDashboardExtendedGameRequestDto,
   OwnerDashboardExtendedTeamSnapshotDto,
 } from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
+import {GameState} from '../../services/dtos/types/game-state';
 import {GamesStackParamList} from '../../stacks/games';
+import {GameEngine} from '../../utilities/game-engine';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 import {Button} from '../core/buttons/button';
 import {Card} from '../core/cards/card';
@@ -344,7 +346,15 @@ const Component: React.FC<Properties> = props => {
           </View>
         </View>
         <View style={[styles.itemStatusContainer]}>
-          <Text style={[styles.itemStatusText]}>{game.state}</Text>
+          <Text style={[styles.itemStatusText]}>
+            {GameEngine.getPeriodName(game.period)} -{' '}
+            {GameEngine.formatGameTime(game.timeRemaining)}
+            {'\n'}
+            {game.state === GameState.Kickoff ||
+            game.state === GameState.KickoffReturn
+              ? 'Kickoff'
+              : `${game.down} & ${game.distance}`}
+          </Text>
         </View>
       </Pressable>
     );

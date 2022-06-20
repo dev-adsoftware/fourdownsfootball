@@ -1,5 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsOptional, IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -16,4 +16,4 @@ class Dto extends SequencedDto {
   status: string;
 }
 
-export { Dto as GameInviteDto };
+export {Dto as GameInviteDto};

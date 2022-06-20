@@ -1,5 +1,5 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsBoolean, IsOptional, IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -22,4 +22,4 @@ class Dto extends SequencedDto {
   isRead?: boolean;
 }
 
-export { Dto as NotificationDto };
+export {Dto as NotificationDto};

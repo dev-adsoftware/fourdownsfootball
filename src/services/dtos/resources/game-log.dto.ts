@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import {Type} from 'class-transformer';
 import {
   IsArray,
   IsEnum,
@@ -8,9 +8,9 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { PlayChanceSnapshotDto } from '.';
-import { SequencedDto } from '../sequenced-dto';
-import { LogType } from '../types/log-type';
+import {PlayChanceSnapshotDto} from '.';
+import {SequencedDto} from '../sequenced-dto';
+import {LogType} from '../types/log-type';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -23,16 +23,16 @@ class Dto extends SequencedDto {
   headline: string;
 
   @IsArray()
-  @IsString({ each: true })
+  @IsString({each: true})
   details: string[];
 
-  @ValidateIf((o) => o.logType === LogType.Result)
+  @ValidateIf(o => o.logType === LogType.Result)
   @IsNumber()
   chanceResult?: number;
 
-  @ValidateIf((o) => o.logType === LogType.Result)
+  @ValidateIf(o => o.logType === LogType.Result)
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => PlayChanceSnapshotDto)
   playChances?: PlayChanceSnapshotDto[];
 
@@ -45,4 +45,4 @@ class Dto extends SequencedDto {
   completingGameActionId?: string;
 }
 
-export { Dto as GameLogDto };
+export {Dto as GameLogDto};

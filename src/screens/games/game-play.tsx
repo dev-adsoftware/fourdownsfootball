@@ -28,8 +28,18 @@ import {GameActionsService} from '../../services/game-actions';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {GamesService} from '../../services/games';
 import {Alignment} from '../../services/dtos/types/alignment';
-import {FormationAssignments} from '../../services/data/formation-assignments';
-import {Formation} from '../../services/dtos/types/formation';
+
+type Action = {type: 'increment'} | {type: 'clear'};
+
+const reducer = (state: {timer: number}, action: Action): {timer: number} => {
+  switch (action.type) {
+    case 'increment':
+      const newState = {timer: state.timer + 1};
+      return newState;
+    case 'clear':
+      return {timer: 0};
+  }
+};
 
 type Properties = {
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
@@ -358,7 +368,16 @@ const GamePlayScreen: React.FC<Properties> = () => {
     },
   });
 
-  console.log(activeGame.item?.logs[activeGame.item.logs.length - 1]);
+  const [timerState, timerDispatch] = React.useReducer(reducer, {timer: 0});
+
+  React.useEffect(() => {
+    const timerCb = setInterval(() => {
+      timerDispatch({type: 'increment'});
+    }, 1000);
+    return () => {
+      clearInterval(timerCb);
+    };
+  }, []);
 
   return (
     <>
@@ -375,13 +394,13 @@ const GamePlayScreen: React.FC<Properties> = () => {
                   ? Math.abs(activeGame.item.momentum)
                   : 0
               }
-              timeRemaining={GameEngine.getTimeRemaining(
-                activeGame.item,
-                opposingTeam.id,
-              )}
+              timeRemaining={
+                GameEngine.getTimeRemaining(activeGame.item, opposingTeam.id) -
+                // 0
+                (opposingTeam.id === actingTeam.id ? timerState.timer : 0)
+              }
               actionIconName="user-friends"
               onActionPressed={async () => {
-                console.log('checking opponent roster');
                 animateCarousel('out', () => {});
               }}
             />
@@ -399,10 +418,20 @@ const GamePlayScreen: React.FC<Properties> = () => {
                 awayTeamPrimaryColor={activeGame.item.awayTeam.primaryColor}
                 offenseAssignments={
                   offenseTeam.id === ownerTeam.id
-                    ? selectedPlay.assignments
+                    ? actingTeam.id === ownerTeam.id
+                      ? selectedPlay.assignments
+                      : activeGame.item?.logs[activeGame.item.logs.length - 1]
+                          .initiatingGameAction?.playSnapshot.assignments || []
                     : []
                 }
-                defenseAssignments={[]}
+                defenseAssignments={
+                  offenseTeam.id !== ownerTeam.id
+                    ? actingTeam.id === ownerTeam.id
+                      ? selectedPlay.assignments
+                      : activeGame.item?.logs[activeGame.item.logs.length - 1]
+                          .completingGameAction?.playSnapshot.assignments || []
+                    : []
+                }
                 defendingView={offenseTeam.id !== ownerTeam.id}
                 animateFuncRef={gameFieldAnimateFuncRef}
               />
@@ -486,6 +515,12 @@ const GamePlayScreen: React.FC<Properties> = () => {
                         const gameAction = new GameActionDto();
                         gameAction.id = uuid.v4() as string;
                         gameAction.gameId = activeGame.item?.id || 'n/a';
+                        gameAction.gameSequence =
+                          activeGame.item?.sequence || '-1';
+                        gameAction.initiatingGameActionId =
+                          activeGame.item?.logs[
+                            activeGame.item?.logs.length - 1
+                          ].initiatingGameActionId;
                         gameAction.actingTeamSnapshotId = ownerTeam.id;
                         gameAction.playSnapshotId = selectedPlay.id;
                         gameAction.flipped = false;
@@ -513,7 +548,11 @@ const GamePlayScreen: React.FC<Properties> = () => {
                     <>
                       {offenseTeam.id === ownerTeam.id ? (
                         <GameControlPanel
-                          selectedPlay={selectedPlay}
+                          selectedPlay={
+                            activeGame.item?.logs[
+                              activeGame.item.logs.length - 1
+                            ].initiatingGameAction?.playSnapshot || selectedPlay
+                          }
                           isSplit={true}
                           isWaiting={false}
                           onPressPlaybook={() => {}}
@@ -554,22 +593,23 @@ const GamePlayScreen: React.FC<Properties> = () => {
                             filteredPlayer.alignment = assignment.alignment;
                             return filteredPlayer;
                           })
-                        : FormationAssignments[Formation.KickoffReturn].map(
-                            assignment => {
-                              const filteredPlayer: PlayerSnapshotDto & {
-                                alignment?: Alignment;
-                              } = ownerTeam.players.filter(player => {
-                                return (
-                                  player.position ===
-                                    assignment.depthChartPosition &&
-                                  player.depthChartSlot ===
-                                    assignment.depthChartSlot
-                                );
-                              })[0];
-                              filteredPlayer.alignment = assignment.alignment;
-                              return filteredPlayer;
-                            },
-                          )
+                        : []
+                      // : FormationAssignments[Formation.KickoffReturn].map(
+                      //     assignment => {
+                      //       const filteredPlayer: PlayerSnapshotDto & {
+                      //         alignment?: Alignment;
+                      //       } = ownerTeam.players.filter(player => {
+                      //         return (
+                      //           player.position ===
+                      //             assignment.depthChartPosition &&
+                      //           player.depthChartSlot ===
+                      //             assignment.depthChartSlot
+                      //         );
+                      //       })[0];
+                      //       filteredPlayer.alignment = assignment.alignment;
+                      //       return filteredPlayer;
+                      //     },
+                      //   )
                     }
                   />
                 </Animated.View>
@@ -589,7 +629,6 @@ const GamePlayScreen: React.FC<Properties> = () => {
               )}
               actionIconName="cog"
               onActionPressed={async () => {
-                console.log('checking settings');
                 animateCarousel('in', () => {});
               }}
             />

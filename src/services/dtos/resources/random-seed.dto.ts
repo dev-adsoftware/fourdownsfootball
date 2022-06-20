@@ -1,5 +1,5 @@
-import { IsNumber } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsNumber} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   // no indexes
@@ -8,4 +8,4 @@ class Dto extends SequencedDto {
   seed: number;
 }
 
-export { Dto as RandomSeedDto };
+export {Dto as RandomSeedDto};

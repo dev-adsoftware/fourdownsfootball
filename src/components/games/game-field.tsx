@@ -353,25 +353,6 @@ const Component: React.FC<Properties> = props => {
       xPos -= 5 * (defendingView ? -1 : 1);
     } else if (alignment === Alignment.LeftTackle) {
       xPos -= 10 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.YReceiver && false) {
-      xPos -= 15 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.XReceiver && false) {
-      xPos -= 35 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.ZReceiver && false) {
-      xPos += 35 * (defendingView ? -1 : 1);
-      yPos += 3 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.ZReceiver) {
-      xPos -= 35 * (defendingView ? -1 : 1);
-      yPos += 3 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.AReceiver) {
-      xPos -= 30 * (defendingView ? -1 : 1);
-      yPos += 3 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.BReceiver && false) {
-      xPos += 25 * (defendingView ? -1 : 1);
-      yPos += 3 * (defendingView ? -1 : 1);
-    } else if (alignment === Alignment.BReceiver) {
-      xPos -= 25 * (defendingView ? -1 : 1);
-      yPos += 3 * (defendingView ? -1 : 1);
     } else if (alignment === Alignment.RightGuard) {
       xPos += 5 * (defendingView ? -1 : 1);
     } else if (alignment === Alignment.RightTackle) {
@@ -379,7 +360,16 @@ const Component: React.FC<Properties> = props => {
     } else if (alignment === Alignment.YReceiver) {
       xPos += 15 * (defendingView ? -1 : 1);
     } else if (alignment === Alignment.XReceiver) {
+      xPos -= 35 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.ZReceiver) {
       xPos += 35 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.AReceiver) {
+      xPos -= 30 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
+    } else if (alignment === Alignment.BReceiver) {
+      xPos -= 25 * (defendingView ? -1 : 1);
+      yPos += 3 * (defendingView ? -1 : 1);
     } else if (alignment === Alignment.CReceiver) {
       xPos += 30 * (defendingView ? -1 : 1);
       yPos += 3 * (defendingView ? -1 : 1);
@@ -528,6 +518,36 @@ const Component: React.FC<Properties> = props => {
     } else if (alignment === Alignment.HuddleBack5) {
       xPos += 10 * (!defendingView ? -1 : 1);
       yPos += 18 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffReturner) {
+      yPos += 100 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker1) {
+      yPos += 10 * (!defendingView ? -1 : 1);
+      xPos -= 30 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker2) {
+      yPos += 10 * (!defendingView ? -1 : 1);
+      xPos -= 15 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker3) {
+      yPos += 10 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker4) {
+      yPos += 10 * (!defendingView ? -1 : 1);
+      xPos += 15 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker5) {
+      yPos += 10 * (!defendingView ? -1 : 1);
+      xPos += 30 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker6) {
+      yPos += 40 * (!defendingView ? -1 : 1);
+      xPos -= 25 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker7) {
+      yPos += 40 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker8) {
+      yPos += 40 * (!defendingView ? -1 : 1);
+      xPos += 25 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker9) {
+      yPos += 70 * (!defendingView ? -1 : 1);
+      xPos -= 20 * (!defendingView ? -1 : 1);
+    } else if (alignment === Alignment.KickoffBlocker10) {
+      yPos += 70 * (!defendingView ? -1 : 1);
+      xPos += 20 * (!defendingView ? -1 : 1);
     }
 
     return (

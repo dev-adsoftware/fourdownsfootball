@@ -6,6 +6,7 @@ import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {PlayerSnapshotDto} from '../../services/dtos';
 import {Alignment} from '../../services/dtos/types/alignment';
 import {GameEngine} from '../../utilities/game-engine';
+import {AttributeKey} from '../../services/dtos/types/attribute-key';
 
 interface Properties extends InjectedThemeProps {
   players: (PlayerSnapshotDto & {alignment?: Alignment})[];
@@ -169,7 +170,7 @@ const Component: React.FC<Properties> = props => {
             alignment: player.alignment,
             position: player.position,
             jerseyNumber: player.jerseyNumber,
-            health: player.stamina,
+            health: player.attributes[AttributeKey.Stamina].value,
             name: player.lastName,
             borderColor: theme.colors.white,
           };

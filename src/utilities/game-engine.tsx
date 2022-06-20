@@ -90,13 +90,38 @@ export class GameEngine {
       case Alignment.KickoffStreaker9:
       case Alignment.KickoffStreaker10:
         return 'ST';
+      case Alignment.KickoffReturner:
+        return 'KR';
+      case Alignment.KickoffBlocker1:
+      case Alignment.KickoffBlocker2:
+      case Alignment.KickoffBlocker3:
+      case Alignment.KickoffBlocker4:
+      case Alignment.KickoffBlocker5:
+      case Alignment.KickoffBlocker6:
+      case Alignment.KickoffBlocker7:
+      case Alignment.KickoffBlocker8:
+      case Alignment.KickoffBlocker9:
+      case Alignment.KickoffBlocker10:
+        return 'BLK';
+      case Alignment.QBUnderCenter:
+        return 'QB';
+      case Alignment.XReceiver:
+        return 'X';
+      case Alignment.YReceiver:
+        return 'Y';
+      case Alignment.ZReceiver:
+        return 'TE1';
+      case Alignment.HalfBack:
+        return 'HB';
+      case Alignment.AReceiver:
+        return 'A';
       default:
         return undefined;
     }
   }
 
-  public static getGameStateName(gameState?: GameState & -1): string {
-    if (gameState === -1) {
+  public static getGameStateName(gameState?: GameState): string {
+    if (gameState === GameState.Loading) {
       return 'Loading';
     } else if (gameState === GameState.Kickoff) {
       return 'Kickoff';
@@ -113,6 +138,30 @@ export class GameEngine {
     } else {
       return `${formation}`;
     }
+  }
+
+  public static getPeriodName(period: number): string {
+    if (period === 1) {
+      return '1st';
+    }
+    if (period === 2) {
+      return '2nd';
+    }
+    if (period === 3) {
+      return '3rd';
+    }
+    if (period === 4) {
+      return '4th';
+    }
+    return 'OT';
+  }
+
+  public static formatGameTime(timeRemaining: number): string {
+    const minutes = Math.floor(timeRemaining / 60);
+    const seconds = timeRemaining % 60;
+    return `${minutes > 0 ? minutes : '0'}:${
+      seconds < 10 ? '0' : ''
+    }${seconds}`;
   }
 
   public static reducePlayChances(chances: PlayChanceSnapshotDto[]): {

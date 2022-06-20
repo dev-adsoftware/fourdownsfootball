@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   // no indexes
@@ -11,4 +11,4 @@ class Dto extends SequencedDto {
   type: string;
 }
 
-export { Dto as LeagueDto };
+export {Dto as LeagueDto};

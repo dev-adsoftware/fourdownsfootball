@@ -4,6 +4,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
 import {DataItemSegment} from '../../providers/data';
 import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {GameState} from '../../services/dtos/types/game-state';
 import {GameEngine} from '../../utilities/game-engine';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 
@@ -131,7 +132,14 @@ const Component: React.FC<Properties> = props => {
       </View>
       <View style={[styles.stateGrid]}>
         <Text style={[styles.stateText]}>
-          {GameEngine.getGameStateName(activeGame.item?.state)}
+          {GameEngine.getPeriodName(activeGame.item?.period || 0)}
+          {' - '}
+          {GameEngine.formatGameTime(activeGame.item?.timeRemaining || 0)}
+          {'\n'}
+          {activeGame.item?.state === GameState.Kickoff ||
+          activeGame.item?.state === GameState.KickoffReturn
+            ? 'Kickoff'
+            : `${activeGame.item?.down} & ${activeGame.item?.distance}`}
         </Text>
       </View>
       <View style={[styles.stateIconsGrid]}>

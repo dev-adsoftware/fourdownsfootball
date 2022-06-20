@@ -1,5 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
+import {IsNumber, IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -21,4 +21,4 @@ class Dto extends SequencedDto {
   timezone: string;
 }
 
-export { Dto as TownDto };
+export {Dto as TownDto};
