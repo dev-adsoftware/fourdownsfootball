@@ -7,5 +7,5 @@
         },
         "badge": 0,
     },
-    "notification": "{\"id\":\"jest.id\",\"sequence\":\"0\",\"lastUpdatedBy\":\"jest.lastUpdatedBy\",\"lastUpdateDate\":\"2000-01-01T00:00:00.000Z\",\"ownerId\":\"jest.ownerId\",\"title\":\"jest.title\",\"message\":\"jest.message\",\"recordType\":\"games\",\"recordId\":\"ca2789ce-ae1f-4cab-ac87-c0f3ca35d748\"}"
+    "notification": "{\"id\":\"jest.id\",\"sequence\":\"0\",\"lastUpdatedBy\":\"jest.lastUpdatedBy\",\"lastUpdateDate\":\"2000-01-01T00:00:00.000Z\",\"ownerId\":\"jest.ownerId\",\"title\":\"jest.title\",\"message\":\"jest.message\",\"recordType\":\"games\",\"recordId\":\"3f4fd869-7fa5-4872-a051-f83026fa01e8\"}"
 }

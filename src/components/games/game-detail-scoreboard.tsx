@@ -2,14 +2,13 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
-import {DataItemSegment} from '../../providers/data';
-import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {ActiveGame} from '../../providers/data';
 import {GameState} from '../../services/dtos/types/game-state';
 import {GameEngine} from '../../utilities/game-engine';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 
 interface Properties extends InjectedThemeProps {
-  activeGame: DataItemSegment<GameDetailQueryResponseDto>;
+  activeGame: ActiveGame;
 }
 
 const Component: React.FC<Properties> = props => {
@@ -85,11 +84,11 @@ const Component: React.FC<Properties> = props => {
       <View style={[styles.teamLogoGrid]}>
         <View style={[styles.teamLogoColumn]}>
           <TeamAvatar
-            town={activeGame.item?.awayTeam.town}
-            team={activeGame.item?.awayTeam}
+            town={activeGame.item.awayTeam.town}
+            team={activeGame.item.awayTeam}
           />
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item?.awayTeam.nickname}
+            {activeGame.item.awayTeam.nickname}
           </Text>
         </View>
       </View>
@@ -98,17 +97,17 @@ const Component: React.FC<Properties> = props => {
           style={[
             styles.scoreText,
             styles.awayScoreText,
-            (activeGame.item?.awayTeamScore || 0) >=
-            (activeGame.item?.homeTeamScore || 0)
+            (activeGame.item.awayTeamScore || 0) >=
+            (activeGame.item.homeTeamScore || 0)
               ? styles.winningScoreText
               : {},
           ]}>
-          {activeGame.item?.awayTeamScore}
+          {activeGame.item.awayTeamScore}
         </Text>
       </View>
       <View style={[styles.stateIconsGrid]}>
         <View style={[styles.stateIconsColumn]}>
-          {activeGame.item?.offenseTeamId === activeGame.item?.awayTeamId ? (
+          {activeGame.item.offenseTeamId === activeGame.item.awayTeamId ? (
             <FontAwesome5Icon
               name="football-ball"
               color={theme.colors.brown}
@@ -118,7 +117,7 @@ const Component: React.FC<Properties> = props => {
           ) : (
             <></>
           )}
-          {activeGame.item?.actingTeamId === activeGame.item?.awayTeamId ? (
+          {activeGame.item.actingTeamId === activeGame.item.awayTeamId ? (
             <FontAwesome5Icon
               name="play"
               color={theme.colors.text}
@@ -132,19 +131,19 @@ const Component: React.FC<Properties> = props => {
       </View>
       <View style={[styles.stateGrid]}>
         <Text style={[styles.stateText]}>
-          {GameEngine.getPeriodName(activeGame.item?.period || 0)}
+          {GameEngine.getPeriodName(activeGame.item.period || 0)}
           {' - '}
-          {GameEngine.formatGameTime(activeGame.item?.timeRemaining || 0)}
+          {GameEngine.formatGameTime(activeGame.item.timeRemaining || 0)}
           {'\n'}
-          {activeGame.item?.state === GameState.Kickoff ||
-          activeGame.item?.state === GameState.KickoffReturn
+          {activeGame.item.state === GameState.Kickoff ||
+          activeGame.item.state === GameState.KickoffReturn
             ? 'Kickoff'
-            : `${activeGame.item?.down} & ${activeGame.item?.distance}`}
+            : `${activeGame.item.down} & ${activeGame.item.distance}`}
         </Text>
       </View>
       <View style={[styles.stateIconsGrid]}>
         <View style={[styles.stateIconsColumn]}>
-          {activeGame.item?.offenseTeamId === activeGame.item?.homeTeamId ? (
+          {activeGame.item.offenseTeamId === activeGame.item.homeTeamId ? (
             <FontAwesome5Icon
               name="football-ball"
               color={theme.colors.brown}
@@ -154,7 +153,7 @@ const Component: React.FC<Properties> = props => {
           ) : (
             <></>
           )}
-          {activeGame.item?.actingTeamId === activeGame.item?.homeTeamId ? (
+          {activeGame.item.actingTeamId === activeGame.item.homeTeamId ? (
             <FontAwesome5Icon
               name="play"
               color={theme.colors.text}
@@ -171,22 +170,22 @@ const Component: React.FC<Properties> = props => {
           style={[
             styles.scoreText,
             styles.homeScoreText,
-            (activeGame.item?.awayTeamScore || 0) >=
-            (activeGame.item?.homeTeamScore || 0)
+            (activeGame.item.awayTeamScore || 0) >=
+            (activeGame.item.homeTeamScore || 0)
               ? styles.winningScoreText
               : {},
           ]}>
-          {activeGame.item?.awayTeamScore}
+          {activeGame.item.awayTeamScore}
         </Text>
       </View>
       <View style={[styles.teamLogoGridLast]}>
         <View style={[styles.teamLogoColumn]}>
           <TeamAvatar
-            town={activeGame.item?.homeTeam.town}
-            team={activeGame.item?.homeTeam}
+            town={activeGame.item.homeTeam.town}
+            team={activeGame.item.homeTeam}
           />
           <Text style={[styles.teamLogoNameText]}>
-            {activeGame.item?.homeTeam.nickname}
+            {activeGame.item.homeTeam.nickname}
           </Text>
         </View>
       </View>

@@ -4,17 +4,9 @@ import React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {GamesStackParamList} from '../../stacks/games';
 import {useData} from '../../providers/data';
-import {GameDetailQueryResponseDto} from '../../services/dtos';
 import {GameDetailScoreboard} from '../../components/games/game-detail-scoreboard';
 import {GameDetailTabStack} from '../../stacks/game-detail';
-import {GameState} from '../../services/dtos/types/game-state';
-
-export type GameDetailTabParamList = {
-  'Game Play': undefined;
-  'Box Score': undefined;
-  'Play-by-Play': undefined;
-  'Game Stats': undefined;
-};
+import {useNotification} from '../../providers/notification';
 
 type Properties = {
   route: RouteProp<GamesStackParamList, 'Game Detail Stack'>;
@@ -22,22 +14,45 @@ type Properties = {
 };
 
 const GameDetailScreen: React.FC<Properties> = ({route, navigation}) => {
+  const [isLocallyLoading, setIsLocallyLoading] = React.useState(true);
+  const {addListener, removeListener} = useNotification();
+  const {activeGame} = useData();
+  const {load: fetchActiveGame} = activeGame;
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: `${route.params.game.awayTeam?.nickname} @ ${route.params.game.homeTeam?.nickname}`,
     });
   });
 
-  const {activeGame} = useData();
+  React.useEffect(() => {
+    console.log('fetching game', route.params.game.id);
+    fetchActiveGame(route.params.game.id).then(() => {
+      setIsLocallyLoading(false);
+    });
+  }, [route.params.game.id, fetchActiveGame]);
+
+  const refreshGame = React.useCallback(
+    async (id: string) => {
+      console.log('refreshing game');
+      fetchActiveGame(id);
+    },
+    [fetchActiveGame],
+  );
 
   React.useEffect(() => {
-    if (route.params.game.id !== activeGame.item?.id) {
-      const game = new GameDetailQueryResponseDto();
-      game.id = route.params.game.id;
-      game.state = GameState.Loading;
-      activeGame.set(game);
-    }
-  }, [activeGame, route.params.game.id]);
+    removeListener('game-detail-games-listener');
+    addListener({
+      eventType: 'games',
+      id: 'game-detail-games-listener',
+      callback: (recordId: string) => {
+        if (recordId === route.params.game.id) {
+          refreshGame(route.params.game.id);
+        }
+      },
+    });
+    return () => removeListener('game-detail-games-listener');
+  }, [addListener, route.params.game.id, refreshGame, removeListener]);
 
   const styles = StyleSheet.create({
     emptyContainer: {
@@ -50,16 +65,14 @@ const GameDetailScreen: React.FC<Properties> = ({route, navigation}) => {
 
   return (
     <>
-      {!activeGame.item ||
-      activeGame.isLoading ||
-      activeGame.item?.state === GameState.Loading ? (
+      {isLocallyLoading ? (
         <View style={[styles.emptyContainer]}>
           <ActivityIndicator />
         </View>
       ) : (
         <>
           <GameDetailScoreboard activeGame={activeGame} />
-          <GameDetailTabStack />
+          <GameDetailTabStack activeGame={activeGame} />
         </>
       )}
     </>

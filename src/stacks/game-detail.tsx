@@ -2,6 +2,7 @@ import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {TempScreen} from '../screens/temp';
 import {GamePlayScreen} from '../screens/games/game-play';
+import {ActiveGame} from '../providers/data';
 
 export type GameDetailTabParamList = {
   'Game Play': undefined;
@@ -12,7 +13,9 @@ export type GameDetailTabParamList = {
 
 const Tab = createMaterialTopTabNavigator<GameDetailTabParamList>();
 
-type Properties = {};
+type Properties = {
+  activeGame: ActiveGame;
+};
 
 const GameDetailTabStack: React.FC<Properties> = ({}) => {
   return (

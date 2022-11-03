@@ -51,8 +51,8 @@ const Main = () => {
   return auth.isLoading ? (
     <SplashScreen />
   ) : (
-    <DataProvider>
-      <NotificationProvider>
+    <NotificationProvider>
+      <DataProvider>
         {!auth.isAuthenticated ? (
           <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
             <AuthStack />
@@ -62,8 +62,8 @@ const Main = () => {
             <MainTabStack />
           </NavigationContainer>
         )}
-      </NotificationProvider>
-    </DataProvider>
+      </DataProvider>
+    </NotificationProvider>
   );
 };
 

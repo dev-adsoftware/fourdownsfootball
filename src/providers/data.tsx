@@ -3,7 +3,6 @@ import React from 'react';
 import {
   GameDetailQueryArgsDto,
   GameDetailQueryResponseDto,
-  NotificationDto,
   OwnerDashboardQueryArgsDto,
   OwnerDashboardQueryResponseDto,
   OwnerDto,
@@ -14,43 +13,42 @@ import {GamesService} from '../services/games';
 import {OwnersService} from '../services/owners';
 import {TeamsService} from '../services/teams';
 import {useAuth} from './auth';
+import {useNotification} from './notification';
 
 const DataContext = React.createContext<Data | undefined>(undefined);
 
-export interface DataSetSegment<T> {
-  items: T[];
-  isLoading: boolean;
-  refresh: () => Promise<void>;
+export interface WithRefresher {
+  refresh: (showLoadingIndicator?: boolean) => Promise<void>;
 }
 
-export interface DataItemSegment<T> {
-  item?: T;
-  isLoading: boolean;
-  refresh: () => Promise<void>;
-}
-
-export interface WithSetter<T> {
-  set: (item: T) => void;
+export interface WithLoader {
+  load: (id: string, showLoadingIndicator?: boolean) => Promise<void>;
 }
 
 export interface WithLocalState<L> {
   setLocalState: (item: L) => Promise<void>;
-  getLocalState: () => Promise<L | undefined>;
+  localState: L;
 }
-
+export interface DataItemSegment<T> {
+  item: T;
+  isLoading: boolean;
+}
 export interface LocalGameState {
   lastPlayedSequence?: string;
+  expectedSequence?: string;
 }
+
+export type ActiveGame = DataItemSegment<GameDetailQueryResponseDto> &
+  WithLoader &
+  WithLocalState<LocalGameState>;
 interface Data {
-  ownerDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
-  systemDashboard: DataItemSegment<OwnerDashboardQueryResponseDto>;
-  activeGame: DataItemSegment<GameDetailQueryResponseDto> &
-    WithSetter<GameDetailQueryResponseDto> &
-    WithLocalState<LocalGameState>;
-  activeTeam: DataItemSegment<TeamDetailQueryResponseDto> &
-    WithSetter<TeamDetailQueryResponseDto>;
+  ownerDashboard: DataItemSegment<OwnerDashboardQueryResponseDto> &
+    WithRefresher;
+  systemDashboard: DataItemSegment<OwnerDashboardQueryResponseDto> &
+    WithRefresher;
+  activeGame: ActiveGame;
+  activeTeam: DataItemSegment<TeamDetailQueryResponseDto> & WithLoader;
   clearAll: () => void;
-  queueNotification: (notification: NotificationDto) => void;
   localStore: {
     get: <T>(key: string) => Promise<T | undefined>;
     set: <T>(key: string, value: T) => Promise<void>;
@@ -58,78 +56,69 @@ interface Data {
   };
 }
 
-type Action =
-  | {type: 'queue-notification'; payload: NotificationDto}
-  | {type: 'pop-notification'};
-
-const reducer = (
-  state: NotificationDto[],
-  action: Action,
-): NotificationDto[] => {
-  switch (action.type) {
-    case 'queue-notification':
-      const newState = [...state];
-      newState.push(action.payload);
-      return newState;
-    case 'pop-notification':
-      let poppedState = [...state];
-      poppedState = poppedState.slice(1);
-      return poppedState;
-  }
-};
-
 type Properties = {
   children: React.ReactNode;
 };
 
 const DataProvider: React.FC<Properties> = ({children}) => {
-  const [notificationQueueState, notificationQueueDispatch] = React.useReducer(
-    reducer,
-    [],
-  );
-
   const [ownerDashboard, setOwnerDashboard] =
-    React.useState<OwnerDashboardQueryResponseDto>();
+    React.useState<OwnerDashboardQueryResponseDto>(
+      new OwnerDashboardQueryResponseDto(),
+    );
   const [isOwnerDashboardLoading, setIsOwnerDashboardLoading] =
     React.useState(true);
 
   const [systemDashboard, setSystemDashboard] =
-    React.useState<OwnerDashboardQueryResponseDto>();
+    React.useState<OwnerDashboardQueryResponseDto>(
+      new OwnerDashboardQueryResponseDto(),
+    );
   const [isSystemDashboardLoading, setIsSystemDashboardLoading] =
     React.useState(true);
 
-  const [activeGame, setActiveGame] = React.useState<
-    GameDetailQueryResponseDto & LocalGameState
-  >();
+  const [activeGame, setActiveGame] =
+    React.useState<GameDetailQueryResponseDto>(
+      new GameDetailQueryResponseDto(),
+    );
+  const [activeGameLocalState, setActiveGameLocalState] =
+    React.useState<LocalGameState>({lastPlayedSequence: '-1'});
   const [isActiveGameLoading, setIsActiveGameLoading] = React.useState(true);
 
   const [activeTeam, setActiveTeam] =
-    React.useState<TeamDetailQueryResponseDto>();
+    React.useState<TeamDetailQueryResponseDto>(
+      new TeamDetailQueryResponseDto(),
+    );
   const [isActiveTeamLoading, setIsActiveTeamLoading] = React.useState(true);
 
   const auth = useAuth();
+  const {addListener, removeListener} = useNotification();
 
-  const getLocalData = async <T,>(key: string): Promise<T | undefined> => {
-    const jsonValue = await AsyncStorage.getItem(`@fourd:${key}`);
-    return jsonValue != null ? (JSON.parse(jsonValue) as T) : undefined;
-  };
+  const getLocalData = React.useCallback(
+    async <T,>(key: string): Promise<T | undefined> => {
+      const jsonValue = await AsyncStorage.getItem(`@fourd:${key}`);
+      return jsonValue != null ? (JSON.parse(jsonValue) as T) : undefined;
+    },
+    [],
+  );
 
-  const setLocalData = async <T,>(key: string, value: T): Promise<void> => {
-    await AsyncStorage.setItem(`@fourd:${key}`, JSON.stringify(value));
-  };
+  const setLocalData = React.useCallback(
+    async <T,>(key: string, value: T): Promise<void> => {
+      await AsyncStorage.setItem(`@fourd:${key}`, JSON.stringify(value));
+    },
+    [],
+  );
 
-  const clearLocalData = async (): Promise<void> => {
+  const clearLocalData = React.useCallback(async (): Promise<void> => {
     const keys = (await AsyncStorage.getAllKeys()) as string[];
     await AsyncStorage.multiRemove(
       keys.filter(key => {
         return key.startsWith('@fourd');
       }),
     );
-    setActiveGame(undefined);
-  };
+  }, []);
 
   const refreshOwnerDashboard = React.useCallback(
     async (showLoadingIndicator = true) => {
+      console.log('fetching owner dashboard');
       if (showLoadingIndicator) {
         setIsOwnerDashboardLoading(true);
       }
@@ -178,44 +167,39 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     [],
   );
 
-  const refreshActiveGame = React.useCallback(
-    async (showLoadingIndicator = true) => {
-      if (!activeGame?.id) {
-        return;
-      }
-
+  const loadActiveGame = React.useCallback(
+    async (id: string, showLoadingIndicator = true) => {
       if (showLoadingIndicator) {
         setIsActiveGameLoading(true);
       }
-
-      const gamesService = new GamesService();
-      const game: GameDetailQueryResponseDto & LocalGameState =
-        await gamesService.queryGameDetail(
-          new GameDetailQueryArgsDto().init({id: activeGame?.id as string}),
-        );
-
-      setActiveGame(game);
+      const teamsService = new GamesService();
+      setActiveGame(
+        await teamsService.queryGameDetail(
+          new GameDetailQueryArgsDto().init({id}),
+        ),
+      );
+      setActiveGameLocalState(
+        (await getLocalData<LocalGameState>(`${id}-state`)) || {
+          lastPlayedSequence: '-1',
+        },
+      );
 
       if (showLoadingIndicator) {
         setIsActiveGameLoading(false);
       }
     },
-    [activeGame?.id],
+    [getLocalData],
   );
 
-  const refreshActiveTeam = React.useCallback(
-    async (showLoadingIndicator = true) => {
-      if (!activeTeam?.id) {
-        return;
-      }
-
+  const loadActiveTeam = React.useCallback(
+    async (id: string, showLoadingIndicator = true) => {
       if (showLoadingIndicator) {
         setIsActiveTeamLoading(true);
       }
       const teamsService = new TeamsService();
       setActiveTeam(
         await teamsService.queryTeamDetail(
-          new TeamDetailQueryArgsDto().init({id: activeTeam?.id as string}),
+          new TeamDetailQueryArgsDto().init({id}),
         ),
       );
 
@@ -223,71 +207,64 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         setIsActiveTeamLoading(false);
       }
     },
-    [activeTeam?.id],
+    [],
   );
 
   const clearAll = React.useCallback(() => {
     setIsOwnerDashboardLoading(true);
-    setOwnerDashboard(undefined);
-    setActiveGame(undefined);
-    setActiveTeam(undefined);
+    setOwnerDashboard(new OwnerDashboardQueryResponseDto());
+    setActiveGame(new GameDetailQueryResponseDto());
+    setActiveTeam(new TeamDetailQueryResponseDto());
     setIsOwnerDashboardLoading(false);
   }, []);
+
+  const setLocalGameStateCb = React.useCallback(
+    async (item: LocalGameState) => {
+      await setLocalData<LocalGameState>(`${activeGame?.id}-state`, item);
+    },
+    [activeGame?.id, setLocalData],
+  );
 
   React.useEffect(() => {
     if (auth.user) {
       refreshOwnerDashboard();
-    }
-  }, [auth.user, refreshOwnerDashboard]);
-
-  React.useEffect(() => {
-    if (auth.user) {
       refreshSystemDashboard();
     }
-  }, [auth.user, refreshSystemDashboard]);
+  }, [auth.user, refreshOwnerDashboard, refreshSystemDashboard]);
 
   React.useEffect(() => {
-    if (auth.user) {
-      refreshActiveGame();
-    }
-  }, [auth.user, refreshActiveGame]);
+    console.log('mounting data provider');
+    addListener({
+      eventType: 'games',
+      id: 'data-provider-games-listener',
+      callback: () => {
+        console.log('owner dashboard refresher');
+        refreshOwnerDashboard();
+      },
+    });
+    addListener({
+      eventType: 'game-requests',
+      id: 'data-provider-game-requests-listener',
+      callback: () => {
+        console.log('owner dashboard refresher');
+        refreshOwnerDashboard();
+      },
+    });
+    addListener({
+      eventType: 'game-invites',
+      id: 'data-provider-game-invites-listener',
+      callback: () => {
+        console.log('owner dashboard refresher');
+        refreshOwnerDashboard();
+      },
+    });
 
-  React.useEffect(() => {
-    if (auth.user) {
-      refreshActiveTeam();
-    }
-  }, [auth.user, refreshActiveTeam]);
-
-  React.useEffect(() => {
-    if (notificationQueueState.length > 0) {
-      const notification = notificationQueueState[0];
-      notificationQueueDispatch({type: 'pop-notification'});
-
-      if (notification.recordType === 'games') {
-        if (activeGame?.id === notification.recordId) {
-          refreshActiveGame(false)
-            .then(() => console.log('refreshed active game'))
-            .catch(e => console.log(e));
-        }
-        refreshOwnerDashboard(false)
-          .then(() => console.log('refreshed owner dashboard'))
-          .catch(e => console.log(e));
-      } else if (notification.recordType === 'game-requests') {
-        refreshOwnerDashboard(false)
-          .then(() => console.log('refreshed owner dashboard'))
-          .catch(e => console.log(e));
-      } else if (notification.recordType === 'game-invites') {
-        refreshOwnerDashboard(false)
-          .then(() => console.log('refreshed owner dashboard'))
-          .catch(e => console.log(e));
-      }
-    }
-  }, [
-    notificationQueueState,
-    activeGame,
-    refreshActiveGame,
-    refreshOwnerDashboard,
-  ]);
+    return () => {
+      removeListener('data-provider-games-listener');
+      removeListener('data-provider-game-requests-listener');
+      removeListener('data-provider-game-invites-listener');
+    };
+  }, [addListener, removeListener, refreshOwnerDashboard]);
 
   return (
     <DataContext.Provider
@@ -305,33 +282,16 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         activeGame: {
           item: activeGame,
           isLoading: isActiveGameLoading,
-          set: setActiveGame,
-          refresh: refreshActiveGame,
-          getLocalState: async () => {
-            return await getLocalData<LocalGameState>(
-              `${activeGame?.id}-state`,
-            );
-          },
-          setLocalState: async (localState: LocalGameState) => {
-            await setLocalData<LocalGameState>(
-              `${activeGame?.id}-state`,
-              localState,
-            );
-          },
+          load: loadActiveGame,
+          setLocalState: setLocalGameStateCb,
+          localState: activeGameLocalState,
         },
         activeTeam: {
           item: activeTeam,
           isLoading: isActiveTeamLoading,
-          set: setActiveTeam,
-          refresh: refreshActiveTeam,
+          load: loadActiveTeam,
         },
         clearAll,
-        queueNotification: (notification: NotificationDto) => {
-          notificationQueueDispatch({
-            type: 'queue-notification',
-            payload: notification,
-          });
-        },
         localStore: {
           get: getLocalData,
           set: setLocalData,

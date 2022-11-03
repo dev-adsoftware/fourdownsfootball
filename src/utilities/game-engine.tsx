@@ -135,6 +135,8 @@ export class GameEngine {
       return 'Kickoff';
     } else if (formation === Formation.KickoffReturn) {
       return 'Kick Return';
+    } else if (formation === Formation.SingleBack) {
+      return 'Single Back';
     } else {
       return `${formation}`;
     }

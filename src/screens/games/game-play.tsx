@@ -3,7 +3,6 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  ActivityIndicator,
   Animated,
   Easing,
   Text,
@@ -26,8 +25,8 @@ import {
 } from '../../services/dtos';
 import {GameActionsService} from '../../services/game-actions';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
-import {GamesService} from '../../services/games';
 import {Alignment} from '../../services/dtos/types/alignment';
+import {RouteProp} from '@react-navigation/native';
 
 type Action = {type: 'increment'} | {type: 'clear'};
 
@@ -42,27 +41,42 @@ const reducer = (state: {timer: number}, action: Action): {timer: number} => {
 };
 
 type Properties = {
+  route: RouteProp<GameDetailTabParamList, 'Game Play'>;
   navigation: NativeStackNavigationProp<GameDetailTabParamList>;
 };
 
-const GamePlayScreen: React.FC<Properties> = () => {
-  const {activeGame, ownerDashboard} = useData();
-  const opposingTeam = GameEngine.getOpposingTeam(
-    activeGame.item as GameDetailQueryResponseDto,
-    ownerDashboard.item?.owner.id as string,
+const GamePlayScreen: React.FC<Properties> = ({}) => {
+  const {ownerDashboard, activeGame} = useData();
+  const {setLocalState: setLocalState} = activeGame;
+
+  const opposingTeam = React.useMemo(
+    () =>
+      GameEngine.getOpposingTeam(
+        activeGame.item as GameDetailQueryResponseDto,
+        ownerDashboard.item.owner.id as string,
+      ),
+    [activeGame.item, ownerDashboard.item.owner.id],
   );
 
-  const ownerTeam = GameEngine.getOwnerTeam(
-    activeGame.item as GameDetailQueryResponseDto,
-    ownerDashboard.item?.owner.id as string,
+  const ownerTeam = React.useMemo(
+    () =>
+      GameEngine.getOwnerTeam(
+        activeGame.item as GameDetailQueryResponseDto,
+        ownerDashboard.item.owner.id as string,
+      ),
+    [activeGame.item, ownerDashboard.item.owner.id],
   );
 
-  const actingTeam = GameEngine.getActingTeam(
-    activeGame.item as GameDetailQueryResponseDto,
+  const actingTeam = React.useMemo(
+    () =>
+      GameEngine.getActingTeam(activeGame.item as GameDetailQueryResponseDto),
+    [activeGame.item],
   );
 
-  const offenseTeam = GameEngine.getOffenseTeam(
-    activeGame.item as GameDetailQueryResponseDto,
+  const offenseTeam = React.useMemo(
+    () =>
+      GameEngine.getOffenseTeam(activeGame.item as GameDetailQueryResponseDto),
+    [activeGame.item],
   );
 
   const gameFieldAnimateFuncRef =
@@ -70,27 +84,31 @@ const GamePlayScreen: React.FC<Properties> = () => {
 
   const [isPlaybookOpen, setIsPlaybookOpen] = React.useState(false);
   const [selectedPlay, setSelectedPlay] = React.useState(ownerTeam.plays[0]);
-  const [waitingForGameUpdate, setWaitingForGameUpdate] = React.useState(false);
+  const [isWaitingForExpectedSequence, setIsWaitingForExpectedSequence] =
+    React.useState(false);
 
   const animationPlaybookOpacity = React.useRef(new Animated.Value(0)).current;
   const fadePlaybook = React.useCallback(
-    (inOut: 'in' | 'out') => {
-      animationPlaybookOpacity.setValue(inOut === 'in' ? 0 : 1);
-      Animated.timing(animationPlaybookOpacity, {
-        toValue: inOut === 'in' ? 1 : 0,
-        duration: 200,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }).start(() => {
-        if (inOut === 'out') {
-          setIsPlaybookOpen(false);
-        }
+    async (inOut: 'in' | 'out') => {
+      return new Promise(resolve => {
+        animationPlaybookOpacity.setValue(inOut === 'in' ? 0 : 1);
+        Animated.timing(animationPlaybookOpacity, {
+          toValue: inOut === 'in' ? 1 : 0,
+          duration: 200,
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }).start(() => {
+          if (inOut === 'out') {
+            setIsPlaybookOpen(false);
+            resolve(undefined);
+          }
+        });
       });
     },
     [animationPlaybookOpacity],
   );
 
-  const animationResultTranslate = React.useRef(new Animated.Value(0)).current;
+  const animationResultTranslate = React.useRef(new Animated.Value(1)).current;
   const animationCarouselTranslate = React.useRef(
     new Animated.Value(actingTeam.id === ownerTeam.id ? 0 : 1),
   ).current;
@@ -99,19 +117,25 @@ const GamePlayScreen: React.FC<Properties> = () => {
   ).current;
 
   const fadeControlPanel = React.useCallback(
-    (inOut: 'in' | 'out') => {
-      Animated.timing(animationControlPanelOpacity, {
-        toValue: inOut === 'in' ? 1 : 0,
-        duration: 200,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }).start(() => {});
+    async (inOut: 'in' | 'out') => {
+      return new Promise(resolve => {
+        Animated.timing(animationControlPanelOpacity, {
+          toValue: inOut === 'in' ? 1 : 0,
+          duration: 200,
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }).start(({finished}) => {
+          if (finished) {
+            resolve(undefined);
+          }
+        });
+      });
     },
     [animationControlPanelOpacity],
   );
 
-  const animateResultBox = React.useCallback(
-    (onFinished: () => void) => {
+  const animateResultBox = React.useCallback(async () => {
+    return new Promise(resolve => {
       animationResultTranslate.setValue(1);
       Animated.sequence([
         Animated.spring(animationResultTranslate, {
@@ -125,69 +149,71 @@ const GamePlayScreen: React.FC<Properties> = () => {
           useNativeDriver: true,
           delay: 2000,
         }),
-      ]).start(({finished}) => {
+      ]).start(async ({finished}) => {
         if (finished) {
-          onFinished();
+          resolve(undefined);
         }
       });
-    },
-    [animationResultTranslate],
-  );
+    });
+  }, [animationResultTranslate]);
 
   const animateCarousel = React.useCallback(
-    (inOut: 'in' | 'out', onFinished: () => void) => {
-      Animated.sequence([
-        Animated.timing(animationCarouselTranslate, {
-          toValue: inOut === 'in' ? 0 : 1,
-          duration: 300,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        }),
-      ]).start(({finished}) => {
-        if (finished) {
-          onFinished();
-        }
+    async (inOut: 'in' | 'out') => {
+      return new Promise(resolve => {
+        Animated.sequence([
+          Animated.timing(animationCarouselTranslate, {
+            toValue: inOut === 'in' ? 0 : 1,
+            duration: 300,
+            useNativeDriver: true,
+            easing: Easing.linear,
+          }),
+        ]).start(async ({finished}) => {
+          if (finished) {
+            resolve(undefined);
+          }
+        });
       });
     },
     [animationCarouselTranslate],
   );
 
+  // console.log(activeGame.localState);
+  // console.log(activeGame.item.sequence);
+
   const doAnimationSequence = React.useCallback(async () => {
-    // if not played, do the animation sequence:
-    // if result has chanceResult, show split control panel with animated arrow and fade out control panel
-    // scroll field view to ballOn
+    console.log('animation sequence');
+    if (
+      activeGame.localState?.lastPlayedSequence !== activeGame.item.sequence
+    ) {
+      console.log('sequence change');
 
-    const localState = await activeGame.getLocalState();
+      // Before doing any animations, reset the local state
+      setIsWaitingForExpectedSequence(false);
+      // setSelectedPlay(ownerTeam.plays[0]);
 
-    animationResultTranslate.setValue(1);
-    animationControlPanelOpacity.setValue(0);
-    if (localState?.lastPlayedSequence !== activeGame.item?.sequence) {
-      // if (
-      //   activeGame.item?.logs[Number(activeGame.item.sequence)].logType ===
-      //   LogType.Result
-      // ) {
-      // setSuspendGameFieldAnimation(false);
+      animationResultTranslate.setValue(1);
       if (gameFieldAnimateFuncRef.current) {
-        gameFieldAnimateFuncRef.current(() => {
-          animateResultBox(() => {
-            // Mark as 'played'
-            activeGame.setLocalState({
-              lastPlayedSequence: activeGame.item?.sequence,
-            });
-            fadeControlPanel('in');
+        animationControlPanelOpacity.setValue(0);
+        gameFieldAnimateFuncRef.current(async () => {
+          await animateResultBox();
+          await setLocalState({
+            lastPlayedSequence: activeGame.item.sequence,
           });
+          await fadeControlPanel('in');
         });
       }
-      // }
     } else {
       if (gameFieldAnimateFuncRef.current) {
-        gameFieldAnimateFuncRef.current(() => {
-          fadeControlPanel('in');
+        animationControlPanelOpacity.setValue(0);
+        gameFieldAnimateFuncRef.current(async () => {
+          await fadeControlPanel('in');
         });
       }
     }
   }, [
-    activeGame,
+    activeGame.localState.lastPlayedSequence,
+    activeGame.item.sequence,
+    setLocalState,
     animationResultTranslate,
     animationControlPanelOpacity,
     animateResultBox,
@@ -197,6 +223,13 @@ const GamePlayScreen: React.FC<Properties> = () => {
   React.useEffect(() => {
     doAnimationSequence();
   }, [doAnimationSequence]);
+
+  React.useEffect(() => {
+    console.log('component was remounted');
+    return () => {
+      console.log('component was unmounted');
+    };
+  }, []);
 
   const theme = useTheme();
   const styles = StyleSheet.create({
@@ -366,6 +399,11 @@ const GamePlayScreen: React.FC<Properties> = () => {
       borderRadius: 5,
       backgroundColor: theme.colors.secondaryBackground,
     },
+    emptyContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });
 
   const [timerState, timerDispatch] = React.useReducer(reducer, {timer: 0});
@@ -381,299 +419,267 @@ const GamePlayScreen: React.FC<Properties> = () => {
 
   return (
     <>
-      {activeGame.item ? (
-        activeGame.isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <View style={[styles.container]}>
-            <GameMomentumBar
-              teamName={opposingTeam.nickname}
-              teamPrimaryColor={opposingTeam.primaryColor}
-              momentum={
-                activeGame.item.momentum < 0
-                  ? Math.abs(activeGame.item.momentum)
-                  : 0
-              }
-              timeRemaining={
-                GameEngine.getTimeRemaining(activeGame.item, opposingTeam.id) -
-                // 0
-                (opposingTeam.id === actingTeam.id ? timerState.timer : 0)
-              }
-              actionIconName="user-friends"
-              onActionPressed={async () => {
-                animateCarousel('out', () => {});
-              }}
-            />
-            <View style={[styles.gameFieldContainer]}>
-              <GameField
-                ballOn={
-                  offenseTeam.id === ownerTeam.id
-                    ? 100 - activeGame.item.ballOn
-                    : activeGame.item.ballOn
-                }
-                direction={activeGame.item.direction}
-                homeTeamName={activeGame.item.homeTeam.nickname}
-                homeTeamPrimaryColor={activeGame.item.homeTeam.primaryColor}
-                awayTeamName={activeGame.item.awayTeam.nickname}
-                awayTeamPrimaryColor={activeGame.item.awayTeam.primaryColor}
-                offenseAssignments={
-                  offenseTeam.id === ownerTeam.id
-                    ? actingTeam.id === ownerTeam.id
-                      ? selectedPlay.assignments
-                      : activeGame.item?.logs[activeGame.item.logs.length - 1]
-                          .initiatingGameAction?.playSnapshot.assignments || []
-                    : []
-                }
-                defenseAssignments={
-                  offenseTeam.id !== ownerTeam.id
-                    ? actingTeam.id === ownerTeam.id
-                      ? selectedPlay.assignments
-                      : activeGame.item?.logs[activeGame.item.logs.length - 1]
-                          .completingGameAction?.playSnapshot.assignments || []
-                    : []
-                }
-                defendingView={offenseTeam.id !== ownerTeam.id}
-                animateFuncRef={gameFieldAnimateFuncRef}
-              />
-              <Animated.View
-                style={[
-                  styles.resultOverlayContainer,
+      <View style={[styles.container]}>
+        <GameMomentumBar
+          teamName={opposingTeam.nickname}
+          teamPrimaryColor={opposingTeam.primaryColor}
+          momentum={
+            activeGame.item.momentum < 0
+              ? Math.abs(activeGame.item.momentum)
+              : 0
+          }
+          timeRemaining={
+            GameEngine.getTimeRemaining(activeGame.item, opposingTeam.id) -
+            // 0
+            (opposingTeam.id === actingTeam.id ? timerState.timer : 0)
+          }
+          actionIconName="user-friends"
+          onActionPressed={async () => {
+            await animateCarousel('out');
+          }}
+        />
+        <View style={[styles.gameFieldContainer]}>
+          <GameField
+            ballOn={
+              offenseTeam.id === ownerTeam.id
+                ? 100 - activeGame.item.ballOn
+                : activeGame.item.ballOn
+            }
+            direction={activeGame.item.direction}
+            homeTeamName={activeGame.item.homeTeam.nickname}
+            homeTeamPrimaryColor={activeGame.item.homeTeam.primaryColor}
+            awayTeamName={activeGame.item.awayTeam.nickname}
+            awayTeamPrimaryColor={activeGame.item.awayTeam.primaryColor}
+            offenseAssignments={
+              offenseTeam.id === ownerTeam.id
+                ? actingTeam.id === ownerTeam.id
+                  ? selectedPlay.assignments
+                  : activeGame.item?.logs[activeGame.item.logs.length - 1]
+                      .initiatingGameAction?.playSnapshot.assignments || []
+                : []
+            }
+            defenseAssignments={
+              offenseTeam.id !== ownerTeam.id
+                ? actingTeam.id === ownerTeam.id
+                  ? selectedPlay.assignments
+                  : activeGame.item?.logs[activeGame.item.logs.length - 1]
+                      .completingGameAction?.playSnapshot.assignments || []
+                : []
+            }
+            defendingView={offenseTeam.id !== ownerTeam.id}
+            animateFuncRef={gameFieldAnimateFuncRef}
+          />
+          <Animated.View
+            style={[
+              styles.resultOverlayContainer,
+              {
+                transform: [
                   {
-                    transform: [
-                      {
-                        translateX: animationResultTranslate.interpolate({
-                          inputRange: [-1, 1],
-                          outputRange: [
-                            -Dimensions.get('screen').width,
-                            Dimensions.get('screen').width,
-                          ],
-                        }),
-                      },
-                    ],
+                    translateX: animationResultTranslate.interpolate({
+                      inputRange: [-1, 1],
+                      outputRange: [
+                        -Dimensions.get('screen').width,
+                        Dimensions.get('screen').width,
+                      ],
+                    }),
                   },
-                ]}>
-                <View style={[styles.resultTextContainer]}>
-                  <Text style={[styles.resultText]} numberOfLines={1}>
-                    {
-                      activeGame.item.logs[activeGame.item.logs.length - 1]
-                        .headline
-                    }
+                ],
+              },
+            ]}>
+            <View style={[styles.resultTextContainer]}>
+              <Text style={[styles.resultText]} numberOfLines={1}>
+                {activeGame.item.logs[activeGame.item.logs.length - 1].headline}
+              </Text>
+              {activeGame.item.logs[
+                activeGame.item.logs.length - 1
+              ].details.map((detail: string, index: number) => {
+                return (
+                  <Text
+                    key={`${detail}-${index}`}
+                    style={[styles.resultSubText]}>
+                    {detail}
                   </Text>
-                  {activeGame.item.logs[
-                    activeGame.item.logs.length - 1
-                  ].details.map((detail: string, index: number) => {
-                    return (
-                      <Text
-                        key={`${detail}-${index}`}
-                        style={[styles.resultSubText]}>
-                        {detail}
-                      </Text>
-                    );
-                  })}
-                </View>
-              </Animated.View>
-              {actingTeam.id !== ownerTeam.id ? (
-                <Animated.View
-                  style={[
-                    styles.waitingForOpponentContainer,
-                    {
-                      opacity: animationControlPanelOpacity,
-                    },
-                  ]}>
-                  <Text style={[styles.waitingforOpponentText]}>
-                    Waiting for opponent
-                  </Text>
-                </Animated.View>
-              ) : (
-                <></>
-              )}
-              <Animated.View
-                style={[
-                  styles.overlayContainer,
-                  {opacity: animationControlPanelOpacity},
-                ]}>
-                <View
-                  style={[
-                    styles.controlPanelContainer,
-                    // {
-                    //   transform: [{translateY: 0}],
-                    // },
-                  ]}>
-                  {actingTeam.id === ownerTeam.id ? (
-                    <GameControlPanel
-                      selectedPlay={selectedPlay}
-                      isSplit={false}
-                      isWaiting={waitingForGameUpdate}
-                      onPressPlaybook={() => {
-                        setIsPlaybookOpen(true);
-                        fadePlaybook('in');
-                      }}
-                      onSubmit={async () => {
-                        animateCarousel('out', () => {});
-                        setWaitingForGameUpdate(true);
-
-                        const gameAction = new GameActionDto();
-                        gameAction.id = uuid.v4() as string;
-                        gameAction.gameId = activeGame.item?.id || 'n/a';
-                        gameAction.gameSequence =
-                          activeGame.item?.sequence || '-1';
-                        gameAction.initiatingGameActionId =
-                          activeGame.item?.logs[
-                            activeGame.item?.logs.length - 1
-                          ].initiatingGameActionId;
-                        gameAction.actingTeamSnapshotId = ownerTeam.id;
-                        gameAction.playSnapshotId = selectedPlay.id;
-                        gameAction.flipped = false;
-                        gameAction.noHuddle = false;
-                        gameAction.hurryUp = false;
-                        gameAction.assignments = [...selectedPlay.assignments];
-                        await new GameActionsService().createGameAction(
-                          gameAction,
-                        );
-
-                        const updatedSequence = String(
-                          Number(activeGame.item?.sequence) + 1,
-                        );
-
-                        await new GamesService().waitForGameUpdate(
-                          activeGame.item?.id as string,
-                          updatedSequence,
-                        );
-
-                        setWaitingForGameUpdate(false);
-                        await activeGame.refresh();
-                      }}
-                    />
-                  ) : (
-                    <>
-                      {offenseTeam.id === ownerTeam.id ? (
-                        <GameControlPanel
-                          selectedPlay={
-                            activeGame.item?.logs[
-                              activeGame.item.logs.length - 1
-                            ].initiatingGameAction?.playSnapshot || selectedPlay
-                          }
-                          isSplit={true}
-                          isWaiting={false}
-                          onPressPlaybook={() => {}}
-                          onSubmit={async () => {}}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                      {/* <GameWaitingPanel /> */}
-                    </>
-                  )}
-                </View>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        translateY: animationCarouselTranslate.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0, 400],
-                        }),
-                      },
-                    ],
-                  }}>
-                  <GamePlayerCarousel
-                    players={
-                      actingTeam.id === ownerTeam.id
-                        ? selectedPlay.assignments.map(assignment => {
-                            const filteredPlayer: PlayerSnapshotDto & {
-                              alignment?: Alignment;
-                            } = ownerTeam.players.filter(player => {
-                              return (
-                                player.position ===
-                                  assignment.depthChartPosition &&
-                                player.depthChartSlot ===
-                                  assignment.depthChartSlot
-                              );
-                            })[0];
-                            filteredPlayer.alignment = assignment.alignment;
-                            return filteredPlayer;
-                          })
-                        : []
-                      // : FormationAssignments[Formation.KickoffReturn].map(
-                      //     assignment => {
-                      //       const filteredPlayer: PlayerSnapshotDto & {
-                      //         alignment?: Alignment;
-                      //       } = ownerTeam.players.filter(player => {
-                      //         return (
-                      //           player.position ===
-                      //             assignment.depthChartPosition &&
-                      //           player.depthChartSlot ===
-                      //             assignment.depthChartSlot
-                      //         );
-                      //       })[0];
-                      //       filteredPlayer.alignment = assignment.alignment;
-                      //       return filteredPlayer;
-                      //     },
-                      //   )
-                    }
-                  />
-                </Animated.View>
-              </Animated.View>
+                );
+              })}
             </View>
-            <GameMomentumBar
-              teamName={ownerTeam.nickname}
-              teamPrimaryColor={ownerTeam.primaryColor}
-              momentum={
-                activeGame.item.momentum > 0
-                  ? Math.abs(activeGame.item.momentum)
-                  : 0
-              }
-              timeRemaining={GameEngine.getTimeRemaining(
-                activeGame.item,
-                ownerTeam.id,
-              )}
-              actionIconName="cog"
-              onActionPressed={async () => {
-                animateCarousel('in', () => {});
-              }}
-            />
-            {isPlaybookOpen ? (
-              <Animated.View
-                style={[
-                  styles.playbookOverlayContainer,
-                  {opacity: animationPlaybookOpacity},
-                ]}>
-                <GamePlaybook
-                  plays={ownerTeam.plays.sort((a, b) => {
-                    if (a.formation > b.formation) {
-                      return 1;
-                    } else if (a.formation === b.formation) {
-                      if (a.name > b.name) {
-                        return 1;
-                      } else {
-                        return -1;
-                      }
-                    } else {
-                      return -1;
-                    }
-                  })}
-                  onSelect={(playId: string) => {
-                    const filteredPlay = ownerTeam.plays.filter(
-                      (play: GameDetailExtendedPlaySnapshotDto) => {
-                        return play.id === playId;
-                      },
-                    )[0];
-
-                    setSelectedPlay(filteredPlay);
+          </Animated.View>
+          {actingTeam.id !== ownerTeam.id ? (
+            <Animated.View
+              style={[
+                styles.waitingForOpponentContainer,
+                {
+                  opacity: animationControlPanelOpacity,
+                },
+              ]}>
+              <Text style={[styles.waitingforOpponentText]}>
+                Waiting for opponent
+              </Text>
+            </Animated.View>
+          ) : (
+            <></>
+          )}
+          <Animated.View
+            style={[
+              styles.overlayContainer,
+              {opacity: animationControlPanelOpacity},
+            ]}>
+            <View
+              style={[
+                styles.controlPanelContainer,
+                // {
+                //   transform: [{translateY: 0}],
+                // },
+              ]}>
+              {actingTeam.id === ownerTeam.id ? (
+                <GameControlPanel
+                  selectedPlay={selectedPlay}
+                  isSplit={false}
+                  isWaiting={
+                    isWaitingForExpectedSequence ||
+                    (!!activeGame.localState.expectedSequence &&
+                      activeGame.localState.expectedSequence !==
+                        activeGame.item.sequence)
+                  }
+                  onPressPlaybook={async () => {
+                    setIsPlaybookOpen(true);
+                    await fadePlaybook('in');
                   }}
-                  onClose={() => {
-                    fadePlaybook('out');
+                  onSubmit={async () => {
+                    await animateCarousel('out');
+                    setIsWaitingForExpectedSequence(true);
+
+                    const expectedSequence = String(
+                      Number(activeGame.item.sequence) + 1,
+                    );
+                    activeGame.setLocalState({
+                      ...activeGame.localState,
+                      expectedSequence,
+                    });
+
+                    const gameAction = new GameActionDto();
+                    gameAction.id = uuid.v4() as string;
+                    gameAction.gameId = activeGame.item?.id || 'n/a';
+                    gameAction.gameSequence = activeGame.item?.sequence || '-1';
+                    gameAction.initiatingGameActionId =
+                      activeGame.item?.logs[
+                        activeGame.item?.logs.length - 1
+                      ].initiatingGameActionId;
+                    gameAction.actingTeamSnapshotId = ownerTeam.id;
+                    gameAction.playSnapshotId = selectedPlay.id;
+                    gameAction.flipped = false;
+                    gameAction.noHuddle = false;
+                    gameAction.hurryUp = false;
+                    gameAction.assignments = [...selectedPlay.assignments];
+
+                    await new GameActionsService().createGameAction(gameAction);
                   }}
                 />
-              </Animated.View>
-            ) : (
-              <></>
-            )}
-          </View>
-        )
-      ) : (
-        <></>
-      )}
+              ) : (
+                <>
+                  {offenseTeam.id === ownerTeam.id ? (
+                    <GameControlPanel
+                      selectedPlay={
+                        activeGame.item?.logs[activeGame.item.logs.length - 1]
+                          .initiatingGameAction?.playSnapshot || selectedPlay
+                      }
+                      isSplit={true}
+                      isWaiting={false}
+                      onPressPlaybook={() => {}}
+                      onSubmit={async () => {}}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </>
+              )}
+            </View>
+            <Animated.View
+              style={{
+                transform: [
+                  {
+                    translateY: animationCarouselTranslate.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 400],
+                    }),
+                  },
+                ],
+              }}>
+              <GamePlayerCarousel
+                players={
+                  actingTeam.id === ownerTeam.id
+                    ? selectedPlay.assignments.map(assignment => {
+                        const filteredPlayer: PlayerSnapshotDto & {
+                          alignment?: Alignment;
+                        } = ownerTeam.players.filter(player => {
+                          return (
+                            player.position === assignment.depthChartPosition &&
+                            player.depthChartSlot === assignment.depthChartSlot
+                          );
+                        })[0];
+                        filteredPlayer.alignment = assignment.alignment;
+                        return filteredPlayer;
+                      })
+                    : []
+                }
+              />
+            </Animated.View>
+          </Animated.View>
+        </View>
+        <GameMomentumBar
+          teamName={ownerTeam.nickname}
+          teamPrimaryColor={ownerTeam.primaryColor}
+          momentum={
+            activeGame.item.momentum > 0
+              ? Math.abs(activeGame.item.momentum)
+              : 0
+          }
+          timeRemaining={GameEngine.getTimeRemaining(
+            activeGame.item,
+            ownerTeam.id,
+          )}
+          actionIconName="cog"
+          onActionPressed={async () => {
+            await animateCarousel('in');
+          }}
+        />
+        {isPlaybookOpen ? (
+          <Animated.View
+            style={[
+              styles.playbookOverlayContainer,
+              {opacity: animationPlaybookOpacity},
+            ]}>
+            <GamePlaybook
+              plays={ownerTeam.plays.sort((a, b) => {
+                if (a.formation > b.formation) {
+                  return 1;
+                } else if (a.formation === b.formation) {
+                  if (a.name > b.name) {
+                    return 1;
+                  } else {
+                    return -1;
+                  }
+                } else {
+                  return -1;
+                }
+              })}
+              onSelect={(playId: string) => {
+                const filteredPlay = ownerTeam.plays.filter(
+                  (play: GameDetailExtendedPlaySnapshotDto) => {
+                    return play.id === playId;
+                  },
+                )[0];
+
+                setSelectedPlay(filteredPlay);
+              }}
+              onClose={async () => {
+                await fadePlaybook('out');
+              }}
+            />
+          </Animated.View>
+        ) : (
+          <></>
+        )}
+      </View>
     </>
   );
 };

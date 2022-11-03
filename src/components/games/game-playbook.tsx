@@ -369,7 +369,7 @@ const Component: React.FC<Properties> = props => {
                   playId: item[0].playId,
                   categoryAbbr: GameEngine.getPlaySubCategoryAbbr(
                     item[0].subCategory,
-                  ),
+                  ).toUpperCase(),
                   name: item[0].name.toUpperCase(),
                   showRepetitionPenalty: item[0].showRepetitionPenalty,
                   currentRepetitionPenalty: item[0].currentRepetitionPenalty,
