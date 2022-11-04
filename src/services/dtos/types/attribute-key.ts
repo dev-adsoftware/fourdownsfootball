@@ -1,0 +1,17 @@
+export enum AttributeKey {
+  Passing,
+  Rushing,
+  Receiving,
+  RunBlocking,
+  PassBlocking,
+  RunStuffing,
+  PassRushing,
+  Covering,
+  Endurance,
+  Stamina,
+  Fragility,
+  Returning,
+  Kicking,
+  Punting,
+  Coachability,
+}
