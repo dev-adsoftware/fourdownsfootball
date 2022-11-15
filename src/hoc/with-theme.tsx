@@ -1,13 +1,23 @@
 import React from 'react';
-import {Theme, useTheme} from '../providers/theme';
+import {
+  InjectedThemeProps,
+  ThemeStyleProps,
+  useTheme,
+} from '../providers/theme';
 
-export interface InjectedThemeProps {
-  theme: Theme;
-}
-
-export const withTheme =
-  <P extends InjectedThemeProps>(
-    Component: React.ComponentType<P>,
-  ): React.FC<Omit<P, keyof InjectedThemeProps>> =>
-  ({...props}: Omit<P, keyof InjectedThemeProps>) =>
-    <Component {...(props as P)} theme={useTheme()} />;
+export const withTheme = <P extends ThemeStyleProps>(
+  Component: React.ComponentType<P>,
+): React.FC<Omit<P, keyof InjectedThemeProps>> => {
+  return ({...props}: Omit<P, keyof InjectedThemeProps>) => {
+    const theme = useTheme();
+    const {styleProps, restProps} =
+      theme.mapPropsToStyleSheet<Omit<P, keyof InjectedThemeProps>>(props);
+    return (
+      <Component
+        {...(restProps as P)}
+        style={[restProps.style, styleProps.s]}
+        theme={theme}
+      />
+    );
+  };
+};

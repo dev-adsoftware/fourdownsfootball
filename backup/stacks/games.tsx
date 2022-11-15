@@ -44,10 +44,12 @@ const GamesStack: React.FC<Properties> = ({}) => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.black},
-        headerTintColor: theme.colors.white,
+        headerStyle: {backgroundColor: 'green' || theme.colors.black},
+        headerTintColor: 'yellow' || theme.colors.white,
         headerBackTitleVisible: false,
-        contentStyle: {backgroundColor: theme.colors.secondaryBackground},
+        contentStyle: {
+          backgroundColor: 'brown' || theme.colors.secondaryBackground,
+        },
       }}>
       <Stack.Screen name="Games" component={GamesScreen} />
       <Stack.Screen name="Game Detail Stack" component={GameDetailScreen} />

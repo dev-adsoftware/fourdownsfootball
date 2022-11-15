@@ -1,5 +1,16 @@
 import React from 'react';
 import {Auth as AWSAuth} from 'aws-amplify';
+import axios, {AxiosRequestConfig, AxiosInstance} from 'axios';
+
+const client = axios.create();
+client.interceptors.request.use(async (config: AxiosRequestConfig) => {
+  const session = await AWSAuth.currentSession();
+  config.headers = {
+    Authorization: `Bearer ${session.getIdToken().getJwtToken()}`,
+    ...config.headers,
+  };
+  return config;
+});
 
 const AuthContext = React.createContext<Auth | undefined>(undefined);
 
@@ -21,6 +32,7 @@ interface Auth {
     code: string,
   ) => Promise<void>;
   user?: User;
+  secureClient: AxiosInstance;
 }
 
 type Properties = {
@@ -112,6 +124,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
         sendPasswordRecoveryCode,
         resetPassword,
         user,
+        secureClient: client,
       }}>
       {children}
     </AuthContext.Provider>

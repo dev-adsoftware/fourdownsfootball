@@ -3,28 +3,8 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native';
-import {
-  ColorSchemeName,
-  StyleSheet,
-  TextStyle,
-  useColorScheme,
-  ViewStyle,
-} from 'react-native';
+import {ColorSchemeName, useColorScheme} from 'react-native';
 import Color from 'tinycolor2';
-import {get} from 'lodash';
-
-export interface CoreStyle extends ViewStyle, TextStyle {}
-export interface InjectedThemeProps {
-  theme: Theme;
-}
-
-export interface StyleProps extends ViewStyle, TextStyle {
-  bgColor?: string;
-}
-
-export interface ThemeStyleProps extends InjectedThemeProps, StyleProps {
-  style?: CoreStyle;
-}
 
 interface IColorHues {
   50: string;
@@ -743,45 +723,6 @@ export class Theme {
     }
 
     return this.colors.black;
-  }
-
-  public mapPropsToStyleSheet<T>(props: any): {
-    styleProps: {s: ViewStyle};
-    restProps: T;
-  } {
-    return Object.keys(props).reduce(
-      (
-        prevValue: {
-          styleProps: {s: ViewStyle};
-          restProps: any;
-        },
-        currentValue: string,
-      ) => {
-        if (currentValue === 'bgColor') {
-          return {
-            styleProps: {
-              s: {
-                ...prevValue.styleProps.s,
-                backgroundColor: get(this.colors, props[currentValue]),
-              },
-            },
-            restProps: {...prevValue.restProps},
-          };
-        } else {
-          return {
-            styleProps: {...prevValue.styleProps},
-            restProps: {
-              ...prevValue.restProps,
-              [currentValue]: props[currentValue],
-            },
-          };
-        }
-      },
-      {
-        styleProps: StyleSheet.create({s: {}}),
-        restProps: {},
-      },
-    );
   }
 }
 

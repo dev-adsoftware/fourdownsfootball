@@ -78,7 +78,7 @@ const Component: React.FC<Properties> = props => {
       marginRight: 10,
     },
     listContainer: {
-      backgroundColor: theme.colors.secondaryBackground,
+      backgroundColor: 'purple' || theme.colors.secondaryBackground,
     },
     itemContentRow: {
       flexDirection: 'row',

@@ -1,12 +1,12 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {LeaguesStack} from './leagues';
-import {TeamsStack} from './teams';
-import {useTheme} from '../providers/theme';
+// import {LeaguesStack} from './leagues';
+// import {TeamsStack} from './teams';
+// import {useTheme} from '../providers/theme';
 import {GamesStack} from './games';
-import {MoreStack} from './more';
-import {NotificationsStack} from './notifications';
+// import {MoreStack} from './more';
+// import {NotificationsStack} from './notifications';
 
 type Properties = {};
 
@@ -21,26 +21,26 @@ export type MainTabParamList = {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabStack: React.FC<Properties> = ({}) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   return (
     <Tab.Navigator
       initialRouteName="Games Stack"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: theme.colors.secondaryBackground,
+          backgroundColor: 'white', // theme.colors.secondaryBackground,
           borderTopWidth: 1,
-          borderTopColor: theme.colors.separator,
+          borderTopColor: 'red', // theme.colors.separator,
           // shadowColor: '#000',
           // shadowOpacity: 0.2,
           // shadowRadius: 5,
           // shadowOffset: {width: 0, height: 0},
           // elevation: 3,
         },
-        tabBarActiveTintColor: theme.colors.text, //theme.colors.black,
-        tabBarInactiveTintColor: theme.colors.placeholderText,
+        tabBarActiveTintColor: 'purple', // theme.colors.text, //theme.colors.black,
+        tabBarInactiveTintColor: 'pink', // theme.colors.placeholderText,
       }}>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Teams Stack"
         component={TeamsStack}
         options={{
@@ -59,7 +59,7 @@ const MainTabStack: React.FC<Properties> = ({}) => {
           ),
           tabBarLabel: 'Leagues',
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Games Stack"
         component={GamesStack}
@@ -70,7 +70,7 @@ const MainTabStack: React.FC<Properties> = ({}) => {
           tabBarLabel: 'Games',
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Notifications Stack"
         component={NotificationsStack}
         options={{
@@ -89,7 +89,7 @@ const MainTabStack: React.FC<Properties> = ({}) => {
           ),
           tabBarLabel: 'More',
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

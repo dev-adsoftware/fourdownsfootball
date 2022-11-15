@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
+import {useEnv} from './env';
 import {
   GameDetailQueryArgsDto,
   GameDetailQueryResponseDto,
@@ -90,6 +91,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   const [isActiveTeamLoading, setIsActiveTeamLoading] = React.useState(true);
 
   const auth = useAuth();
+  const env = useEnv();
   // const {addListener, removeListener} = useNotification();
 
   const getLocalData = React.useCallback(
@@ -123,25 +125,30 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         setIsOwnerDashboardLoading(true);
       }
 
-      const service = new OwnersService();
-      if (!(await service.ownerExists(auth.user?.username as string))) {
-        const ownerDto = new OwnerDto();
-        ownerDto.id = auth.user?.username as string;
-        ownerDto.name = auth.user?.username as string;
-        ownerDto.email = auth.user?.email as string;
-        await service.createOwner(ownerDto);
-      }
+      console.log('fetching api');
+      const result = await auth.secureClient.get(`${env.apiEndpoint}/owners`);
+      console.log(result.status);
+      console.log(result.data);
 
-      const fetchedOwnerDashboard = await service.queryOwnerDashboard(
-        new OwnerDashboardQueryArgsDto().init({
-          id: auth.user?.username as string,
-        }),
-      );
+      // const service = new OwnersService();
+      // if (!(await service.ownerExists(auth.user?.username as string))) {
+      //   const ownerDto = new OwnerDto();
+      //   ownerDto.id = auth.user?.username as string;
+      //   ownerDto.name = auth.user?.username as string;
+      //   ownerDto.email = auth.user?.email as string;
+      //   await service.createOwner(ownerDto);
+      // }
 
-      setOwnerDashboard(fetchedOwnerDashboard);
-      if (showLoadingIndicator) {
-        setIsOwnerDashboardLoading(false);
-      }
+      // const fetchedOwnerDashboard = await service.queryOwnerDashboard(
+      //   new OwnerDashboardQueryArgsDto().init({
+      //     id: auth.user?.username as string,
+      //   }),
+      // );
+
+      // setOwnerDashboard(fetchedOwnerDashboard);
+      // if (showLoadingIndicator) {
+      //   setIsOwnerDashboardLoading(false);
+      // }
     },
     [auth.user],
   );
@@ -152,17 +159,17 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         setIsSystemDashboardLoading(true);
       }
 
-      const service = new OwnersService();
-      const fetchedSystemDashboard = await service.queryOwnerDashboard(
-        new OwnerDashboardQueryArgsDto().init({
-          id: 'system',
-        }),
-      );
+      // const service = new OwnersService();
+      // const fetchedSystemDashboard = await service.queryOwnerDashboard(
+      //   new OwnerDashboardQueryArgsDto().init({
+      //     id: 'system',
+      //   }),
+      // );
 
-      setSystemDashboard(fetchedSystemDashboard);
-      if (showLoadingIndicator) {
-        setIsSystemDashboardLoading(false);
-      }
+      // setSystemDashboard(fetchedSystemDashboard);
+      // if (showLoadingIndicator) {
+      //   setIsSystemDashboardLoading(false);
+      // }
     },
     [],
   );

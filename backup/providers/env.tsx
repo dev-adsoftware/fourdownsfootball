@@ -2,7 +2,6 @@ import React from 'react';
 
 interface Env {
   environment: string;
-  identityPoolId: string;
   region: string;
   userPoolId: string;
   userPoolWebClientId: string;

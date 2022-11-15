@@ -28,17 +28,17 @@ const MainTabStack: React.FC<Properties> = ({}) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: theme.colors.secondaryBackground,
+          backgroundColor: 'white', // theme.colors.secondaryBackground,
           borderTopWidth: 1,
-          borderTopColor: theme.colors.separator,
+          borderTopColor: 'red', // theme.colors.separator,
           // shadowColor: '#000',
           // shadowOpacity: 0.2,
           // shadowRadius: 5,
           // shadowOffset: {width: 0, height: 0},
           // elevation: 3,
         },
-        tabBarActiveTintColor: theme.colors.text, //theme.colors.black,
-        tabBarInactiveTintColor: theme.colors.placeholderText,
+        tabBarActiveTintColor: 'purple', // theme.colors.text, //theme.colors.black,
+        tabBarInactiveTintColor: 'pink', // theme.colors.placeholderText,
       }}>
       <Tab.Screen
         name="Teams Stack"
