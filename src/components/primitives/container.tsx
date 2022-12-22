@@ -1,14 +1,14 @@
+import {omit} from 'lodash';
 import React from 'react';
 import {View, ViewProps} from 'react-native';
-import {withTheme} from '../../hoc/with-theme';
-import {ThemeStyleProps} from '../../providers/theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
 
-interface Properties extends ThemeStyleProps, Omit<ViewProps, 'style'> {
-  newProp: string;
-}
+interface ContainerProperties
+  extends WithThemeStyleProps,
+    Omit<ViewProps, 'style'> {}
 
-const Component: React.FC<Properties> = props => {
-  return <View style={[props.style]}>{props.children}</View>;
+const Component: React.FC<ContainerProperties> = props => {
+  return <View {...omit(props, 'children')}>{props.children}</View>;
 };
 
 export const Container = withTheme(Component);

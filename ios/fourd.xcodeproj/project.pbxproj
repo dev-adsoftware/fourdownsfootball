@@ -12,8 +12,14 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		27EA62CF294CDB20006E4841 /* klavika-condensed-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27EA62CB294CDB1F006E4841 /* klavika-condensed-regular.ttf */; };
+		27EA62D0294CDB20006E4841 /* klavika-condensed-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27EA62CC294CDB1F006E4841 /* klavika-condensed-bold.ttf */; };
+		27EA62D1294CDB20006E4841 /* klavika-condensed-bold-italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27EA62CD294CDB20006E4841 /* klavika-condensed-bold-italic.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-fourd-fourdTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-fourd-fourdTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		FC248388FB9E4C238AA0B46D /* klavika-condensed-italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */; };
+		C3EEFD237C7A48ADB2876E5C /* proxima-nova-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */; };
+		78ADCB5DC6C8467E96C172EA /* proxima-nova-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +36,7 @@
 		00E356EE1AD99517003FC87E /* fourdTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = fourdTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* fourdTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fourdTests.m; sourceTree = "<group>"; };
+		0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "klavika-condensed-italic.ttf"; path = "../assets/fonts/klavika-condensed-italic.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* fourd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fourd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = fourd/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = fourd/AppDelegate.mm; sourceTree = "<group>"; };
@@ -54,6 +61,9 @@
 		276628D029145B1B00F7664D /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		276628D129145B1B00F7664D /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		276628E22914611100F7664D /* fourd.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = fourd.entitlements; path = fourd/fourd.entitlements; sourceTree = "<group>"; };
+		27EA62CB294CDB1F006E4841 /* klavika-condensed-regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "klavika-condensed-regular.ttf"; path = "../assets/fonts/klavika-condensed-regular.ttf"; sourceTree = "<group>"; };
+		27EA62CC294CDB1F006E4841 /* klavika-condensed-bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "klavika-condensed-bold.ttf"; path = "../assets/fonts/klavika-condensed-bold.ttf"; sourceTree = "<group>"; };
+		27EA62CD294CDB20006E4841 /* klavika-condensed-bold-italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "klavika-condensed-bold-italic.ttf"; path = "../assets/fonts/klavika-condensed-bold-italic.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-fourd.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.debug.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-fourd.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.release.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-fourd-fourdTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.debug.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,6 +71,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = fourd/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-fourd-fourdTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.release.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */ = {isa = PBXFileReference; name = "proxima-nova-bold.ttf"; path = "../assets/fonts/proxima-nova-bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */ = {isa = PBXFileReference; name = "proxima-nova-regular.ttf"; path = "../assets/fonts/proxima-nova-regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +177,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				BA8676B8605741798EAC19EB /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -178,6 +191,19 @@
 				00E356EE1AD99517003FC87E /* fourdTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BA8676B8605741798EAC19EB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				27EA62CD294CDB20006E4841 /* klavika-condensed-bold-italic.ttf */,
+				27EA62CC294CDB1F006E4841 /* klavika-condensed-bold.ttf */,
+				27EA62CB294CDB1F006E4841 /* klavika-condensed-regular.ttf */,
+				0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */,
+				6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */,
+				BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -286,7 +312,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				27EA62D0294CDB20006E4841 /* klavika-condensed-bold.ttf in Resources */,
+				27EA62CF294CDB20006E4841 /* klavika-condensed-regular.ttf in Resources */,
+				27EA62D1294CDB20006E4841 /* klavika-condensed-bold-italic.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				FC248388FB9E4C238AA0B46D /* klavika-condensed-italic.ttf in Resources */,
+				C3EEFD237C7A48ADB2876E5C /* proxima-nova-bold.ttf in Resources */,
+				78ADCB5DC6C8467E96C172EA /* proxima-nova-regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +562,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = fourd/fourd.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VF9F4J75U;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = fourd/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -557,6 +590,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = fourd/fourd.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VF9F4J75U;
 				INFOPLIST_FILE = fourd/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

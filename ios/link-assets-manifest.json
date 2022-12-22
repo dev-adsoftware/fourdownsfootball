@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/klavika-condensed-bold-italic.ttf",
+      "sha1": "d19438df070f8e5cb1aaad9803a1c759ae48178f"
+    },
+    {
+      "path": "assets/fonts/klavika-condensed-bold.ttf",
+      "sha1": "697f32ec686d90145e501a992b8237191b468459"
+    },
+    {
+      "path": "assets/fonts/klavika-condensed-italic.ttf",
+      "sha1": "1c215703ab309c9234bfb2a4326797706fcc4827"
+    },
+    {
+      "path": "assets/fonts/klavika-condensed-regular.ttf",
+      "sha1": "f2bd84963f2876d345c001487cc3376da6710eae"
+    },
+    {
+      "path": "assets/fonts/proxima-nova-bold.ttf",
+      "sha1": "4c3ce1300b5d7f8b6f7b70a09276aa30bd4ae122"
+    },
+    {
+      "path": "assets/fonts/proxima-nova-regular.ttf",
+      "sha1": "cae6c2110b2e03840aa952df32b90101f3cfc548"
+    }
+  ]
+}

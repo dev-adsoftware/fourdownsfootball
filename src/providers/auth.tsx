@@ -68,6 +68,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
   React.useEffect(() => {
     const init = async () => {
       try {
+        await AWSAuth.signOut();
         const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
         setUser({username, email: attributes.email});
         setIsAuthenticated(true);
@@ -81,10 +82,20 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
   }, []);
 
   const signIn = async (signInUsername: string, password: string) => {
-    await AWSAuth.signIn(signInUsername, password);
-    const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
-    setUser({username, email: attributes.email});
-    setIsAuthenticated(true);
+    try {
+      await AWSAuth.signIn(signInUsername, password);
+      const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
+      setUser({username, email: attributes.email});
+      setIsAuthenticated(true);
+    } catch (e) {
+      const typedE = e as {code: string};
+      if (typedE.code === 'UserNotFoundException') {
+        throw Error('User with that email does not exist');
+      } else if (typedE.code === 'NotAuthorizedException') {
+        throw Error('Username or password is incorrect');
+      }
+      throw e;
+    }
   };
 
   const signOut = async () => {

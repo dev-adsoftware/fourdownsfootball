@@ -150,7 +150,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
       //   setIsOwnerDashboardLoading(false);
       // }
     },
-    [auth.user],
+    [auth.user, auth.secureClient, env.apiEndpoint],
   );
 
   const refreshSystemDashboard = React.useCallback(

@@ -5,7 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // import {SignUpConfirmationScreen} from '../screens/auth/signup-confirmation';
 // import {ForgotPasswordScreen} from '../screens/auth/forgot-password';
 // import {ResetPasswordScreen} from '../screens/auth/reset-password';
-import {useTheme} from '../providers/theme';
+// import {useTheme} from '../providers/theme';
 import {SplashScreen} from '../screens/splash';
 
 type Properties = {};
@@ -21,13 +21,14 @@ export type AuthStackParamList = {
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack: React.FC<Properties> = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.black},
-        headerTintColor: theme.colors.white,
-        headerTitleStyle: {color: theme.colors.white},
+        headerShown: false,
+        // headerStyle: {backgroundColor: 'black'},
+        // headerTintColor: 'white',
+        // headerTitleStyle: {color: 'white'},
       }}>
       <Stack.Screen name="Sign In" component={SplashScreen} />
       {/* <Stack.Screen name="Sign In" component={SignInScreen} />

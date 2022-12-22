@@ -7,7 +7,7 @@
  *
  * @format
  */
-import Amplify from 'aws-amplify';
+import {Amplify} from 'aws-amplify';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {useColorScheme} from 'react-native';
@@ -20,6 +20,7 @@ import {SplashScreen} from './src/screens/splash';
 import {AuthStack} from './src/stacks/auth';
 import {MainTabStack} from './src/stacks/main-tab';
 import {NotificationProvider} from './src/providers/notification';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 Amplify.configure({
   Auth: {
@@ -61,7 +62,9 @@ const App = () => {
     <EnvProvider initialEnv={env}>
       <ThemeProvider>
         <AuthProvider>
-          <Main />
+          <SafeAreaProvider>
+            <Main />
+          </SafeAreaProvider>
         </AuthProvider>
       </ThemeProvider>
     </EnvProvider>

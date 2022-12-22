@@ -36,12 +36,18 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
+		<string>klavika-condensed-regular.ttf</string>
+		<string>klavika-condensed-italic.ttf</string>
+		<string>klavika-condensed-bold.ttf</string>
+		<string>klavika-condensed-bold-italic.ttf</string>
+		<string>proxima-nova-bold.ttf</string>
+		<string>proxima-nova-regular.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
