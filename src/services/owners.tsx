@@ -6,23 +6,20 @@ import {
 } from './dtos';
 
 class Service extends BaseService {
-  constructor() {
-    super();
-  }
-
   public async ownerExists(id: string): Promise<boolean> {
-    console.log('checking to see if owner exists');
     try {
       await this.get<OwnerDto>(`/owners/${id}`, {});
       return true;
     } catch (e) {
-      console.log('got an error');
-      console.log(e);
       if (this.getStatusFromError(e) === 404) {
         return false;
       }
       throw e;
     }
+  }
+
+  public async getOwner(id: string): Promise<OwnerDto> {
+    return await this.get<OwnerDto>(`/owners/${id}`, {});
   }
 
   public async queryOwnerDashboard(

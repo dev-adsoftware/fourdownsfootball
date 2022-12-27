@@ -1,18 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {useEnv} from './env';
-import {
-  GameDetailQueryArgsDto,
-  GameDetailQueryResponseDto,
-  OwnerDashboardQueryArgsDto,
-  OwnerDashboardQueryResponseDto,
-  OwnerDto,
-  TeamDetailQueryArgsDto,
-  TeamDetailQueryResponseDto,
-} from '../services/dtos';
-import {GamesService} from '../services/games';
+import {OwnerDto} from '../services/dtos';
 import {OwnersService} from '../services/owners';
-import {TeamsService} from '../services/teams';
 import {useAuth} from './auth';
 // import {useNotification} from './notification';
 
@@ -39,21 +29,27 @@ export interface LocalGameState {
   expectedSequence?: string;
 }
 
-export type ActiveGame = DataItemSegment<GameDetailQueryResponseDto> &
-  WithLoader &
-  WithLocalState<LocalGameState>;
+export enum AppState {
+  LOADING,
+  UNAUTHENTICATED,
+  ONBOARDING,
+  MAIN,
+}
+
+// export type ActiveGame = DataItemSegment<GameDetailQueryResponseDto> &
+//   WithLoader &
+//   WithLocalState<LocalGameState>;
 interface Data {
-  ownerDashboard: DataItemSegment<OwnerDashboardQueryResponseDto> &
-    WithRefresher;
-  systemDashboard: DataItemSegment<OwnerDashboardQueryResponseDto> &
-    WithRefresher;
-  activeGame: ActiveGame;
-  activeTeam: DataItemSegment<TeamDetailQueryResponseDto> & WithLoader;
+  appState: AppState;
+  owner?: OwnerDto;
   clearAll: () => void;
   localStore: {
     get: <T>(key: string) => Promise<T | undefined>;
     set: <T>(key: string, value: T) => Promise<void>;
     clear: () => Promise<void>;
+  };
+  services: {
+    owners: OwnersService;
   };
 }
 
@@ -62,36 +58,12 @@ type Properties = {
 };
 
 const DataProvider: React.FC<Properties> = ({children}) => {
-  const [ownerDashboard, setOwnerDashboard] =
-    React.useState<OwnerDashboardQueryResponseDto>(
-      new OwnerDashboardQueryResponseDto(),
-    );
-  const [isOwnerDashboardLoading, setIsOwnerDashboardLoading] =
-    React.useState(true);
-
-  const [systemDashboard, setSystemDashboard] =
-    React.useState<OwnerDashboardQueryResponseDto>(
-      new OwnerDashboardQueryResponseDto(),
-    );
-  const [isSystemDashboardLoading, setIsSystemDashboardLoading] =
-    React.useState(true);
-
-  const [activeGame, setActiveGame] =
-    React.useState<GameDetailQueryResponseDto>(
-      new GameDetailQueryResponseDto(),
-    );
-  const [activeGameLocalState, setActiveGameLocalState] =
-    React.useState<LocalGameState>({lastPlayedSequence: '-1'});
-  const [isActiveGameLoading, setIsActiveGameLoading] = React.useState(true);
-
-  const [activeTeam, setActiveTeam] =
-    React.useState<TeamDetailQueryResponseDto>(
-      new TeamDetailQueryResponseDto(),
-    );
-  const [isActiveTeamLoading, setIsActiveTeamLoading] = React.useState(true);
+  const [appState, setAppState] = React.useState<AppState>(AppState.LOADING);
+  const [owner, setOwner] = React.useState<OwnerDto>();
 
   const auth = useAuth();
   const env = useEnv();
+
   // const {addListener, removeListener} = useNotification();
 
   const getLocalData = React.useCallback(
@@ -118,126 +90,46 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     );
   }, []);
 
-  const refreshOwnerDashboard = React.useCallback(
-    async (showLoadingIndicator = true) => {
-      console.log('fetching owner dashboard');
-      if (showLoadingIndicator) {
-        setIsOwnerDashboardLoading(true);
-      }
+  const clearAll = React.useCallback(() => {}, []);
 
-      console.log('fetching api');
-      const result = await auth.secureClient.get(`${env.apiEndpoint}/owners`);
-      console.log(result.status);
-      console.log(result.data);
-
-      // const service = new OwnersService();
-      // if (!(await service.ownerExists(auth.user?.username as string))) {
-      //   const ownerDto = new OwnerDto();
-      //   ownerDto.id = auth.user?.username as string;
-      //   ownerDto.name = auth.user?.username as string;
-      //   ownerDto.email = auth.user?.email as string;
-      //   await service.createOwner(ownerDto);
-      // }
-
-      // const fetchedOwnerDashboard = await service.queryOwnerDashboard(
-      //   new OwnerDashboardQueryArgsDto().init({
-      //     id: auth.user?.username as string,
-      //   }),
-      // );
-
-      // setOwnerDashboard(fetchedOwnerDashboard);
-      // if (showLoadingIndicator) {
-      //   setIsOwnerDashboardLoading(false);
-      // }
-    },
-    [auth.user, auth.secureClient, env.apiEndpoint],
-  );
-
-  const refreshSystemDashboard = React.useCallback(
-    async (showLoadingIndicator = true) => {
-      if (showLoadingIndicator) {
-        setIsSystemDashboardLoading(true);
-      }
-
-      // const service = new OwnersService();
-      // const fetchedSystemDashboard = await service.queryOwnerDashboard(
-      //   new OwnerDashboardQueryArgsDto().init({
-      //     id: 'system',
-      //   }),
-      // );
-
-      // setSystemDashboard(fetchedSystemDashboard);
-      // if (showLoadingIndicator) {
-      //   setIsSystemDashboardLoading(false);
-      // }
-    },
-    [],
-  );
-
-  const loadActiveGame = React.useCallback(
-    async (id: string, showLoadingIndicator = true) => {
-      if (showLoadingIndicator) {
-        setIsActiveGameLoading(true);
-      }
-      const teamsService = new GamesService();
-      setActiveGame(
-        await teamsService.queryGameDetail(
-          new GameDetailQueryArgsDto().init({id}),
-        ),
+  const fetchOwner = React.useCallback(
+    async (id: string) => {
+      console.log('fetching owner', {id});
+      const ownersService = new OwnersService(
+        auth.secureClient,
+        env.apiEndpoint,
       );
-      setActiveGameLocalState(
-        (await getLocalData<LocalGameState>(`${id}-state`)) || {
-          lastPlayedSequence: '-1',
-        },
-      );
-
-      if (showLoadingIndicator) {
-        setIsActiveGameLoading(false);
+      if (!(await ownersService.ownerExists(id))) {
+        setAppState(AppState.ONBOARDING);
+      } else {
+        const fetchedOwner = await ownersService.getOwner(id);
+        setOwner(fetchedOwner);
+        setAppState(AppState.MAIN);
       }
     },
-    [getLocalData],
-  );
-
-  const loadActiveTeam = React.useCallback(
-    async (id: string, showLoadingIndicator = true) => {
-      if (showLoadingIndicator) {
-        setIsActiveTeamLoading(true);
-      }
-      const teamsService = new TeamsService();
-      setActiveTeam(
-        await teamsService.queryTeamDetail(
-          new TeamDetailQueryArgsDto().init({id}),
-        ),
-      );
-
-      if (showLoadingIndicator) {
-        setIsActiveTeamLoading(false);
-      }
-    },
-    [],
-  );
-
-  const clearAll = React.useCallback(() => {
-    setIsOwnerDashboardLoading(true);
-    setOwnerDashboard(new OwnerDashboardQueryResponseDto());
-    setActiveGame(new GameDetailQueryResponseDto());
-    setActiveTeam(new TeamDetailQueryResponseDto());
-    setIsOwnerDashboardLoading(false);
-  }, []);
-
-  const setLocalGameStateCb = React.useCallback(
-    async (item: LocalGameState) => {
-      await setLocalData<LocalGameState>(`${activeGame?.id}-state`, item);
-    },
-    [activeGame?.id, setLocalData],
+    [auth.secureClient, env.apiEndpoint],
   );
 
   React.useEffect(() => {
-    if (auth.user) {
-      refreshOwnerDashboard();
-      refreshSystemDashboard();
+    if (appState === AppState.LOADING) {
+      console.log('loading state');
     }
-  }, [auth.user, refreshOwnerDashboard, refreshSystemDashboard]);
+    if (appState === AppState.UNAUTHENTICATED) {
+      console.log('unauth state');
+    }
+    if (appState === AppState.ONBOARDING) {
+      console.log('onboarding state');
+    }
+    if (appState === AppState.MAIN) {
+      console.log('main state');
+    }
+  }, [appState]);
+
+  React.useEffect(() => {
+    if (auth.user) {
+      fetchOwner(auth.user.username);
+    }
+  }, [auth.user, fetchOwner]);
 
   React.useEffect(() => {
     console.log('mounting data provider');
@@ -277,33 +169,16 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   return (
     <DataContext.Provider
       value={{
-        ownerDashboard: {
-          item: ownerDashboard,
-          isLoading: isOwnerDashboardLoading,
-          refresh: refreshOwnerDashboard,
-        },
-        systemDashboard: {
-          item: systemDashboard,
-          isLoading: isSystemDashboardLoading,
-          refresh: refreshSystemDashboard,
-        },
-        activeGame: {
-          item: activeGame,
-          isLoading: isActiveGameLoading,
-          load: loadActiveGame,
-          setLocalState: setLocalGameStateCb,
-          localState: activeGameLocalState,
-        },
-        activeTeam: {
-          item: activeTeam,
-          isLoading: isActiveTeamLoading,
-          load: loadActiveTeam,
-        },
+        appState,
+        owner,
         clearAll,
         localStore: {
           get: getLocalData,
           set: setLocalData,
           clear: clearLocalData,
+        },
+        services: {
+          owners: new OwnersService(auth.secureClient, env.apiEndpoint),
         },
       }}>
       {children}

@@ -1,6 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {useTheme} from '../providers/theme';
 // import {GameDetailScreen} from '../screens/games/game-detail';
 // import {GameRequestScreen} from '../screens/games/game-request';
 // import {GameRSVPScreen} from '../screens/games/game-rsvp';
@@ -40,14 +39,13 @@ export type GamesStackParamList = {
 const Stack = createNativeStackNavigator<GamesStackParamList>();
 
 const GamesStack: React.FC<Properties> = ({}) => {
-  const theme = useTheme();
-
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: 'green' || theme.colors.black},
-        headerTintColor: 'yellow' || theme.colors.white,
-        headerBackTitleVisible: false,
+        headerShown: false,
+        // headerStyle: {backgroundColor: 'green' || theme.colors.black},
+        // headerTintColor: 'yellow' || theme.colors.white,
+        // headerBackTitleVisible: false,
         // contentStyle: {
         //   backgroundColor: 'brown' || theme.colors.secondaryBackground,
         // },

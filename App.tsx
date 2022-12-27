@@ -12,8 +12,8 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {useColorScheme} from 'react-native';
 import env from './env.json';
-import {AuthProvider, useAuth} from './src/providers/auth';
-import {DataProvider} from './src/providers/data';
+import {AuthProvider} from './src/providers/auth';
+import {AppState, DataProvider, useData} from './src/providers/data';
 import {EnvProvider} from './src/providers/env';
 import {ThemeProvider, useTheme} from './src/providers/theme';
 import {SplashScreen} from './src/screens/splash';
@@ -21,6 +21,7 @@ import {AuthStack} from './src/stacks/auth';
 import {MainTabStack} from './src/stacks/main-tab';
 import {NotificationProvider} from './src/providers/notification';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {OnboardingStack} from './src/stacks/onboarding';
 
 Amplify.configure({
   Auth: {
@@ -34,27 +35,32 @@ Amplify.configure({
 });
 
 const Main = () => {
-  const auth = useAuth();
+  const data = useData();
   const colorScheme = useColorScheme();
   const theme = useTheme();
 
-  return auth.isLoading ? (
-    <SplashScreen />
-  ) : (
-    <NotificationProvider>
-      <DataProvider>
-        {!auth.isAuthenticated ? (
-          <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-            <AuthStack />
-          </NavigationContainer>
-        ) : (
-          <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-            <MainTabStack />
-          </NavigationContainer>
-        )}
-      </DataProvider>
-    </NotificationProvider>
-  );
+  switch (data.appState) {
+    case AppState.LOADING:
+      return <SplashScreen />;
+    case AppState.UNAUTHENTICATED:
+      return (
+        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+          <AuthStack />
+        </NavigationContainer>
+      );
+    case AppState.ONBOARDING:
+      return (
+        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+          <OnboardingStack />
+        </NavigationContainer>
+      );
+    default:
+      return (
+        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+          <MainTabStack />
+        </NavigationContainer>
+      );
+  }
 };
 
 const App = () => {
@@ -62,9 +68,13 @@ const App = () => {
     <EnvProvider initialEnv={env}>
       <ThemeProvider>
         <AuthProvider>
-          <SafeAreaProvider>
-            <Main />
-          </SafeAreaProvider>
+          <NotificationProvider>
+            <DataProvider>
+              <SafeAreaProvider>
+                <Main />
+              </SafeAreaProvider>
+            </DataProvider>
+          </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </EnvProvider>

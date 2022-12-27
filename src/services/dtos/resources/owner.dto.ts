@@ -4,11 +4,17 @@ import {SequencedDto} from '../sequenced-dto';
 class Dto extends SequencedDto {
   // no indexes
 
-  @IsString()
-  name: string;
-
   @IsEmail()
   email: string;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  displayName: string;
 }
 
 export {Dto as OwnerDto};

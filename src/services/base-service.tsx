@@ -1,9 +1,10 @@
-import {API} from 'aws-amplify';
+import {AxiosInstance} from 'axios';
 import {Dto} from './dtos/dto';
+import {DtoList} from './dtos/dto-list';
 import {SequencedDto} from './dtos/sequenced-dto';
 
 export class BaseService {
-  constructor(private readonly apiName: string = 'fourdowns') {}
+  constructor(public client: AxiosInstance, public baseUrl: string) {}
 
   public getStatusFromError(e: any): number {
     return (e as {response: {status: number}}).response.status;
@@ -14,7 +15,11 @@ export class BaseService {
     queryStringParameters: Record<string, unknown>,
   ): Promise<T> {
     try {
-      return (await API.get(this.apiName, path, {queryStringParameters})) as T;
+      return (
+        await this.client.get<T>(`${this.baseUrl}/${path}`, {
+          params: queryStringParameters,
+        })
+      ).data;
     } catch (e) {
       throw e;
     }
@@ -23,15 +28,13 @@ export class BaseService {
   protected async list<T extends Dto>(
     path: string,
     queryStringParameters: Record<string, unknown>,
-  ): Promise<{items: T[]}> {
+  ): Promise<DtoList<T>> {
     try {
-      return {
-        items: (
-          await API.get(this.apiName, path, {
-            queryStringParameters,
-          })
-        ).items as T[],
-      };
+      return (
+        await this.client.get<DtoList<T>>(`${this.baseUrl}/${path}`, {
+          params: queryStringParameters,
+        })
+      ).data;
     } catch (e) {
       console.log(e);
       throw e;
@@ -43,14 +46,14 @@ export class BaseService {
     body: T,
   ): Promise<T> {
     try {
-      return (await API.post(this.apiName, path, {
-        body: {
+      return (
+        await this.client.post<T>(`${this.baseUrl}/${path}`, {
           sequence: '0',
           lastUpdateDate: new Date().toISOString(),
           lastUpdatedBy: 'app',
           ...body.toPlainObject(),
-        },
-      })) as T;
+        })
+      ).data;
     } catch (e) {
       console.log(e);
       throw e;
@@ -64,19 +67,24 @@ export class BaseService {
     updateKeys: string[],
   ): Promise<T> {
     try {
-      return (await API.patch(this.apiName, path, {
-        body: {
-          sequence: String(Number(currentRecord.sequence) + 1),
-          lastUpdateDate: new Date().toISOString(),
-          lastUpdatedBy: 'app',
-          ...updates,
-        },
-        queryStringParameters: {
-          updateMask: `sequence,lastUpdateDate,lastUpdatedBy,${updateKeys.join(
-            ',',
-          )}`,
-        },
-      })) as T;
+      return (
+        await this.client.patch<T>(
+          `${this.baseUrl}/${path}`,
+          {
+            sequence: String(Number(currentRecord.sequence) + 1),
+            lastUpdateDate: new Date().toISOString(),
+            lastUpdatedBy: 'app',
+            ...updates,
+          },
+          {
+            params: {
+              updateMask: `sequence,lastUpdateDate,lastUpdatedBy,${updateKeys.join(
+                ',',
+              )}`,
+            },
+          },
+        )
+      ).data;
     } catch (e) {
       console.log(e);
       throw e;
