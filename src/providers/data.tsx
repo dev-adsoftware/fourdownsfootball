@@ -58,7 +58,9 @@ type Properties = {
 };
 
 const DataProvider: React.FC<Properties> = ({children}) => {
-  const [appState, setAppState] = React.useState<AppState>(AppState.LOADING);
+  const [appState, setAppState] = React.useState<AppState>(
+    AppState.UNAUTHENTICATED,
+  );
   const [owner, setOwner] = React.useState<OwnerDto>();
 
   const auth = useAuth();

@@ -1,12 +1,11 @@
 import {omit} from 'lodash';
 import React from 'react';
-import {Animated as RNAnimated, TextProps} from 'react-native';
+import {Animated as RNAnimated, ViewProps} from 'react-native';
 import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
 
-interface AnimatedTextProperties
+interface AnimatedContainerProperties
   extends WithThemeStyleProps,
-    Omit<TextProps, 'style'> {
-  text: string;
+    Omit<ViewProps, 'style'> {
   transforms?: (
     | {translateX: RNAnimated.AnimatedInterpolation<string | number>}
     | {translateY: RNAnimated.AnimatedInterpolation<string | number>}
@@ -14,10 +13,12 @@ interface AnimatedTextProperties
   )[];
 }
 
-const _AnimatedText: React.FC<AnimatedTextProperties> = props => {
+const _AnimatedContainer: React.FC<AnimatedContainerProperties> = props => {
   return (
-    <RNAnimated.Text {...omit(props, 'children')}>{props.text}</RNAnimated.Text>
+    <RNAnimated.View {...omit(props, 'children')}>
+      {props.children}
+    </RNAnimated.View>
   );
 };
 
-export const AnimatedText = withTheme(_AnimatedText);
+export const AnimatedContainer = withTheme(_AnimatedContainer);

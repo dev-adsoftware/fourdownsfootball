@@ -66,7 +66,7 @@ export const withTheme = <P extends WithThemeStyleProps>(
           pressable
             ? ({pressed}: {pressed: PressableStateCallbackType}) => [
                 ...styles,
-                {opacity: pressed ? 0.5 : 1.0},
+                {opacity: pressed ? 0.9 : 1.0},
               ]
             : styles
         }

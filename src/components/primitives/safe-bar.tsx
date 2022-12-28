@@ -7,7 +7,7 @@ interface SafeBar extends WithThemeStyleProps, Omit<ViewProps, 'style'> {}
 
 const Component: React.FC<SafeBar> = () => {
   const ss = StyleSheet.create({
-    s: {backgroundColor: 'gray'},
+    s: {backgroundColor: 'white'},
   });
   return <SafeAreaView edges={['top']} style={ss.s} />;
 };

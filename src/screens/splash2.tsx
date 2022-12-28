@@ -3,14 +3,14 @@ import {VStack} from '../components/primitives/v-stack';
 import {SafeBar} from '../components/primitives/safe-bar';
 import {LogoSvg} from '../components/composites/logo-svg';
 
-interface SplashScreenProperties {}
+interface Splash2ScreenProperties {}
 
-export const SplashScreen: React.FC<SplashScreenProperties> = () => {
+export const Splash2Screen: React.FC<Splash2ScreenProperties> = () => {
   return (
     <>
       <SafeBar />
-      <VStack justify="center" full styles={[{backgroundColor: '#f8f8f8'}]}>
-        <LogoSvg size={100} />
+      <VStack justify="center" full styles={[{backgroundColor: '#ccc'}]}>
+        <LogoSvg size={50} />
       </VStack>
     </>
   );

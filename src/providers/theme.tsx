@@ -422,6 +422,7 @@ export type ThemeStyles = {
   'p-left-lg': RNStyleSheet;
   'p-left-xl': RNStyleSheet;
   'p-left-xxl': RNStyleSheet;
+  'p-safe': RNStyleSheet;
   'p-x-xxxs': RNStyleSheet;
   'p-x-xxs': RNStyleSheet;
   'p-x-xs': RNStyleSheet;
@@ -532,7 +533,9 @@ export class Theme {
     error: ColorPalette.red[500],
     warning: ColorPalette.orange[700],
     success: ColorPalette.green[700],
-    disabled: ColorPalette.gray[700],
+    disabled: ColorPalette.gray[500],
+    navSurface: ColorPalette.white,
+    separator: ColorPalette.gray[300],
   };
 
   public circles = {
@@ -569,27 +572,6 @@ export class Theme {
 
   constructor(colorScheme: ColorSchemeName) {
     noop(colorScheme);
-    // this.colors = {
-    //   ...ColorPresets,
-    //   danger: ColorPresets.rose,
-    //   error: ColorPresets.red,
-    //   success: ColorPresets.green,
-    //   warning: ColorPresets.orange,
-    //   muted: ColorPresets.trueGray,
-    //   primary: ColorPresets.cyan,
-    //   secondary: ColorPresets.pink,
-    //   tertiary: ColorPresets.emerald,
-    //   info: ColorPresets.lightBlue,
-    //   light: ColorPresets.warmGray,
-    //   text: ColorPresets.trueGray,
-    // };
-    // this.spacings = {...SpacingPresets};
-    // this.sizes = {...SizePresets};
-    // this.borderWidths = {...BorderWidthPresets};
-    // this.radii = {...RadiiPresets};
-    // this.shadows = {...ShadowPresets};
-    // this.fontFamilies = {...FontFamilyPresets};
-    // this.typographies = {...TypographyPresets};
 
     this.ss = {
       // color
@@ -774,6 +756,7 @@ export class Theme {
       'a-center': StyleSheet.create({s: {alignItems: 'center'}}),
       'a-end': StyleSheet.create({s: {alignItems: 'flex-end'}}),
       // padding
+      'p-safe': StyleSheet.create({s: {paddingBottom: 20}}),
       'p-xxxs': StyleSheet.create({s: {padding: 2}}),
       'p-xxs': StyleSheet.create({s: {padding: 4}}),
       'p-xs': StyleSheet.create({s: {padding: 8}}),
