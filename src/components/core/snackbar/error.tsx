@@ -1,6 +1,6 @@
 import React from 'react';
 import {Animated, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-styles';
 import {LinkButton} from '../buttons/link';
 
 interface Properties extends InjectedThemeProps {

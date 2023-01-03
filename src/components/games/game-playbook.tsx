@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, SectionList, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {Formation} from '../../services/dtos/types/formation';
 import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';

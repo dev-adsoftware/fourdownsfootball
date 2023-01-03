@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Svg, {Circle, Line, Polygon, Rect} from 'react-native-svg';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {AnimatedPath} from '../svg/animated-path';
 
 interface Play {

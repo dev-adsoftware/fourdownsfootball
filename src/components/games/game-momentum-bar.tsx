@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
 
 interface Properties extends InjectedThemeProps {

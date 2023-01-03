@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TeamDto, TownDto} from '../../../services/dtos';
-import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   town?: TownDto;

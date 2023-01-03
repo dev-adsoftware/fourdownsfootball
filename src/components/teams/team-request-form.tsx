@@ -6,7 +6,7 @@ import {TextInputBox} from '../core/input/text-input-box';
 import {SelectTrigger} from '../core/select/trigger';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TeamsStackParamList} from '../../stacks/teams';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {Button} from '../core/buttons/button';
 import {NationDto, StateDto, TownDto} from '../../services/dtos';
 

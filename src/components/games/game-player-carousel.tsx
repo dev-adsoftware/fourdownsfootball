@@ -2,7 +2,7 @@ import React from 'react';
 import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {ProgressBar} from '../core/progress-indicators/progress-bar';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {PlayerSnapshotDto} from '../../services/dtos';
 import {Alignment} from '../../services/dtos/types/alignment';
 import {GameEngine} from '../../utilities/game-engine';

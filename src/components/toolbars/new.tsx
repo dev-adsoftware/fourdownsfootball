@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, View, StyleSheet} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   onNew: () => void;

@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   text: string;

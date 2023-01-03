@@ -1,7 +1,7 @@
 import {omit} from 'lodash';
 import React from 'react';
 import {Text as RNText, TextProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 interface TextProperties extends WithThemeStyleProps, Omit<TextProps, 'style'> {
   text: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 // import {StyleSheet} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {GameDetailQueryResponseDto} from '../../services/dtos';
 import {GameEngine} from '../../utilities/game-engine';
 import {GameCoinTossAction} from './game-coin-toss-action';

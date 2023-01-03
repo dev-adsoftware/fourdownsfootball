@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {withTheme, InjectedThemeProps} from '../../../hoc/with-theme';
+import {withTheme, InjectedThemeProps} from '../../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {}
 

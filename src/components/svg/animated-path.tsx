@@ -2,7 +2,7 @@ import React from 'react';
 import {Animated, Easing} from 'react-native';
 import {Path, PathProps} from 'react-native-svg';
 import {svgPathProperties} from 'svg-path-properties';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   path: string;

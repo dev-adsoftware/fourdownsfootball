@@ -8,7 +8,7 @@ import Svg, {
   PathProps,
 } from 'react-native-svg';
 
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {MathExtra} from '../../utilities/math-extra';
 interface Properties extends InjectedThemeProps {
   slices: {

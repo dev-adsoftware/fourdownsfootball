@@ -6,7 +6,7 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-styles';
 import {TextInputBox} from '../input/text-input-box';
 import {SelectListItemSeparator} from './item-separator';
 import {SelectOption} from './option';

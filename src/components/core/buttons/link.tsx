@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, Pressable} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   text: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import validate from 'validate.js';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {Button} from '../core/buttons/button';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';

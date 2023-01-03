@@ -6,10 +6,10 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import {Theme, ThemeStyles, useTheme} from '../providers/theme';
+import {ThemeStyles, useTheme} from '../providers/theme';
 
-export interface InjectedThemeProps {
-  theme: Theme;
+export interface InjectedStyleProps {
+  style: ViewStyle | TextStyle;
 }
 
 export type Style =
@@ -37,7 +37,7 @@ export const mergeStyles = (
   return [];
 };
 
-export interface WithThemeStyleProps extends InjectedThemeProps {
+export interface WithStyleProps {
   styles?: Style;
   transforms?: (
     | {translateX: Animated.AnimatedInterpolation<string | number>}
@@ -48,13 +48,13 @@ export interface WithThemeStyleProps extends InjectedThemeProps {
   pressable?: boolean;
 }
 
-export type ThemeFC<T> = React.FC<Omit<T, 'theme'>>;
+export type StyledFC<T> = React.FC<T>;
 
-export const withTheme = <P extends WithThemeStyleProps>(
+export const withStyles = <P extends WithStyleProps>(
   Component: React.ComponentType<P>,
   pressable?: boolean,
-): React.FC<Omit<P, keyof InjectedThemeProps>> => {
-  return ({...props}: Omit<P, keyof InjectedThemeProps>) => {
+): React.FC<P> => {
+  return ({...props}: P) => {
     const theme = useTheme();
     const styles = [
       props.styles ? theme.sx(props.styles) : [],
@@ -70,8 +70,7 @@ export const withTheme = <P extends WithThemeStyleProps>(
               ]
             : styles
         }
-        {...(omit(props, ['theme', 'style']) as P)}
-        theme={theme}
+        {...(omit(props, ['style']) as P)}
       />
     );
   };

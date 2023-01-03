@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {GameDetailExtendedTeamSnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {TeamAvatar} from '../core/avatars/team-avatar';
 

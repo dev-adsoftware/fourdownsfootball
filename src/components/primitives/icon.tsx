@@ -2,7 +2,7 @@ import React from 'react';
 import FontAwesome5Icon, {
   FontAwesome5IconProps,
 } from 'react-native-vector-icons/FontAwesome5';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 export interface IconProperties
   extends WithThemeStyleProps,

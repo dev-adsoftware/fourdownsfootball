@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {GameDetailExtendedPlaySnapshotDto} from '../../services/dtos/queries/game-detail/game-detail-query-response.dto';
 import {PlaySubCategory} from '../../services/dtos/types/play-sub-category';
 import {GameEngine} from '../../utilities/game-engine';

@@ -1,6 +1,6 @@
 import React from 'react';
 import {TextInput as RNTextInput, TextInputProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 interface TextInputProperties
   extends WithThemeStyleProps,

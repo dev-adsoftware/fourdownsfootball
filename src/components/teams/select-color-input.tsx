@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
 import {SelectOption} from '../core/select/option';
 

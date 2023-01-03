@@ -12,7 +12,7 @@ import moment from 'moment';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {NotificationsStackParamList} from '../../stacks/notifications';
 import {SectionListItemSeparator} from '../core/section-list/sectionlist-item-separator';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {NotificationDto} from '../../services/dtos';
 import {Card} from '../core/cards/card';
 

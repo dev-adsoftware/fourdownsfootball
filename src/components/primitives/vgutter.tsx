@@ -4,7 +4,7 @@ import {
   mergeStyles,
   withTheme,
   WithThemeStyleProps,
-} from '../../hoc/with-theme';
+} from '../../hoc/with-styles';
 import {Container} from './container';
 
 interface VGutterProperties

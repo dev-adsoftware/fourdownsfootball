@@ -6,7 +6,7 @@ import {TextInputBox} from '../core/input/text-input-box';
 import {Form} from '../core/forms/form';
 import {FormRow} from '../core/forms/row';
 import {ErrorSnackbar} from '../core/snackbar/error';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 
 interface Properties extends InjectedThemeProps {
   onSubmit: (username: string) => Promise<void>;

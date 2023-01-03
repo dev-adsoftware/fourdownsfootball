@@ -1,7 +1,7 @@
 import {omit} from 'lodash';
 import React from 'react';
 import {View, ViewProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 interface ContainerProperties
   extends WithThemeStyleProps,

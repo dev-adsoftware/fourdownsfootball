@@ -1,6 +1,6 @@
 import React from 'react';
 import {SvgXml, XmlProps} from 'react-native-svg';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 export interface SvgProperties
   extends WithThemeStyleProps,

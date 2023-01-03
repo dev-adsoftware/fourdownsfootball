@@ -12,7 +12,7 @@ import Svg, {
   Text,
   TextPath,
 } from 'react-native-svg';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {AssignmentDto} from '../../services/dtos/resources/play.dto';
 import {Alignment} from '../../services/dtos/types/alignment';
 import {Direction} from '../../services/dtos/types/directions';

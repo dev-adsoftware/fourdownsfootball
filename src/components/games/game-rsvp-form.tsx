@@ -1,7 +1,7 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {OwnerDashboardExtendedTeamDto} from '../../services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {GamesStackParamList} from '../../stacks/games';
 import {Button} from '../core/buttons/button';

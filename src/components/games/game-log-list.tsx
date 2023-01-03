@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {InjectedThemeProps, withTheme} from '../../hoc/with-theme';
+import {InjectedThemeProps, withTheme} from '../../hoc/with-styles';
 import {GameLogDto} from '../../services/dtos';
 import {ListItemSeparator} from '../core/separators/list-item-separator';
 import {GameLog} from './game-log';

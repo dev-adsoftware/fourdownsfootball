@@ -2,7 +2,7 @@ import React from 'react';
 import {ColorValue, useWindowDimensions, ViewProps} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import {TAB_BAR_HEIGHT} from '../../constants/tab-bar';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-theme';
+import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
 
 interface CurvedTabBarSvgProperties
   extends WithThemeStyleProps,
