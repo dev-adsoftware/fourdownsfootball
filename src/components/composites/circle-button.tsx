@@ -1,30 +1,31 @@
 import React from 'react';
-import {Icon, IconProperties} from '../primitives/icon';
-import {Pressable, PressableProperties} from '../primitives/pressable';
+import {Circle} from '../primitives/circle';
+import {Icon} from '../primitives/icon';
+import {Pressable, PressableProps} from '../primitives/pressable';
+import {VStack} from '../primitives/v-stack';
 
 export interface CircleButtonProperties {
   icon: string;
-  variant: IconProperties['variant'];
-  size: IconProperties['size'];
-  onPress: PressableProperties['onPress'];
+  onPress: PressableProps['onPress'];
 }
+
+const CIRCLE_SIZE = 40;
 
 export const CircleButton: React.FC<CircleButtonProperties> = props => {
   const {icon, onPress} = props;
 
   return (
     <Pressable
-      styles={[
-        props.variant === 'primary-contrast'
-          ? 'circle-primary-solid-md'
-          : 'circle-invisible-md',
-      ]}
       onPress={e => {
         if (onPress) {
           onPress(e);
         }
       }}>
-      <Icon name={icon} variant={props.variant} size="md" />
+      <Circle h={CIRCLE_SIZE} w={CIRCLE_SIZE} bg="primary">
+        <VStack alignItems="center" justifyContent="center" full>
+          <Icon name={icon} color="white" />
+        </VStack>
+      </Circle>
     </Pressable>
   );
 };

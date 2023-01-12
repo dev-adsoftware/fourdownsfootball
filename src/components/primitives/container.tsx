@@ -1,14 +1,41 @@
-import {omit} from 'lodash';
 import React from 'react';
-import {View, ViewProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {View} from 'react-native';
+import {useTheme} from '../../providers/theme';
+import {ChildrenProps} from '../../types/types';
+import {
+  DebugProps,
+  DimensionProps,
+  MarginProps,
+  OverflowProps,
+  PositionProps,
+  StyleBuilder,
+} from '../../utilities/style-builder';
 
-interface ContainerProperties
-  extends WithThemeStyleProps,
-    Omit<ViewProps, 'style'> {}
+interface ContainerProps
+  extends ChildrenProps,
+    PositionProps,
+    DimensionProps,
+    MarginProps {}
 
-const Component: React.FC<ContainerProperties> = props => {
-  return <View {...omit(props, 'children')}>{props.children}</View>;
+export const Container: React.FC<ContainerProps> = props => {
+  const theme = useTheme();
+
+  const style = React.useMemo(() => {
+    const _props: ContainerProps & OverflowProps & DebugProps = {
+      ...{
+        overflow: 'hidden',
+        w: 'full',
+      },
+      ...props,
+    };
+    return new StyleBuilder(theme)
+      .setPositionProps(_props)
+      .setDimensionProps(_props)
+      .setMarginProps(_props)
+      .setOverflowProps(_props)
+      .setBackgroundProps(_props)
+      .build();
+  }, [theme, props]);
+
+  return <View style={[style.ss]}>{props.children}</View>;
 };
-
-export const Container = withTheme(Component);

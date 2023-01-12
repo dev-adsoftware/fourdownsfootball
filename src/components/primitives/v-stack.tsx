@@ -1,37 +1,43 @@
-import {omit} from 'lodash';
 import React from 'react';
-import {FlexStyle, StyleSheet, ViewProps} from 'react-native';
+import {View} from 'react-native';
+import {useTheme} from '../../providers/theme';
+import {ChildrenProps} from '../../types/types';
 import {
-  mergeStyles,
-  withTheme,
-  WithThemeStyleProps,
-} from '../../hoc/with-styles';
-import {Container} from './container';
+  DebugProps,
+  FlexProps,
+  OverflowProps,
+  StyleBuilder,
+} from '../../utilities/style-builder';
 
 interface VStackProperties
-  extends WithThemeStyleProps,
-    Omit<ViewProps, 'style'> {
-  align?: FlexStyle['alignItems'];
-  justify?: FlexStyle['justifyContent'];
+  extends ChildrenProps,
+    Omit<FlexProps, 'flexDirection'> {
   full?: boolean;
 }
 
-const Component: React.FC<VStackProperties> = props => {
-  const ss = StyleSheet.create({
-    s: {
-      ...(props.full && {flex: 1}),
-      flexDirection: 'column',
-      alignItems: props.align || 'center',
-      justifyContent: props.justify || 'flex-start',
-    },
-  });
-  return (
-    <Container
-      {...omit(props, 'children')}
-      styles={mergeStyles(props.styles, ss.s)}>
-      {props.children}
-    </Container>
-  );
-};
+export const VStack: React.FC<VStackProperties> = props => {
+  const theme = useTheme();
 
-export const VStack = withTheme(Component);
+  const style = React.useMemo(() => {
+    const _props: VStackProperties &
+      Pick<FlexProps, 'flexDirection'> &
+      OverflowProps &
+      DebugProps = {
+      ...{
+        flexDirection: 'column',
+        flex: props.full ? 1 : undefined,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        // overflow: 'hidden',
+      },
+      ...props,
+    };
+    return new StyleBuilder(theme)
+      .setFlexProps(_props)
+      .setOverflowProps(_props)
+      .setBackgroundProps(_props)
+      .build();
+  }, [theme, props]);
+
+  return <View style={style.ss}>{props.children}</View>;
+};

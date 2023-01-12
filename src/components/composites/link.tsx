@@ -1,23 +1,21 @@
 import React from 'react';
-import {Pressable, PressableProperties} from '../primitives/pressable';
+import {ThemeColorKey} from '../../providers/theme';
+import {Pressable, PressableProps} from '../primitives/pressable';
 import {Text} from '../primitives/text';
 
-export interface LinkProperties {
+export interface LinkProps {
   text: string;
-  onPress: PressableProperties['onPress'];
-  variant?: 'primary' | 'gray';
+  color?: ThemeColorKey;
+  onPress: PressableProps['onPress'];
 }
 
-export const Link: React.FC<LinkProperties> = props => {
+export const Link: React.FC<LinkProps> = props => {
   return (
     <Pressable onPress={props.onPress}>
       <Text
-        styles={[
-          !props.variant || props.variant === 'primary'
-            ? 'c-primary-lt'
-            : 'c-gray',
-          'link',
-        ]}
+        typeFace="klavikaCondensedBoldItalic"
+        fontSize="lg"
+        color={props.color || 'grayLink'}
         text={props.text}
       />
     </Pressable>

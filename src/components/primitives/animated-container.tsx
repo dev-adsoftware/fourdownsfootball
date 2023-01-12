@@ -1,24 +1,53 @@
-import {omit} from 'lodash';
 import React from 'react';
-import {Animated as RNAnimated, ViewProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {Animated} from 'react-native';
+import {useTheme} from '../../providers/theme';
+import {ChildrenProps, OnLayoutProps} from '../../types/types';
+import {
+  AnimationProps,
+  DebugProps,
+  DimensionProps,
+  MarginProps,
+  OverflowProps,
+  PositionProps,
+  StyleBuilder,
+} from '../../utilities/style-builder';
 
-interface AnimatedContainerProperties
-  extends WithThemeStyleProps,
-    Omit<ViewProps, 'style'> {
-  // transforms?: (
-  //   | {translateX: RNAnimated.AnimatedInterpolation<string | number>}
-  //   | {translateY: RNAnimated.AnimatedInterpolation<string | number>}
-  //   | {scale: RNAnimated.AnimatedInterpolation<string | number>}
-  // )[];
-}
+interface ContainerProps
+  extends ChildrenProps,
+    OnLayoutProps,
+    PositionProps,
+    DimensionProps,
+    MarginProps,
+    AnimationProps {}
 
-const _AnimatedContainer: React.FC<AnimatedContainerProperties> = props => {
+export const AnimatedContainer: React.FC<ContainerProps> = props => {
+  const theme = useTheme();
+
+  const style = React.useMemo(() => {
+    const _props: ContainerProps & OverflowProps & DebugProps = {
+      ...{
+        overflow: 'hidden',
+      },
+      ...props,
+    };
+    const builder = new StyleBuilder(theme);
+    return {
+      static: builder
+        .setPositionProps(_props)
+        .setDimensionProps(_props)
+        .setMarginProps(_props)
+        .setOverflowProps(_props)
+        .setBackgroundProps(_props)
+        .build(),
+      animated: builder.setAnimationProps(props).buildAnimatedStyles(),
+    };
+  }, [theme, props]);
+
   return (
-    <RNAnimated.View {...omit(props, 'children')}>
+    <Animated.View
+      style={[style.static.ss, {transform: style.animated}]}
+      onLayout={props.onLayout}>
       {props.children}
-    </RNAnimated.View>
+    </Animated.View>
   );
 };
-
-export const AnimatedContainer = withTheme(_AnimatedContainer);

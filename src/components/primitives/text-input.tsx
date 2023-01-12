@@ -1,15 +1,61 @@
 import React from 'react';
-import {TextInput as RNTextInput, TextInputProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {
+  TextInput as RNTextInput,
+  TextInputProps as RNTextInputProps,
+} from 'react-native';
+import {ThemeColorKey, useTheme} from '../../providers/theme';
+import {
+  ColorProps,
+  DimensionProps,
+  OpacityProps,
+  StyleBuilder,
+  TextProps,
+} from '../../utilities/style-builder';
 
-interface TextInputProperties
-  extends WithThemeStyleProps,
-    Omit<TextInputProps, 'style'> {
+interface TextInputProps
+  extends Omit<
+      RNTextInputProps,
+      'style' | 'placeholderTextColor' | 'selectionColor'
+    >,
+    ColorProps,
+    Omit<TextProps, 'textAlign'>,
+    OpacityProps {
   innerRef?: any;
+  placeholderTextColor?: ThemeColorKey;
+  selectionColor?: ThemeColorKey;
 }
 
-const Component: React.FC<TextInputProperties> = props => {
-  return <RNTextInput {...props} ref={props.innerRef} />;
-};
+export const TextInput: React.FC<TextInputProps> = props => {
+  const theme = useTheme();
 
-export const TextInput = withTheme(Component);
+  const style = React.useMemo(() => {
+    const _props: ColorProps & TextProps & DimensionProps & OpacityProps = {
+      ...{
+        color: 'black',
+        typeFace: 'sourceSansProRegular',
+        fontSize: 'md',
+        w: 'full',
+      },
+      ...props,
+    };
+    return new StyleBuilder(theme)
+      .setColorProps(_props)
+      .setTextProps(_props)
+      .setDimensionProps(_props)
+      .setOpacityProps(_props)
+      .build();
+  }, [theme, props]);
+
+  return (
+    <RNTextInput
+      {...props}
+      ref={props.innerRef}
+      placeholderTextColor={
+        props.placeholderTextColor
+          ? theme.colors[props.placeholderTextColor]
+          : undefined
+      }
+      style={style.ss}
+    />
+  );
+};

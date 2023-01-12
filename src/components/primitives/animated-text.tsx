@@ -1,23 +1,54 @@
-import {omit} from 'lodash';
 import React from 'react';
-import {Animated as RNAnimated, TextProps} from 'react-native';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {Animated, TextProps as RNTextProps} from 'react-native';
+import {useTheme} from '../../providers/theme';
+import {
+  AnimationProps,
+  BackgroundProps,
+  ColorProps,
+  DimensionProps,
+  OverflowProps,
+  StyleBuilder,
+} from '../../utilities/style-builder';
 
-interface AnimatedTextProperties
-  extends WithThemeStyleProps,
-    Omit<TextProps, 'style'> {
+interface DebugProps extends Pick<BackgroundProps, 'bg'> {}
+
+interface TextProps
+  extends Pick<RNTextProps, 'numberOfLines'>,
+    ColorProps,
+    AnimationProps {
   text: string;
-  transforms?: (
-    | {translateX: RNAnimated.AnimatedInterpolation<string | number>}
-    | {translateY: RNAnimated.AnimatedInterpolation<string | number>}
-    | {scale: RNAnimated.AnimatedInterpolation<string | number>}
-  )[];
 }
 
-const _AnimatedText: React.FC<AnimatedTextProperties> = props => {
+export const AnimatedText: React.FC<TextProps> = props => {
+  const theme = useTheme();
+
+  const style = React.useMemo(() => {
+    const _props: TextProps &
+      OverflowProps &
+      Pick<DimensionProps, 'w'> &
+      DebugProps = {
+      ...{
+        color: 'black',
+        overflow: 'hidden',
+        w: 'full',
+      },
+      ...props,
+    };
+    const builder = new StyleBuilder(theme);
+    return {
+      static: builder
+        .setColorProps(_props)
+        .setOverflowProps(_props)
+        .setBackgroundProps(_props)
+        .setDimensionProps(_props)
+        .build(),
+      animated: builder.setAnimationProps(props).buildAnimatedStyles(),
+    };
+  }, [theme, props]);
+
   return (
-    <RNAnimated.Text {...omit(props, 'children')}>{props.text}</RNAnimated.Text>
+    <Animated.Text style={[style.static.ss, {transform: style.animated}]}>
+      {props.text}
+    </Animated.Text>
   );
 };
-
-export const AnimatedText = withTheme(_AnimatedText);

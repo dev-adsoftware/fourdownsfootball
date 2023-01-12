@@ -49,11 +49,12 @@ const Main = () => {
         </NavigationContainer>
       );
     case AppState.ONBOARDING:
-      return (
-        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-          <OnboardingStack />
-        </NavigationContainer>
-      );
+      return <SplashScreen />;
+    // return (
+    //   <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
+    //     <OnboardingStack />
+    //   </NavigationContainer>
+    // );
     default:
       return (
         <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>

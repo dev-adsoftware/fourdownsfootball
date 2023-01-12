@@ -2,32 +2,33 @@ import React from 'react';
 import FontAwesome5Icon, {
   FontAwesome5IconProps,
 } from 'react-native-vector-icons/FontAwesome5';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {ThemeColorKey, ThemeIconSizeKey, useTheme} from '../../providers/theme';
+import {
+  ColorProps,
+  IconProps as StyleIconProps,
+} from '../../utilities/style-builder';
 
-export interface IconProperties
-  extends WithThemeStyleProps,
-    Omit<FontAwesome5IconProps, 'style' | 'size'> {
-  variant: 'primary' | 'disabled' | 'primary-contrast';
-  size: 'sm' | 'md' | 'lg';
-}
+export interface IconProps
+  extends Pick<FontAwesome5IconProps, 'name'>,
+    StyleIconProps,
+    ColorProps {}
 
-const Component: React.FC<IconProperties> = props => {
-  const {name, variant, size: propsSize, theme} = props;
-  let color = theme.colors.primary;
-  if (variant === 'disabled') {
-    color = theme.colors.disabled;
-  } else if (variant === 'primary-contrast') {
-    color = theme.getContrastTextColor(theme.colors.primary);
-  }
+export const Icon: React.FC<IconProps> = props => {
+  const theme = useTheme();
 
-  let size = 17;
-  if (propsSize === 'sm') {
-    size = 15;
-  } else if (propsSize === 'lg') {
-    size = 20;
-  }
+  const _props = {
+    ...{
+      color: 'white' as ThemeColorKey,
+      size: 'md' as ThemeIconSizeKey,
+    },
+    ...props,
+  };
 
-  return <FontAwesome5Icon name={name} color={color} size={size} />;
+  return (
+    <FontAwesome5Icon
+      name={props.name}
+      color={theme.colors[_props.color]}
+      size={theme.iconSizes[_props.size]}
+    />
+  );
 };
-
-export const Icon = withTheme(Component);

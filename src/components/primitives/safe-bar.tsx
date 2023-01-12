@@ -1,15 +1,19 @@
 import React from 'react';
-import {StyleSheet, ViewProps} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {useTheme} from '../../providers/theme';
+import {BackgroundProps, StyleBuilder} from '../../utilities/style-builder';
 
-interface SafeBar extends WithThemeStyleProps, Omit<ViewProps, 'style'> {}
+interface SafeBarProps extends BackgroundProps {}
 
-const Component: React.FC<SafeBar> = () => {
-  const ss = StyleSheet.create({
-    s: {backgroundColor: 'white'},
-  });
-  return <SafeAreaView edges={['top']} style={ss.s} />;
+export const SafeBar: React.FC<SafeBarProps> = props => {
+  const theme = useTheme();
+  const style = React.useMemo(() => {
+    const _props: BackgroundProps = {
+      ...{backgroundColor: 'white'},
+      ...props,
+    };
+    return new StyleBuilder(theme).setBackgroundProps(_props).build();
+  }, [theme, props]);
+
+  return <SafeAreaView edges={['top']} style={style.ss} />;
 };
-
-export const SafeBar = withTheme(Component);

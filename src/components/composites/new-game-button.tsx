@@ -1,17 +1,20 @@
 import React from 'react';
-import {Animated, StyleSheet, useWindowDimensions} from 'react-native';
+import {Animated, useWindowDimensions} from 'react-native';
+import {TAB_BAR_HEIGHT} from '../../constants/tab-bar';
 import {AnimatedIcon} from '../primitives/animated-icon';
-import {Pressable, PressableProperties} from '../primitives/pressable';
+import {Circle} from '../primitives/circle';
+import {Container} from '../primitives/container';
+import {Pressable, PressableProps} from '../primitives/pressable';
+import {VStack} from '../primitives/v-stack';
 
 export interface NewGameButtonProperties {
   rotated: boolean;
   wrapped: boolean;
-  onPress: PressableProperties['onPress'];
+  onPress: PressableProps['onPress'];
 }
 
 const WRAPPED_SIZE = 70;
 const PLAIN_SIZE = 50;
-const TAB_BAR_HEIGHT = 105;
 
 export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
   const {rotated, wrapped, onPress} = props;
@@ -40,42 +43,53 @@ export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
     }
   }, [rotated, rotationAnimationValue]);
 
-  const ss = StyleSheet.create({
-    s: {
-      position: 'absolute',
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      left: width / 2 - size / 2,
-      bottom: TAB_BAR_HEIGHT - size - (wrapped ? 0 : 10),
-      borderColor: '#ffffff',
-      borderWidth: wrapped ? 10 : 0,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
+  // const ss = StyleSheet.create({
+  //   s: {
+  //     position: 'absolute',
+  //     width: size,
+  //     height: size,
+  //     borderRadius: size / 2,
+  //     left: width / 2 - size / 2,
+  //     bottom: TAB_BAR_HEIGHT - size - (wrapped ? 0 : 10),
+  //     borderColor: '#ffffff',
+  //     borderWidth: wrapped ? 10 : 0,
+  //     alignItems: 'center',
+  //     justifyContent: 'center',
+  //   },
+  // });
 
   return (
-    <Pressable
-      styles={[ss.s, 'bg-primary', 'c-contrast']}
-      onPress={e => {
-        if (onPress) {
-          onPress(e);
-        }
-      }}>
-      <AnimatedIcon
-        name="plus"
-        variant="primary-contrast"
-        size="md"
-        transforms={[
-          {
-            rotate: rotationAnimationValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0deg', '135deg'],
-            }),
-          },
-        ]}
-      />
-    </Pressable>
+    <Container
+      position="absolute"
+      // bg="secondary"
+      w={size}
+      h={size}
+      left={width / 2 - size / 2}
+      bottom={TAB_BAR_HEIGHT - size - (wrapped ? 0 : 10)}>
+      <Pressable
+        onPress={e => {
+          if (onPress) {
+            onPress(e);
+          }
+        }}>
+        <Circle
+          h={size}
+          w={size}
+          bg="primary"
+          borderWidth={wrapped ? 'md' : 'none'}
+          borderColor="navSurface">
+          <VStack full alignItems="center" justifyContent="center">
+            <AnimatedIcon
+              name="plus"
+              size="xl"
+              rotate={{
+                animatedValue: rotationAnimationValue,
+                range: ['0deg', '135deg'],
+              }}
+            />
+          </VStack>
+        </Circle>
+      </Pressable>
+    </Container>
   );
 };

@@ -1,11 +1,11 @@
 import React from 'react';
 import {SplashScreen} from '../screens/splash';
-import {Splash2Screen} from '../screens/splash2';
-import {MainTabBar} from '../components/composites/main-tab-bar';
-import {NewGameButton} from '../components/composites/new-game-button';
 import {Animated, StyleSheet} from 'react-native';
 import {TAB_BAR_HEIGHT} from '../constants/tab-bar';
+import {Splash2Screen} from '../screens/splash2';
 import {AnimatedContainer} from '../components/primitives/animated-container';
+import {MainTabBar} from '../components/composites/main-tab-bar';
+import {NewGameButton} from '../components/composites/new-game-button';
 
 type Properties = {};
 
@@ -60,36 +60,34 @@ const MainTabStack: React.FC<Properties> = ({}) => {
   return (
     <>
       {currentScreen === 'home' ? (
-        <SplashScreen />
-      ) : currentScreen === 'bell' ? (
         <Splash2Screen />
+      ) : currentScreen === 'bell' ? (
+        <SplashScreen />
       ) : (
-        <Animated.View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            transform: [
-              {
-                translateY: slideInOutValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [300, 0],
-                }),
-              },
-            ],
-          }}>
-          <SplashScreen />
-        </Animated.View>
+        <SplashScreen />
+        // <Animated.View
+        //   style={{
+        //     position: 'absolute',
+        //     bottom: 0,
+        //     transform: [
+        //       {
+        //         translateY: slideInOutValue.interpolate({
+        //           inputRange: [0, 1],
+        //           outputRange: [300, 0],
+        //         }),
+        //       },
+        //     ],
+        //   }}>
+        //   <SplashScreen />
+        // </Animated.View>
       )}
       <AnimatedContainer
-        transforms={[
-          {
-            translateY: slideInOutValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, TAB_BAR_HEIGHT],
-            }),
-          },
-        ]}
-        styles={['p-safe', ss.tabBarContainer]}>
+        mt="tabBarHeight"
+        h={TAB_BAR_HEIGHT}
+        translateY={{
+          animatedValue: slideInOutValue,
+          range: [0, TAB_BAR_HEIGHT],
+        }}>
         <MainTabBar
           activeIcon={currentScreen}
           onPressHome={() => {

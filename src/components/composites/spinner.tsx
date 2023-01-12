@@ -1,17 +1,12 @@
 import React from 'react';
 import {Animated} from 'react-native';
-import {
-  AnimatedIcon,
-  AnimatedIconProperties,
-} from '../primitives/animated-icon';
-import {Container} from '../primitives/container';
+import {AnimatedIcon} from '../primitives/animated-icon';
+import {Rect} from '../primitives/rect';
+import {VStack} from '../primitives/v-stack';
 
-export interface SpinnerProperties {
-  variant: AnimatedIconProperties['variant'];
-  size: AnimatedIconProperties['size'];
-}
+export interface SpinnerProps {}
 
-export const Spinner: React.FC<SpinnerProperties> = props => {
+export const Spinner: React.FC<SpinnerProps> = () => {
   const {current: scaleAnimationValue} = React.useRef<Animated.Value>(
     new Animated.Value(0),
   );
@@ -45,31 +40,19 @@ export const Spinner: React.FC<SpinnerProperties> = props => {
   });
 
   return (
-    <Container
-      styles={[
-        props.variant === 'primary-contrast'
-          ? 'circle-primary-solid-md'
-          : 'circle-invisible-md',
-      ]}>
-      <AnimatedIcon
-        name="spinner"
-        variant={props.variant}
-        size="md"
-        transforms={[
-          {
-            scale: scaleAnimationValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 2],
-            }),
-          },
-          {
-            rotate: rotationAnimationValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0deg', '720deg'],
-            }),
-          },
-        ]}
-      />
-    </Container>
+    <Rect h={40} w={40}>
+      <VStack alignItems="center" justifyContent="center">
+        <AnimatedIcon
+          name="spinner"
+          color="primary"
+          size="2xl"
+          scale={{animatedValue: scaleAnimationValue, range: [0.5, 1]}}
+          rotate={{
+            animatedValue: rotationAnimationValue,
+            range: ['0deg', '720deg'],
+          }}
+        />
+      </VStack>
+    </Rect>
   );
 };

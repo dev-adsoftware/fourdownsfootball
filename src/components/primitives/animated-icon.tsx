@@ -3,40 +3,47 @@ import {Animated as RNAnimated} from 'react-native';
 import FontAwesome5Icon, {
   FontAwesome5IconProps,
 } from 'react-native-vector-icons/FontAwesome5';
-import {withTheme, WithThemeStyleProps} from '../../hoc/with-styles';
+import {ThemeColorKey, ThemeIconSizeKey, useTheme} from '../../providers/theme';
+import {
+  AnimationProps,
+  ColorProps,
+  IconProps as StyleIconProps,
+  StyleBuilder,
+} from '../../utilities/style-builder';
 
-export interface AnimatedIconProperties
-  extends WithThemeStyleProps,
-    Omit<FontAwesome5IconProps, 'style' | 'size'> {
-  variant: 'primary' | 'disabled' | 'primary-contrast';
-  size: 'sm' | 'md' | 'lg';
-  transforms?: (
-    | {translateX: RNAnimated.AnimatedInterpolation<string | number>}
-    | {translateY: RNAnimated.AnimatedInterpolation<string | number>}
-    | {scale: RNAnimated.AnimatedInterpolation<string | number>}
-    | {rotate: RNAnimated.AnimatedInterpolation<string | number>}
-  )[];
-}
+export interface AnimatedIconProps
+  extends Pick<FontAwesome5IconProps, 'name'>,
+    StyleIconProps,
+    ColorProps,
+    AnimationProps {}
 
 const _AnimatedIcon = RNAnimated.createAnimatedComponent(FontAwesome5Icon);
 
-const Component: React.FC<AnimatedIconProperties> = props => {
-  const {name, variant, size: propsSize, theme} = props;
-  let color = theme.colors.primary;
-  if (variant === 'disabled') {
-    color = theme.colors.disabled;
-  } else if (variant === 'primary-contrast') {
-    color = theme.getContrastTextColor(theme.colors.primary);
-  }
+export const AnimatedIcon: React.FC<AnimatedIconProps> = props => {
+  const theme = useTheme();
 
-  let size = 17;
-  if (propsSize === 'sm') {
-    size = 15;
-  } else if (propsSize === 'lg') {
-    size = 20;
-  }
+  const _props = {
+    ...{
+      color: 'white' as ThemeColorKey,
+      size: 'md' as ThemeIconSizeKey,
+    },
+    ...props,
+  };
 
-  return <_AnimatedIcon {...props} name={name} color={color} size={size} />;
+  const animatedStyle = React.useMemo(() => {
+    return new StyleBuilder(theme)
+      .setAnimationProps(props)
+      .buildAnimatedStyles();
+  }, [theme, props]);
+
+  return (
+    <_AnimatedIcon
+      name={props.name}
+      color={theme.colors[_props.color]}
+      size={theme.iconSizes[_props.size]}
+      style={{
+        transform: animatedStyle,
+      }}
+    />
+  );
 };
-
-export const AnimatedIcon = withTheme(Component);

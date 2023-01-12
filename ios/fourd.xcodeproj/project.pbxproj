@@ -20,6 +20,18 @@
 		FC248388FB9E4C238AA0B46D /* klavika-condensed-italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */; };
 		C3EEFD237C7A48ADB2876E5C /* proxima-nova-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */; };
 		78ADCB5DC6C8467E96C172EA /* proxima-nova-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */; };
+		C1C44CA9DE4C47BFA815DC16 /* SourceSansPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2ECB71E7047F416B900E7C74 /* SourceSansPro-Black.otf */; };
+		0F2B6622F20E453FB5AF28FC /* SourceSansPro-BlackIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = D52A8D15DAAE40DDB52694C7 /* SourceSansPro-BlackIt.otf */; };
+		5C70413DCC7D42B9AD397725 /* SourceSansPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8ED12A6153A5481FA1281F01 /* SourceSansPro-Bold.otf */; };
+		C79E7F0454E64A06807894ED /* SourceSansPro-BoldIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 327631864312471E9D3F68FB /* SourceSansPro-BoldIt.otf */; };
+		EF3C1AEACC3B40FCBAB1B338 /* SourceSansPro-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9A9218F0EC284F178FCC11CB /* SourceSansPro-ExtraLight.otf */; };
+		A6FCE7ABE07440F8A33AB51E /* SourceSansPro-ExtraLightIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08A0CCED1C72418DAEA4D09B /* SourceSansPro-ExtraLightIt.otf */; };
+		D3758705954F4F1EA950AC05 /* SourceSansPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BDE94682B82B4414A0026BED /* SourceSansPro-It.otf */; };
+		A6EA7C0EE46F40DCB4FC4277 /* SourceSansPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = EA0E55B3AF5B487ABE4249A3 /* SourceSansPro-Light.otf */; };
+		EA7C8C0EE5B04BE8BA6A24A8 /* SourceSansPro-LightIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47C63C33923044C280D625DF /* SourceSansPro-LightIt.otf */; };
+		F85F00A33D7B4AC7B3D0042B /* SourceSansPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 213B6D90405D44309C272D5B /* SourceSansPro-Regular.otf */; };
+		73BC3CC162024377A6425CD4 /* SourceSansPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 54AD78B7974A49D7A41DCFAB /* SourceSansPro-Semibold.otf */; };
+		290E448CFB7846748373ECDD /* SourceSansPro-SemiboldIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = F01DFA3CED8C4544A480EDF1 /* SourceSansPro-SemiboldIt.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +85,18 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */ = {isa = PBXFileReference; name = "proxima-nova-bold.ttf"; path = "../assets/fonts/proxima-nova-bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */ = {isa = PBXFileReference; name = "proxima-nova-regular.ttf"; path = "../assets/fonts/proxima-nova-regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2ECB71E7047F416B900E7C74 /* SourceSansPro-Black.otf */ = {isa = PBXFileReference; name = "SourceSansPro-Black.otf"; path = "../assets/fonts/SourceSansPro-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D52A8D15DAAE40DDB52694C7 /* SourceSansPro-BlackIt.otf */ = {isa = PBXFileReference; name = "SourceSansPro-BlackIt.otf"; path = "../assets/fonts/SourceSansPro-BlackIt.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8ED12A6153A5481FA1281F01 /* SourceSansPro-Bold.otf */ = {isa = PBXFileReference; name = "SourceSansPro-Bold.otf"; path = "../assets/fonts/SourceSansPro-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		327631864312471E9D3F68FB /* SourceSansPro-BoldIt.otf */ = {isa = PBXFileReference; name = "SourceSansPro-BoldIt.otf"; path = "../assets/fonts/SourceSansPro-BoldIt.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9A9218F0EC284F178FCC11CB /* SourceSansPro-ExtraLight.otf */ = {isa = PBXFileReference; name = "SourceSansPro-ExtraLight.otf"; path = "../assets/fonts/SourceSansPro-ExtraLight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		08A0CCED1C72418DAEA4D09B /* SourceSansPro-ExtraLightIt.otf */ = {isa = PBXFileReference; name = "SourceSansPro-ExtraLightIt.otf"; path = "../assets/fonts/SourceSansPro-ExtraLightIt.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BDE94682B82B4414A0026BED /* SourceSansPro-It.otf */ = {isa = PBXFileReference; name = "SourceSansPro-It.otf"; path = "../assets/fonts/SourceSansPro-It.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EA0E55B3AF5B487ABE4249A3 /* SourceSansPro-Light.otf */ = {isa = PBXFileReference; name = "SourceSansPro-Light.otf"; path = "../assets/fonts/SourceSansPro-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		47C63C33923044C280D625DF /* SourceSansPro-LightIt.otf */ = {isa = PBXFileReference; name = "SourceSansPro-LightIt.otf"; path = "../assets/fonts/SourceSansPro-LightIt.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		213B6D90405D44309C272D5B /* SourceSansPro-Regular.otf */ = {isa = PBXFileReference; name = "SourceSansPro-Regular.otf"; path = "../assets/fonts/SourceSansPro-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		54AD78B7974A49D7A41DCFAB /* SourceSansPro-Semibold.otf */ = {isa = PBXFileReference; name = "SourceSansPro-Semibold.otf"; path = "../assets/fonts/SourceSansPro-Semibold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F01DFA3CED8C4544A480EDF1 /* SourceSansPro-SemiboldIt.otf */ = {isa = PBXFileReference; name = "SourceSansPro-SemiboldIt.otf"; path = "../assets/fonts/SourceSansPro-SemiboldIt.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +226,18 @@
 				0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */,
 				6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */,
 				BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */,
+				2ECB71E7047F416B900E7C74 /* SourceSansPro-Black.otf */,
+				D52A8D15DAAE40DDB52694C7 /* SourceSansPro-BlackIt.otf */,
+				8ED12A6153A5481FA1281F01 /* SourceSansPro-Bold.otf */,
+				327631864312471E9D3F68FB /* SourceSansPro-BoldIt.otf */,
+				9A9218F0EC284F178FCC11CB /* SourceSansPro-ExtraLight.otf */,
+				08A0CCED1C72418DAEA4D09B /* SourceSansPro-ExtraLightIt.otf */,
+				BDE94682B82B4414A0026BED /* SourceSansPro-It.otf */,
+				EA0E55B3AF5B487ABE4249A3 /* SourceSansPro-Light.otf */,
+				47C63C33923044C280D625DF /* SourceSansPro-LightIt.otf */,
+				213B6D90405D44309C272D5B /* SourceSansPro-Regular.otf */,
+				54AD78B7974A49D7A41DCFAB /* SourceSansPro-Semibold.otf */,
+				F01DFA3CED8C4544A480EDF1 /* SourceSansPro-SemiboldIt.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -319,6 +355,18 @@
 				FC248388FB9E4C238AA0B46D /* klavika-condensed-italic.ttf in Resources */,
 				C3EEFD237C7A48ADB2876E5C /* proxima-nova-bold.ttf in Resources */,
 				78ADCB5DC6C8467E96C172EA /* proxima-nova-regular.ttf in Resources */,
+				C1C44CA9DE4C47BFA815DC16 /* SourceSansPro-Black.otf in Resources */,
+				0F2B6622F20E453FB5AF28FC /* SourceSansPro-BlackIt.otf in Resources */,
+				5C70413DCC7D42B9AD397725 /* SourceSansPro-Bold.otf in Resources */,
+				C79E7F0454E64A06807894ED /* SourceSansPro-BoldIt.otf in Resources */,
+				EF3C1AEACC3B40FCBAB1B338 /* SourceSansPro-ExtraLight.otf in Resources */,
+				A6FCE7ABE07440F8A33AB51E /* SourceSansPro-ExtraLightIt.otf in Resources */,
+				D3758705954F4F1EA950AC05 /* SourceSansPro-It.otf in Resources */,
+				A6EA7C0EE46F40DCB4FC4277 /* SourceSansPro-Light.otf in Resources */,
+				EA7C8C0EE5B04BE8BA6A24A8 /* SourceSansPro-LightIt.otf in Resources */,
+				F85F00A33D7B4AC7B3D0042B /* SourceSansPro-Regular.otf in Resources */,
+				73BC3CC162024377A6425CD4 /* SourceSansPro-Semibold.otf in Resources */,
+				290E448CFB7846748373ECDD /* SourceSansPro-SemiboldIt.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
