@@ -61,11 +61,7 @@ export const Svg: React.FC<SvgProps> = props => {
         <Path
           d={pathProps.path}
           fill={pathProps.bg ? theme.colors[pathProps.bg] : undefined}
-          strokeWidth={
-            pathProps.borderWidth
-              ? theme.borderWidths[pathProps.borderWidth]
-              : undefined
-          }
+          strokeWidth={pathProps.borderWidth}
           stroke={
             pathProps.borderColor
               ? theme.colors[pathProps.borderColor]

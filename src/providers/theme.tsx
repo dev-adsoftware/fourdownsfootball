@@ -17,6 +17,7 @@ import {
   COLOR_PALETTE_GRAY_300,
   COLOR_PALETTE_GRAY_500,
   COLOR_PALETTE_GRAY_700,
+  COLOR_PALETTE_GRAY_800,
   COLOR_PALETTE_GREEN_700,
   COLOR_PALETTE_ORANGE_700,
   COLOR_PALETTE_RED_500,
@@ -24,12 +25,8 @@ import {
   COLOR_PALETTE_RED_900,
   COLOR_PALETTE_WHITE,
 } from '../constants/color-palette';
-import {TAB_BAR_HEIGHT} from '../constants/tab-bar';
 
-export type ThemeSpacingKey = keyof Theme['spacing'];
 export type ThemeColorKey = keyof Theme['colors'];
-export type ThemeBorderWidthKey = keyof Theme['borderWidths'];
-export type ThemeBorderRadiiKey = keyof Theme['borderRadii'];
 export type ThemeIconSizeKey = keyof Theme['iconSizes'];
 export type ThemeFontSizeKey = keyof Theme['fontSizes'];
 export type ThemeTypeFacesKey = keyof Theme['typeFaces'];
@@ -49,6 +46,7 @@ export class Theme {
     separator: COLOR_PALETTE_GRAY_300,
     white: COLOR_PALETTE_WHITE,
     black: COLOR_PALETTE_BLACK,
+    primaryText: COLOR_PALETTE_GRAY_800,
     transparent: COLOR_PALETETE_TRANSPARENT,
     placeholder: COLOR_PALETTE_GRAY_500,
     inputBorder: COLOR_PALETTE_GRAY_500,
@@ -57,54 +55,18 @@ export class Theme {
     evenLayerSurface: COLOR_PALETTE_GRAY_200,
   };
 
-  public spacing = {
-    none: 0,
-    '3xs': 1,
-    '2xs': 2,
-    xs: 4,
-    sm: 6,
-    md: 8,
-    lg: 10,
-    xl: 16,
-    '2xl': 20,
-    '3xl': 40,
-    safe: 40,
-    tabBarHeight: -TAB_BAR_HEIGHT,
-  };
-
-  public borderRadii = {
-    none: 0,
-    '2xs': 1,
-    xs: 2,
-    sm: 4,
-    md: 6,
-    lg: 8,
-    xl: 12,
-    '2xl': 16,
-    full: 99999,
-  };
-
-  public borderWidths = {
-    none: 0,
-    '2xs': 1,
-    xs: 2,
-    sm: 4,
-    md: 6,
-    lg: 8,
-    xl: 12,
-    '2xl': 16,
-  };
-
   public fontSizes = {
-    '4xs': 11,
-    '3xs': 12,
-    '2xs': 13,
-    xs: 15,
-    sm: 16,
-    md: 17,
-    lg: 22,
-    xl: 28,
-    '2xl': 34,
+    caption2: 11,
+    caption1: 12,
+    footnote: 13,
+    subhead: 15,
+    callout: 16,
+    body: 17,
+    headline: 17,
+    title3: 20,
+    title2: 22,
+    title1: 28,
+    largeTitle: 34,
   };
 
   public typeFaces = {
@@ -112,12 +74,23 @@ export class Theme {
       fontFamily: 'KlavikaCondensed-BoldItalic',
       letterSpacing: 0.64,
     },
-    proximaNovaRegular: {
-      fontFamily: 'ProximaNova-Regular',
-      letterSpacing: 0.1,
+    klavikaCondensedBold: {
+      fontFamily: 'KlavikaCondensed-Bold',
+      letterSpacing: 0.64,
+    },
+    klavikaCondensedRegularItalic: {
+      fontFamily: 'KlavikaCondensed-Italic',
+      letterSpacing: 0.64,
+    },
+    klavikaCondensedRegular: {
+      fontFamily: 'KlavikaCondensed-Regular',
+      letterSpacing: 0.64,
     },
     sourceSansProRegular: {
       fontFamily: 'SourceSansPro-Regular',
+    },
+    sourceSansProRegularSemibold: {
+      fontFamily: 'SourceSansPro-Semibold',
     },
     // SourceSansPro-Regular
     // SourceSansPro-It
@@ -134,15 +107,15 @@ export class Theme {
   };
 
   public iconSizes = {
-    xs: 10,
-    sm: 15,
-    md: 20,
-    lg: 25,
-    xl: 30,
-    '2xl': 35,
-    '3xl': 40,
-    '4xl': 45,
-    '5xl': 50,
+    '3xs': 14,
+    '2xs': 16,
+    xs: 18,
+    sm: 20,
+    md: 22,
+    lg: 24,
+    xl: 26,
+    '2xl': 28,
+    '3xl': 30,
   };
 
   constructor(colorScheme: ColorSchemeName) {

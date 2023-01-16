@@ -4,6 +4,7 @@ import {useEnv} from './env';
 import {OwnerDto} from '../services/dtos';
 import {OwnersService} from '../services/owners';
 import {useAuth} from './auth';
+import {AppState, useGlobalState} from './global-state';
 // import {useNotification} from './notification';
 
 const DataContext = React.createContext<Data | undefined>(undefined);
@@ -29,18 +30,7 @@ export interface LocalGameState {
   expectedSequence?: string;
 }
 
-export enum AppState {
-  LOADING,
-  UNAUTHENTICATED,
-  ONBOARDING,
-  MAIN,
-}
-
-// export type ActiveGame = DataItemSegment<GameDetailQueryResponseDto> &
-//   WithLoader &
-//   WithLocalState<LocalGameState>;
 interface Data {
-  appState: AppState;
   owner?: OwnerDto;
   clearAll: () => void;
   localStore: {
@@ -58,13 +48,11 @@ type Properties = {
 };
 
 const DataProvider: React.FC<Properties> = ({children}) => {
-  const [appState, setAppState] = React.useState<AppState>(
-    AppState.UNAUTHENTICATED,
-  );
   const [owner, setOwner] = React.useState<OwnerDto>();
 
   const auth = useAuth();
   const env = useEnv();
+  const globalState = useGlobalState();
 
   // const {addListener, removeListener} = useNotification();
 
@@ -96,36 +84,23 @@ const DataProvider: React.FC<Properties> = ({children}) => {
 
   const fetchOwner = React.useCallback(
     async (id: string) => {
-      console.log('fetching owner', {id});
-      const ownersService = new OwnersService(
-        auth.secureClient,
-        env.apiEndpoint,
-      );
-      if (!(await ownersService.ownerExists(id))) {
-        setAppState(AppState.ONBOARDING);
-      } else {
-        const fetchedOwner = await ownersService.getOwner(id);
-        setOwner(fetchedOwner);
-        setAppState(AppState.MAIN);
+      if (globalState.appState.get() === AppState.AUTHENTICATED) {
+        console.log('fetching owner', {id});
+        const ownersService = new OwnersService(
+          auth.secureClient,
+          env.apiEndpoint,
+        );
+        if (!(await ownersService.ownerExists(id))) {
+          globalState.appState.set(AppState.ONBOARDING);
+        } else {
+          const fetchedOwner = await ownersService.getOwner(id);
+          setOwner(fetchedOwner);
+          globalState.appState.set(AppState.MAIN);
+        }
       }
     },
-    [auth.secureClient, env.apiEndpoint],
+    [auth.secureClient, env.apiEndpoint, globalState.appState],
   );
-
-  React.useEffect(() => {
-    if (appState === AppState.LOADING) {
-      console.log('loading state');
-    }
-    if (appState === AppState.UNAUTHENTICATED) {
-      console.log('unauth state');
-    }
-    if (appState === AppState.ONBOARDING) {
-      console.log('onboarding state');
-    }
-    if (appState === AppState.MAIN) {
-      console.log('main state');
-    }
-  }, [appState]);
 
   React.useEffect(() => {
     if (auth.user) {
@@ -171,7 +146,6 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   return (
     <DataContext.Provider
       value={{
-        appState,
         owner,
         clearAll,
         localStore: {

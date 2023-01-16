@@ -9,7 +9,7 @@ export const SafeBar: React.FC<SafeBarProps> = props => {
   const theme = useTheme();
   const style = React.useMemo(() => {
     const _props: BackgroundProps = {
-      ...{backgroundColor: 'white'},
+      ...{bg: 'white'},
       ...props,
     };
     return new StyleBuilder(theme).setBackgroundProps(_props).build();

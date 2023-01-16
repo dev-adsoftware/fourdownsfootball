@@ -6,8 +6,8 @@ import {
 import {useTheme} from '../../providers/theme';
 import {ChildrenProps} from '../../types/types';
 import {
+  DebugProps,
   DimensionProps,
-  OverflowProps,
   StyleBuilder,
 } from '../../utilities/style-builder';
 
@@ -22,15 +22,13 @@ export const Pressable: React.FC<PressableProps> = props => {
   const theme = useTheme();
 
   const style = React.useMemo(() => {
-    const _props: PressableProps & OverflowProps = {
-      ...{
-        overflow: 'hidden',
-      },
+    const _props: PressableProps & DebugProps = {
+      ...{},
       ...props,
     };
     return new StyleBuilder(theme)
       .setDimensionProps(_props)
-      .setOverflowProps(_props)
+      .setDebugProps(_props)
       .build();
   }, [theme, props]);
 

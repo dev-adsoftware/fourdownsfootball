@@ -1,6 +1,7 @@
 import React from 'react';
 import {Auth as AWSAuth} from 'aws-amplify';
 import axios, {AxiosRequestConfig, AxiosInstance} from 'axios';
+import {AppState, useGlobalState} from './global-state';
 
 const client = axios.create();
 client.interceptors.request.use(async (config: AxiosRequestConfig) => {
@@ -44,42 +45,27 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [user, setUser] = React.useState<User>();
 
-  // const checkOrCreateOwner = async (
-  //   id: string,
-  //   username: string,
-  // ): Promise<void> => {
-  //   const service = new OwnersService();
-  //   try {
-  //     await service.ownerExists(id);
-  //     return;
-  //   } catch (e) {
-  //     if (getStatusFromError(e) === 404) {
-  //       const ownerDto = new OwnerDto();
-  //       ownerDto.id = id;
-  //       ownerDto.name = username;
-  //       ownerDto.email = username;
-  //       await service.createOwner(ownerDto);
-  //       return;
-  //     }
-  //     throw e;
-  //   }
-  // };
+  const globalState = useGlobalState();
 
   React.useEffect(() => {
     const init = async () => {
-      try {
-        await AWSAuth.signOut();
-        const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
-        setUser({username, email: attributes.email});
-        setIsAuthenticated(true);
-      } catch (e) {
-        console.log(e);
+      if (globalState.appState.get() === AppState.LOADING) {
+        try {
+          const {username, attributes} =
+            await AWSAuth.currentAuthenticatedUser();
+          setUser({username, email: attributes.email});
+          setIsAuthenticated(true);
+          globalState.appState.set(AppState.AUTHENTICATED);
+        } catch (e) {
+          console.log(e);
+          globalState.appState.set(AppState.UNAUTHENTICATED);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     init();
-  }, []);
+  }, [globalState.appState]);
 
   const signIn = async (signInUsername: string, password: string) => {
     try {
@@ -87,6 +73,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
       const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
       setUser({username, email: attributes.email});
       setIsAuthenticated(true);
+      globalState.appState.set(AppState.ONBOARDING);
     } catch (e) {
       const typedE = e as {code: string};
       if (typedE.code === 'UserNotFoundException') {

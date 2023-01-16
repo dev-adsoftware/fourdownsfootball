@@ -6,6 +6,7 @@ import {
 import {ThemeColorKey, useTheme} from '../../providers/theme';
 import {
   ColorProps,
+  DebugProps,
   DimensionProps,
   OpacityProps,
   StyleBuilder,
@@ -29,11 +30,15 @@ export const TextInput: React.FC<TextInputProps> = props => {
   const theme = useTheme();
 
   const style = React.useMemo(() => {
-    const _props: ColorProps & TextProps & DimensionProps & OpacityProps = {
+    const _props: ColorProps &
+      TextProps &
+      DimensionProps &
+      OpacityProps &
+      DebugProps = {
       ...{
         color: 'black',
         typeFace: 'sourceSansProRegular',
-        fontSize: 'md',
+        fontSize: 'body',
         w: 'full',
       },
       ...props,
@@ -43,6 +48,7 @@ export const TextInput: React.FC<TextInputProps> = props => {
       .setTextProps(_props)
       .setDimensionProps(_props)
       .setOpacityProps(_props)
+      .setDebugProps(_props)
       .build();
   }, [theme, props]);
 

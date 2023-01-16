@@ -1,0 +1,30 @@
+import React from 'react';
+import {
+  ColorProps,
+  IconProps as StyleIconProps,
+} from '../../utilities/style-builder';
+import {Icon, IconProps} from '../primitives/icon';
+import {Pressable, PressableProps} from '../primitives/pressable';
+import {View} from '../primitives/view';
+
+export interface IconButtonProps extends ColorProps, StyleIconProps {
+  icon: IconProps['name'];
+  onPress: PressableProps['onPress'];
+}
+
+export const IconButton: React.FC<IconButtonProps> = props => {
+  const {icon, onPress} = props;
+
+  return (
+    <Pressable
+      onPress={e => {
+        if (onPress) {
+          onPress(e);
+        }
+      }}>
+      <View flex="none" alignItems="center" justifyContent="center">
+        <Icon name={icon} color={props.color} size={props.size || 'md'} />
+      </View>
+    </Pressable>
+  );
+};

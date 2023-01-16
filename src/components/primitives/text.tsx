@@ -3,9 +3,9 @@ import {Text as RNText, TextProps as RNTextProps} from 'react-native';
 import {useTheme} from '../../providers/theme';
 import {
   ColorProps,
-  OverflowProps,
   TextProps as SBTextProps,
   StyleBuilder,
+  DebugProps,
 } from '../../utilities/style-builder';
 
 interface TextProps
@@ -19,19 +19,18 @@ export const Text: React.FC<TextProps> = props => {
   const theme = useTheme();
 
   const style = React.useMemo(() => {
-    const _props: TextProps & OverflowProps = {
+    const _props: TextProps & DebugProps = {
       ...{
-        color: 'black',
+        color: 'primaryText',
         typeFace: 'sourceSansProRegular',
-        fontSize: 'md',
-        overflow: 'hidden',
+        fontSize: 'body',
       },
       ...props,
     };
     return new StyleBuilder(theme)
       .setColorProps(_props)
       .setTextProps(_props)
-      .setOverflowProps(_props)
+      .setDebugProps(_props)
       .build();
   }, [theme, props]);
 

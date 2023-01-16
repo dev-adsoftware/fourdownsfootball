@@ -13,15 +13,20 @@ import {NavigationContainer} from '@react-navigation/native';
 import {useColorScheme} from 'react-native';
 import env from './env.json';
 import {AuthProvider} from './src/providers/auth';
-import {AppState, DataProvider, useData} from './src/providers/data';
+import {DataProvider} from './src/providers/data';
 import {EnvProvider} from './src/providers/env';
 import {ThemeProvider, useTheme} from './src/providers/theme';
 import {SplashScreen} from './src/screens/splash';
 import {AuthStack} from './src/stacks/auth';
-import {MainTabStack} from './src/stacks/main-tab';
+import {MainScreen} from './src/screens/main';
 import {NotificationProvider} from './src/providers/notification';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {OnboardingStack} from './src/stacks/onboarding';
+// import {OnboardingStack} from './src/stacks/onboarding';
+import {
+  AppState,
+  GlobalStateProvider,
+  useGlobalState,
+} from './src/providers/global-state';
 
 Amplify.configure({
   Auth: {
@@ -35,11 +40,11 @@ Amplify.configure({
 });
 
 const Main = () => {
-  const data = useData();
+  const globalState = useGlobalState();
   const colorScheme = useColorScheme();
   const theme = useTheme();
 
-  switch (data.appState) {
+  switch (globalState.appState.get()) {
     case AppState.LOADING:
       return <SplashScreen />;
     case AppState.UNAUTHENTICATED:
@@ -48,6 +53,8 @@ const Main = () => {
           <AuthStack />
         </NavigationContainer>
       );
+    case AppState.AUTHENTICATED:
+      return <SplashScreen />;
     case AppState.ONBOARDING:
       return <SplashScreen />;
     // return (
@@ -58,7 +65,7 @@ const Main = () => {
     default:
       return (
         <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-          <MainTabStack />
+          <MainScreen />
         </NavigationContainer>
       );
   }
@@ -68,15 +75,17 @@ const App = () => {
   return (
     <EnvProvider initialEnv={env}>
       <ThemeProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <DataProvider>
-              <SafeAreaProvider>
-                <Main />
-              </SafeAreaProvider>
-            </DataProvider>
-          </NotificationProvider>
-        </AuthProvider>
+        <GlobalStateProvider>
+          <AuthProvider>
+            <NotificationProvider>
+              <DataProvider>
+                <SafeAreaProvider>
+                  <Main />
+                </SafeAreaProvider>
+              </DataProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </GlobalStateProvider>
       </ThemeProvider>
     </EnvProvider>
   );

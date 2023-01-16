@@ -7,12 +7,9 @@ import {
 } from 'react-native';
 import {
   Theme,
-  ThemeBorderRadiiKey,
-  ThemeBorderWidthKey,
   ThemeColorKey,
   ThemeFontSizeKey,
   ThemeIconSizeKey,
-  ThemeSpacingKey,
   ThemeTypeFacesKey,
 } from '../providers/theme';
 
@@ -24,30 +21,30 @@ export interface PositionProps {
   left?: number;
 }
 export interface DimensionProps {
-  h?: number;
-  w?: number | 'full' | 'fit';
+  h?: ViewStyle['height'];
+  w?: ViewStyle['width'];
 }
 
 export interface MarginProps {
-  m?: ThemeSpacingKey;
-  mt?: ThemeSpacingKey;
-  mr?: ThemeSpacingKey;
-  mb?: ThemeSpacingKey;
-  ml?: ThemeSpacingKey;
-  mx?: ThemeSpacingKey;
-  my?: ThemeSpacingKey;
-  ms?: ThemeSpacingKey;
+  m?: ViewStyle['margin'];
+  mt?: ViewStyle['margin'];
+  mr?: ViewStyle['margin'];
+  mb?: ViewStyle['margin'];
+  ml?: ViewStyle['margin'];
+  mx?: ViewStyle['margin'];
+  my?: ViewStyle['margin'];
+  ms?: ViewStyle['margin'];
 }
 
 export interface PaddingProps {
-  p?: ThemeSpacingKey;
-  pt?: ThemeSpacingKey;
-  pr?: ThemeSpacingKey;
-  pb?: ThemeSpacingKey;
-  pl?: ThemeSpacingKey;
-  px?: ThemeSpacingKey;
-  py?: ThemeSpacingKey;
-  ps?: ThemeSpacingKey;
+  p?: ViewStyle['padding'];
+  pt?: ViewStyle['padding'];
+  pr?: ViewStyle['padding'];
+  pb?: ViewStyle['padding'];
+  pl?: ViewStyle['padding'];
+  px?: ViewStyle['padding'];
+  py?: ViewStyle['padding'];
+  ps?: ViewStyle['padding'];
 }
 
 export interface BackgroundProps {
@@ -66,25 +63,25 @@ export interface BorderProps {
   borderLeftColor?: ThemeColorKey;
   borderVerticalColor?: ThemeColorKey;
   borderHorizontalColor?: ThemeColorKey;
-  borderWidth?: ThemeBorderWidthKey;
-  borderTopWidth?: ThemeBorderWidthKey;
-  borderRightWidth?: ThemeBorderWidthKey;
-  borderLeftWidth?: ThemeBorderWidthKey;
-  borderBottomWidth?: ThemeBorderWidthKey;
-  borderVerticalWidth?: ThemeBorderWidthKey;
-  borderHorizontalWidth?: ThemeBorderWidthKey;
+  borderWidth?: ViewStyle['borderWidth'];
+  borderTopWidth?: ViewStyle['borderWidth'];
+  borderRightWidth?: ViewStyle['borderWidth'];
+  borderLeftWidth?: ViewStyle['borderWidth'];
+  borderBottomWidth?: ViewStyle['borderWidth'];
+  borderVerticalWidth?: ViewStyle['borderWidth'];
+  borderHorizontalWidth?: ViewStyle['borderWidth'];
 }
 
 export interface BorderRadiusProps {
-  borderRadius?: ThemeBorderRadiiKey;
-  borderTopLeftRadius?: ThemeBorderRadiiKey;
-  borderTopRightRadius?: ThemeBorderRadiiKey;
-  borderBottomLeftRadius?: ThemeBorderRadiiKey;
-  borderBottomRightRadius?: ThemeBorderRadiiKey;
-  borderTopRadius?: ThemeBorderRadiiKey;
-  borderLeftRadius?: ThemeBorderRadiiKey;
-  borderRightRadius?: ThemeBorderRadiiKey;
-  borderBottomRadius?: ThemeBorderRadiiKey;
+  borderRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderTopLeftRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderTopRightRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderBottomLeftRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderBottomRightRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderTopRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderLeftRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderRightRadius?: ViewStyle['borderRadius'] | 'circle';
+  borderBottomRadius?: ViewStyle['borderRadius'] | 'circle';
 }
 
 export interface OverflowProps {
@@ -96,14 +93,15 @@ export interface IconProps {
 }
 
 export interface FlexProps
-  extends Pick<
-    ViewStyle,
-    'flex' | 'flexDirection' | 'alignItems' | 'justifyContent'
-  > {}
+  extends Pick<ViewStyle, 'alignItems' | 'justifyContent'> {
+  flex?: ViewStyle['flex'] | 'none';
+  row?: boolean;
+}
 
 export interface TransformProps extends Pick<TransformsStyle, 'transform'> {}
 
 export interface AnimationProps {
+  animated?: boolean;
   rotate?: {animatedValue: Animated.Value; range: string[]};
   translateX?: {animatedValue: Animated.Value; range: number[]};
   translateY?: {animatedValue: Animated.Value; range: number[]};
@@ -121,7 +119,9 @@ export interface TextProps
   typeFace?: ThemeTypeFacesKey;
 }
 
-export interface DebugProps extends Pick<BackgroundProps, 'bg'> {}
+export interface DebugProps {
+  debugColor?: ViewStyle['backgroundColor'];
+}
 
 export class StyleBuilder {
   public styleObject: ViewStyle | TextStyle;
@@ -146,8 +146,7 @@ export class StyleBuilder {
   public setDimensionProps<P extends DimensionProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      width:
-        props.w === 'full' ? '100%' : props.w === 'fit' ? undefined : props.w,
+      width: props.w === 'full' ? '100%' : props.w,
       height: props.h,
     };
     return this;
@@ -156,27 +155,11 @@ export class StyleBuilder {
   public setMarginProps<P extends MarginProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      margin: props.m ? this.theme.spacing[props.m] : undefined,
-      marginTop: props.mt
-        ? this.theme.spacing[props.mt]
-        : props.my
-        ? this.theme.spacing[props.my]
-        : undefined,
-      marginRight: props.mr
-        ? this.theme.spacing[props.mr]
-        : props.mx
-        ? this.theme.spacing[props.mx]
-        : undefined,
-      marginBottom: props.mb
-        ? this.theme.spacing[props.mb]
-        : props.my
-        ? this.theme.spacing[props.my]
-        : undefined,
-      marginLeft: props.ml
-        ? this.theme.spacing[props.ml]
-        : props.mx
-        ? this.theme.spacing[props.mx]
-        : undefined,
+      margin: props.m,
+      marginTop: props.mt || props.my,
+      marginRight: props.mr || props.mx,
+      marginBottom: props.mb || props.my,
+      marginLeft: props.ml || props.mx,
     };
     return this;
   }
@@ -184,27 +167,11 @@ export class StyleBuilder {
   public setPaddingProps<P extends PaddingProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      padding: props.p ? this.theme.spacing[props.p] : undefined,
-      paddingTop: props.pt
-        ? this.theme.spacing[props.pt]
-        : props.py
-        ? this.theme.spacing[props.py]
-        : undefined,
-      paddingRight: props.pr
-        ? this.theme.spacing[props.pr]
-        : props.px
-        ? this.theme.spacing[props.px]
-        : undefined,
-      paddingBottom: props.pb
-        ? this.theme.spacing[props.pb]
-        : props.py
-        ? this.theme.spacing[props.py]
-        : undefined,
-      paddingLeft: props.pl
-        ? this.theme.spacing[props.pl]
-        : props.px
-        ? this.theme.spacing[props.px]
-        : undefined,
+      padding: props.p,
+      paddingTop: props.pt || props.py,
+      paddingRight: props.pr || props.px,
+      paddingBottom: props.pb || props.py,
+      paddingLeft: props.pl || props.px,
     };
     return this;
   }
@@ -251,29 +218,18 @@ export class StyleBuilder {
         : props.borderVerticalColor
         ? this.theme.colors[props.borderVerticalColor]
         : undefined,
-      borderWidth: props.borderWidth
-        ? this.theme.borderWidths[props.borderWidth]
-        : undefined,
-      borderTopWidth: props.borderTopWidth
-        ? this.theme.borderWidths[props.borderTopWidth]
-        : props.borderHorizontalWidth
-        ? this.theme.borderWidths[props.borderHorizontalWidth]
-        : undefined,
-      borderRightWidth: props.borderRightWidth
-        ? this.theme.borderWidths[props.borderRightWidth]
-        : props.borderVerticalWidth
-        ? this.theme.borderWidths[props.borderVerticalWidth]
-        : undefined,
-      borderBottomWidth: props.borderBottomWidth
-        ? this.theme.borderWidths[props.borderBottomWidth]
-        : props.borderHorizontalWidth
-        ? this.theme.borderWidths[props.borderHorizontalWidth]
-        : undefined,
-      borderLeftWidth: props.borderLeftWidth
-        ? this.theme.borderWidths[props.borderLeftWidth]
-        : props.borderVerticalWidth
-        ? this.theme.borderWidths[props.borderVerticalWidth]
-        : undefined,
+      borderTopWidth:
+        props.borderTopWidth || props.borderVerticalWidth || props.borderWidth,
+      borderRightWidth:
+        props.borderRightWidth ||
+        props.borderVerticalWidth ||
+        props.borderWidth,
+      borderBottomWidth:
+        props.borderBottomWidth ||
+        props.borderHorizontalWidth ||
+        props.borderWidth,
+      borderLeftWidth:
+        props.borderLeftWidth || props.borderVerticalWidth || props.borderWidth,
     };
     return this;
   }
@@ -281,31 +237,29 @@ export class StyleBuilder {
   public setBorderRadiusProps<P extends BorderRadiusProps>(
     props: P,
   ): StyleBuilder {
+    const convertCircleToNumber = (
+      value: ViewStyle['borderRadius'] | 'circle',
+    ): ViewStyle['borderRadius'] => {
+      return value === 'circle' ? 9999 : value;
+    };
     this.styleObject = {
       ...this.styleObject,
-      borderRadius: props.borderRadius
-        ? this.theme.borderRadii[props.borderRadius]
-        : undefined,
-      borderTopLeftRadius: props.borderTopLeftRadius
-        ? this.theme.borderRadii[props.borderTopLeftRadius]
-        : props.borderTopRadius
-        ? this.theme.borderRadii[props.borderTopRadius]
-        : undefined,
-      borderTopRightRadius: props.borderTopRightRadius
-        ? this.theme.borderRadii[props.borderTopRightRadius]
-        : props.borderTopRadius
-        ? this.theme.borderRadii[props.borderTopRadius]
-        : undefined,
-      borderBottomLeftRadius: props.borderBottomLeftRadius
-        ? this.theme.borderRadii[props.borderBottomLeftRadius]
-        : props.borderBottomRadius
-        ? this.theme.borderRadii[props.borderBottomRadius]
-        : undefined,
-      borderBottomRightRadius: props.borderBottomRightRadius
-        ? this.theme.borderRadii[props.borderBottomRightRadius]
-        : props.borderBottomRadius
-        ? this.theme.borderRadii[props.borderBottomRadius]
-        : undefined,
+      borderTopLeftRadius:
+        convertCircleToNumber(props.borderTopLeftRadius) ||
+        convertCircleToNumber(props.borderTopRadius) ||
+        convertCircleToNumber(props.borderRadius),
+      borderTopRightRadius:
+        convertCircleToNumber(props.borderTopRightRadius) ||
+        convertCircleToNumber(props.borderTopRadius) ||
+        convertCircleToNumber(props.borderRadius),
+      borderBottomLeftRadius:
+        convertCircleToNumber(props.borderBottomLeftRadius) ||
+        convertCircleToNumber(props.borderBottomRadius) ||
+        convertCircleToNumber(props.borderRadius),
+      borderBottomRightRadius:
+        convertCircleToNumber(props.borderBottomRightRadius) ||
+        convertCircleToNumber(props.borderBottomRadius) ||
+        convertCircleToNumber(props.borderRadius),
     };
     return this;
   }
@@ -313,7 +267,7 @@ export class StyleBuilder {
   public setOverflowProps<P extends OverflowProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      overflow: props.overflow || 'hidden',
+      overflow: props.overflow,
     };
     return this;
   }
@@ -321,8 +275,8 @@ export class StyleBuilder {
   public setFlexProps<P extends FlexProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      flex: props.flex,
-      flexDirection: props.flexDirection,
+      flex: props.flex === 'none' ? undefined : props.flex,
+      flexDirection: props.row ? 'row' : 'column',
       alignItems: props.alignItems,
       justifyContent: props.justifyContent,
     };
@@ -390,10 +344,18 @@ export class StyleBuilder {
       textTransform: props.textTransform,
       fontSize: props.fontSize
         ? this.theme.fontSizes[props.fontSize]
-        : this.theme.fontSizes.md,
+        : this.theme.fontSizes.body,
       ...(props.typeFace ? this.theme.typeFaces[props.typeFace] : {}),
     };
 
+    return this;
+  }
+
+  public setDebugProps<P extends DebugProps>(props: P): StyleBuilder {
+    this.styleObject = {
+      ...this.styleObject,
+      backgroundColor: props.debugColor || this.styleObject.backgroundColor,
+    };
     return this;
   }
 

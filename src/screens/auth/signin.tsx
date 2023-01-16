@@ -1,33 +1,33 @@
 import React from 'react';
-import validate from 'validate.js';
-import {Link} from '../../components/composites/link';
-import {Input} from '../../components/composites/input';
-import {Text} from '../../components/primitives/text';
-import {VGutter} from '../../components/primitives/vgutter';
-import {VStack} from '../../components/primitives/v-stack';
-import {CircleButton} from '../../components/composites/circle-button';
-import {Spinner} from '../../components/composites/spinner';
 import {SafeBar} from '../../components/primitives/safe-bar';
-import {LogoSvg} from '../../components/composites/logo-svg';
-import {HStack} from '../../components/primitives/h-stack';
-import {useAuth} from '../../providers/auth';
-import {Rect} from '../../components/primitives/rect';
-import {Container} from '../../components/primitives/container';
+// import validate from 'validate.js';
+// import {Link} from '../../components/composites/link';
+// import {Input} from '../../components/composites/input';
+// import {Text} from '../../components/primitives/text';
+// import {VGutter} from '../../components/primitives/vgutter';
+// import {VStack} from '../../components/primitives/v-stack';
+// import {CircleButton} from '../../components/composites/circle-button';
+// import {Spinner} from '../../components/composites/spinner';
+// import {LogoSvg} from '../../components/composites/logo-svg';
+// import {HStack} from '../../components/primitives/h-stack';
+// import {useAuth} from '../../providers/auth';
+// import {Rect} from '../../components/primitives/rect';
+// import {Container} from '../../components/primitives/container';
 
 interface AuthSignInScreenProperties {}
 
 export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
-  const [isProcessing, setIsProcessing] = React.useState(false);
+  // const [username, setUsername] = React.useState('');
+  // const [password, setPassword] = React.useState('');
+  // const [error, setError] = React.useState('');
+  // const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const auth = useAuth();
+  // const auth = useAuth();
 
   return (
     <>
       <SafeBar />
-      <VStack justifyContent="space-between" full>
+      {/* <VStack justifyContent="space-between" full>
         <Rect p="xl">
           <VStack>
             <VGutter size="2xl" />
@@ -138,7 +138,7 @@ export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
             />
           </HStack>
         </Rect>
-      </VStack>
+      </VStack> */}
     </>
   );
 };
