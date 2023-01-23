@@ -1,4 +1,13 @@
-export const COLOR_PALETETE_TRANSPARENT = 'rgba(255, 255, 255, 0)';
+export const COLOR_PALETTE_TRANSPARENT_FULL = 'rgba(0, 0, 0, 0.0)';
+export const COLOR_PALETTE_TRANSPARENT_100 = 'rgba(0, 0, 0, 0.1)';
+export const COLOR_PALETTE_TRANSPARENT_200 = 'rgba(0, 0, 0, 0.2)';
+export const COLOR_PALETTE_TRANSPARENT_300 = 'rgba(0, 0, 0, 0.3)';
+export const COLOR_PALETTE_TRANSPARENT_400 = 'rgba(0, 0, 0, 0.4)';
+export const COLOR_PALETTE_TRANSPARENT_500 = 'rgba(0, 0, 0, 0.5)';
+export const COLOR_PALETTE_TRANSPARENT_600 = 'rgba(0, 0, 0, 0.6)';
+export const COLOR_PALETTE_TRANSPARENT_700 = 'rgba(0, 0, 0, 0.7)';
+export const COLOR_PALETTE_TRANSPARENT_800 = 'rgba(0, 0, 0, 0.8)';
+export const COLOR_PALETTE_TRANSPARENT_900 = 'rgba(0, 0, 0, 0.9)';
 
 export const COLOR_PALETTE_RED_50 = '#ffebee';
 export const COLOR_PALETTE_RED_100 = '#ffcdd2';

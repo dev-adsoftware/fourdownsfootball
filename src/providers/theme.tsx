@@ -3,7 +3,6 @@ import {ColorSchemeName, useColorScheme} from 'react-native';
 import {noop} from 'lodash';
 import TinyColor from 'tinycolor2';
 import {
-  COLOR_PALETETE_TRANSPARENT,
   COLOR_PALETTE_BLACK,
   COLOR_PALETTE_BLUE_500,
   COLOR_PALETTE_BLUE_800,
@@ -19,6 +18,10 @@ import {
   COLOR_PALETTE_RED_500,
   COLOR_PALETTE_RED_700,
   COLOR_PALETTE_RED_900,
+  COLOR_PALETTE_TRANSPARENT_300,
+  COLOR_PALETTE_TRANSPARENT_500,
+  COLOR_PALETTE_TRANSPARENT_700,
+  COLOR_PALETTE_TRANSPARENT_FULL,
   COLOR_PALETTE_WHITE,
 } from '../constants/color-palette';
 
@@ -43,12 +46,15 @@ export class Theme {
     white: COLOR_PALETTE_WHITE,
     black: COLOR_PALETTE_BLACK,
     primaryText: COLOR_PALETTE_GRAY_800,
-    transparent: COLOR_PALETETE_TRANSPARENT,
     placeholder: COLOR_PALETTE_GRAY_700,
     inputBorder: COLOR_PALETTE_GRAY_700,
     grayLink: COLOR_PALETTE_GRAY_700,
     oddLayerSurface: COLOR_PALETTE_GRAY_100,
     evenLayerSurface: COLOR_PALETTE_GRAY_200,
+    transparentDark: COLOR_PALETTE_TRANSPARENT_700,
+    transparentMedium: COLOR_PALETTE_TRANSPARENT_500,
+    transparentLight: COLOR_PALETTE_TRANSPARENT_300,
+    transparent: COLOR_PALETTE_TRANSPARENT_FULL,
   };
 
   public fontSizes = {

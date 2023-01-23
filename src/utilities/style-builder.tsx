@@ -119,7 +119,9 @@ export interface AnimationProps {
 
 export interface OpacityProps extends Pick<ViewStyle, 'opacity'> {}
 
-export interface ZIndexProps extends Pick<ViewStyle, 'zIndex'> {}
+export interface ZIndexProps {
+  zIndex?: ViewStyle['zIndex'] | 'top';
+}
 
 export interface ViewProps
   extends FlexProps,
@@ -427,7 +429,7 @@ export class StyleBuilder {
   public setZIndexProps<P extends ZIndexProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      zIndex: props.zIndex,
+      zIndex: props.zIndex === 'top' ? 9999 : props.zIndex,
     };
     return this;
   }

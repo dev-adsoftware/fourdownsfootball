@@ -79,7 +79,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
         onClose={() => {
           setIsSettingsScreenVisible(false);
         }}>
-        <View h={200} w={200} debugColor="purple" />
+        <View w="full" flex={1} debugColor="purple" />
       </FadeInScreen>
     </>
   );

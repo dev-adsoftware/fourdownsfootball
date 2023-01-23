@@ -39,17 +39,18 @@ export const FadeInScreen: React.FC<FadeInScreenProps> = props => {
       right={0}
       bottom={0}
       left={0}
-      zIndex={9999}
+      zIndex="top"
       opacity={0.0}
-      bg="white"
+      bg="transparentMedium"
       animatedOpacity={{
         animatedValue: screenOpacityAnimatedValue,
         range: [0, 1.0],
       }}>
+      {props.children}
       <View
         position="absolute"
-        bottom={0 + SAFE_AREA_PADDING_BOTTOM}
-        right={0}
+        bottom={SAFE_AREA_PADDING_BOTTOM}
+        right={20}
         w={75}
         h={75}
         alignItems="center"
@@ -59,9 +60,9 @@ export const FadeInScreen: React.FC<FadeInScreenProps> = props => {
           onPress={e => {
             props.onClose && props.onClose(e);
           }}
+          size={60}
         />
       </View>
-      {props.children}
     </View>
   );
 };
