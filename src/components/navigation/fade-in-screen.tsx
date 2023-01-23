@@ -41,6 +41,7 @@ export const FadeInScreen: React.FC<FadeInScreenProps> = props => {
       left={0}
       zIndex={9999}
       opacity={0.0}
+      bg="white"
       animatedOpacity={{
         animatedValue: screenOpacityAnimatedValue,
         range: [0, 1.0],
