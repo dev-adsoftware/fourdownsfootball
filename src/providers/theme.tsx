@@ -48,8 +48,8 @@ export class Theme {
     black: COLOR_PALETTE_BLACK,
     primaryText: COLOR_PALETTE_GRAY_800,
     transparent: COLOR_PALETETE_TRANSPARENT,
-    placeholder: COLOR_PALETTE_GRAY_500,
-    inputBorder: COLOR_PALETTE_GRAY_500,
+    placeholder: COLOR_PALETTE_GRAY_700,
+    inputBorder: COLOR_PALETTE_GRAY_700,
     grayLink: COLOR_PALETTE_GRAY_700,
     oddLayerSurface: COLOR_PALETTE_GRAY_100,
     evenLayerSurface: COLOR_PALETTE_GRAY_200,
@@ -62,7 +62,7 @@ export class Theme {
     subhead: 15,
     callout: 16,
     body: 17,
-    headline: 17,
+    headline: 18,
     title3: 20,
     title2: 22,
     title1: 28,
@@ -86,10 +86,18 @@ export class Theme {
       fontFamily: 'KlavikaCondensed-Regular',
       letterSpacing: 0.64,
     },
+    klavikaCondensedMediumItalic: {
+      fontFamily: 'KlavikaCondensed-MediumItalic',
+      letterSpacing: 0.64,
+    },
+    klavikaCondensedMedium: {
+      fontFamily: 'KlavikaCondensed-Medium',
+      letterSpacing: 0.64,
+    },
     sourceSansProRegular: {
       fontFamily: 'SourceSansPro-Regular',
     },
-    sourceSansProRegularSemibold: {
+    sourceSansProSemibold: {
       fontFamily: 'SourceSansPro-Semibold',
     },
     // SourceSansPro-Regular

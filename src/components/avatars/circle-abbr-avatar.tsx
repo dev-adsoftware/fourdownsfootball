@@ -10,7 +10,6 @@ export interface CircleAbbrAvatarProps {
 export const CircleAbbrAvatar: React.FC<CircleAbbrAvatarProps> = props => {
   return (
     <View
-      flex="none"
       alignItems="center"
       justifyContent="center"
       h={props.size || 50}

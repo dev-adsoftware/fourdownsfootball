@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  TextStyle,
-  ViewStyle,
-  TransformsStyle,
-  Animated,
-} from 'react-native';
+import {StyleSheet, TextStyle, ViewStyle, Animated} from 'react-native';
 import {
   Theme,
   ThemeColorKey,
@@ -98,17 +92,42 @@ export interface FlexProps
   row?: boolean;
 }
 
-export interface TransformProps extends Pick<TransformsStyle, 'transform'> {}
+export interface TransformProps {
+  rotate?: string;
+  translateX?: number;
+  translateY?: number;
+  scale?: number;
+  scaleX?: number;
+}
+
+export type AnimatedValueType =
+  | Animated.Value
+  | Animated.AnimatedInterpolation<number | string>;
 
 export interface AnimationProps {
   animated?: boolean;
-  rotate?: {animatedValue: Animated.Value; range: string[]};
-  translateX?: {animatedValue: Animated.Value; range: number[]};
-  translateY?: {animatedValue: Animated.Value; range: number[]};
-  scale?: {animatedValue: Animated.Value; range: number[]};
+  animatedRotate?: {
+    animatedValue: AnimatedValueType;
+    range: string[];
+  };
+  animatedTranslateX?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedTranslateY?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedScale?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedScaleX?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedOpacity?: {animatedValue: AnimatedValueType; range: number[]};
 }
 
 export interface OpacityProps extends Pick<ViewStyle, 'opacity'> {}
+
+export interface ViewProps
+  extends FlexProps,
+    DimensionProps,
+    PositionProps,
+    PaddingProps,
+    MarginProps,
+    BackgroundProps,
+    BorderProps,
+    BorderRadiusProps {}
 
 export interface TextProps
   extends Pick<
@@ -125,9 +144,17 @@ export interface DebugProps {
 
 export class StyleBuilder {
   public styleObject: ViewStyle | TextStyle;
-  public animatedStyleObjects: Animated.AnimatedProps<
-    ViewStyle['transform'] | TextStyle['transform']
-  > = [];
+  public staticTransformStyleObjects:
+    | ViewStyle['transform']
+    | ViewStyle['transform'];
+  public animatedStyleObjects: {
+    transform: Animated.AnimatedProps<
+      ViewStyle['transform'] | TextStyle['transform']
+    >;
+    others: Animated.AnimatedProps<{
+      opacity: ViewStyle['opacity'] | TextStyle['opacity'];
+    }>;
+  } = {transform: [], others: {opacity: undefined}};
 
   constructor(public readonly theme: Theme) {}
 
@@ -283,44 +310,102 @@ export class StyleBuilder {
     return this;
   }
 
-  public setTransformProps<P extends TransformProps>(props: P): StyleBuilder {
-    this.styleObject = {
-      transform: props.transform,
-    };
+  public setAnimationProps<P extends AnimationProps>(
+    props: P,
+    animated?: boolean,
+  ): StyleBuilder {
+    if (!animated) {
+      return this;
+    }
+
+    this.animatedStyleObjects.transform = [];
+    if (props.animatedRotate) {
+      this.animatedStyleObjects?.transform.push({
+        rotate: props.animatedRotate.animatedValue.interpolate({
+          inputRange: props.animatedRotate.range.map((_, i) => i),
+          outputRange: [
+            props.animatedRotate.range[0],
+            props.animatedRotate.range[1],
+          ],
+        }),
+      });
+    }
+    if (props.animatedTranslateX) {
+      this.animatedStyleObjects?.transform.push({
+        translateX: props.animatedTranslateX.animatedValue.interpolate({
+          inputRange: props.animatedTranslateX.range.map((_, i) => i),
+          outputRange: props.animatedTranslateX.range,
+        }),
+      });
+    }
+    if (props.animatedTranslateY) {
+      this.animatedStyleObjects?.transform.push({
+        translateY: props.animatedTranslateY.animatedValue.interpolate({
+          inputRange: props.animatedTranslateY.range.map((_, i) => i),
+          outputRange: props.animatedTranslateY.range,
+        }),
+      });
+    }
+    if (props.animatedScale) {
+      this.animatedStyleObjects?.transform.push({
+        scale: props.animatedScale.animatedValue.interpolate({
+          inputRange: props.animatedScale.range.map((_, i) => i),
+          outputRange: props.animatedScale.range,
+        }),
+      });
+    }
+    if (props.animatedScaleX) {
+      this.animatedStyleObjects?.transform.push({
+        scaleX: props.animatedScaleX.animatedValue.interpolate({
+          inputRange: props.animatedScaleX.range.map((_, i) => i),
+          outputRange: props.animatedScaleX.range,
+        }),
+      });
+    }
+    if (props.animatedOpacity) {
+      this.animatedStyleObjects.others = {
+        opacity: props.animatedOpacity.animatedValue.interpolate<number>({
+          inputRange: props.animatedOpacity.range.map((_, i) => i),
+          outputRange: props.animatedOpacity.range,
+        }),
+      };
+    }
+
     return this;
   }
 
-  public setAnimationProps<P extends AnimationProps>(props: P): StyleBuilder {
+  public setStaticTransformProps<P extends TransformProps>(
+    props: P,
+    animated?: boolean,
+  ): StyleBuilder {
+    if (animated) {
+      return this;
+    }
+
+    this.staticTransformStyleObjects = [];
     if (props.rotate) {
-      this.animatedStyleObjects?.push({
-        rotate: props.rotate.animatedValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [props.rotate.range[0], props.rotate.range[1]],
-        }),
+      this.staticTransformStyleObjects?.push({
+        rotate: props.rotate,
       });
     }
     if (props.translateX) {
-      this.animatedStyleObjects?.push({
-        translateX: props.translateX.animatedValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [props.translateX.range[0], props.translateX.range[1]],
-        }),
+      this.staticTransformStyleObjects?.push({
+        translateX: props.translateX,
       });
     }
     if (props.translateY) {
-      this.animatedStyleObjects?.push({
-        translateY: props.translateY.animatedValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [props.translateY.range[0], props.translateY.range[1]],
-        }),
+      this.staticTransformStyleObjects?.push({
+        translateY: props.translateY,
       });
     }
     if (props.scale) {
-      this.animatedStyleObjects?.push({
-        scale: props.scale.animatedValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [props.scale.range[0], props.scale.range[1]],
-        }),
+      this.staticTransformStyleObjects?.push({
+        scale: props.scale,
+      });
+    }
+    if (props.scaleX) {
+      this.staticTransformStyleObjects?.push({
+        scaleX: props.scaleX,
       });
     }
 
@@ -333,6 +418,17 @@ export class StyleBuilder {
       opacity: props.opacity,
     };
     return this;
+  }
+
+  public setViewProps<P extends ViewProps>(props: P): StyleBuilder {
+    return this.setFlexProps(props)
+      .setDimensionProps(props)
+      .setPositionProps(props)
+      .setPaddingProps(props)
+      .setMarginProps(props)
+      .setBackgroundProps(props)
+      .setBorderProps(props)
+      .setBorderRadiusProps(props);
   }
 
   public setTextProps<P extends TextProps>(props: P): StyleBuilder {
@@ -367,5 +463,11 @@ export class StyleBuilder {
 
   public buildAnimatedStyles() {
     return this.animatedStyleObjects;
+  }
+
+  public buildStaticTransformStyles() {
+    return this.staticTransformStyleObjects
+      ? this.staticTransformStyleObjects
+      : undefined;
   }
 }

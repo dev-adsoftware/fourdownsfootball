@@ -66,6 +66,14 @@
       "sha1": "f2bd84963f2876d345c001487cc3376da6710eae"
     },
     {
+      "path": "assets/fonts/klavika-condensed-semibold-italic.ttf",
+      "sha1": "64b81afa0c35871cea232add5db5e945ff967a5b"
+    },
+    {
+      "path": "assets/fonts/klavika-condensed-semibold.ttf",
+      "sha1": "bdcf97caf5510defd9c12e74f04c1f6a106e1dc7"
+    },
+    {
       "path": "assets/fonts/proxima-nova-bold.ttf",
       "sha1": "4c3ce1300b5d7f8b6f7b70a09276aa30bd4ae122"
     },

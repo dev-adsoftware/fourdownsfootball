@@ -21,10 +21,10 @@ export interface InputProperties
   hasError?: boolean;
 }
 
-const LABEL_INITIAL_X = 8;
-const LABEL_INITIAL_Y = 13;
+const LABEL_INITIAL_X = 12;
+const LABEL_INITIAL_Y = 17;
 const LABEL_SCALE = 0.8;
-const INPUT_HEIGHT = 50;
+const INPUT_HEIGHT = 60;
 
 export const Input: React.FC<InputProperties> = props => {
   const [isFocused, setIsFocused] = React.useState(false);
@@ -83,9 +83,11 @@ export const Input: React.FC<InputProperties> = props => {
         forceFocus();
       }}>
       <View
+        flex="none"
         borderWidth={1}
         borderColor={isFocused ? 'primary' : 'inputBorder'}
-        h={50}>
+        borderRadius={8}
+        h={INPUT_HEIGHT}>
         <View
           animated
           position="absolute"
@@ -104,23 +106,27 @@ export const Input: React.FC<InputProperties> = props => {
             setLabelXOffset(computedLabelXOffset);
             setLabelYOffset(computedLabelYOffset);
           }}
-          translateY={{
+          animatedTranslateY={{
             animatedValue: labelAnimatedValue,
-            range: [0, labelYOffset - LABEL_INITIAL_Y + 2],
+            range: [0, labelYOffset - LABEL_INITIAL_Y + 4],
           }}
-          translateX={{
+          animatedTranslateX={{
             animatedValue: labelAnimatedValue,
             range: [0, labelXOffset],
           }}
-          scale={{animatedValue: labelAnimatedValue, range: [1, LABEL_SCALE]}}>
+          animatedScale={{
+            animatedValue: labelAnimatedValue,
+            range: [1, LABEL_SCALE],
+          }}>
           <View alignItems="flex-start" justifyContent="flex-start">
             <Text
               text={props.label || ''}
               color={props.hasError ? 'error' : 'placeholder'}
+              fontSize="headline"
             />
           </View>
         </View>
-        <View mt={20} ml={10}>
+        <View mt={25} ml={12}>
           <TextInput
             {...omit(props, ['onFocus', 'onBlur', 'opacity'])}
             innerRef={(ref: RNTextInput) => {

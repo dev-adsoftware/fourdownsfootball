@@ -14,7 +14,7 @@ export const Link: React.FC<LinkProps> = props => {
     <Pressable onPress={props.onPress}>
       <Text
         typeFace="klavikaCondensedBoldItalic"
-        fontSize="title1"
+        fontSize="title2"
         color={props.color || 'grayLink'}
         text={props.text}
       />

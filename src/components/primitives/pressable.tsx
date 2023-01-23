@@ -7,14 +7,14 @@ import {useTheme} from '../../providers/theme';
 import {ChildrenProps} from '../../types/types';
 import {
   DebugProps,
-  DimensionProps,
   StyleBuilder,
+  ViewProps,
 } from '../../utilities/style-builder';
 
 export interface PressableProps
   extends Pick<RNPressableProps, 'onPress' | 'disabled'>,
     ChildrenProps,
-    DimensionProps {
+    ViewProps {
   opaque?: boolean;
 }
 
@@ -27,7 +27,7 @@ export const Pressable: React.FC<PressableProps> = props => {
       ...props,
     };
     return new StyleBuilder(theme)
-      .setDimensionProps(_props)
+      .setViewProps(_props)
       .setDebugProps(_props)
       .build();
   }, [theme, props]);

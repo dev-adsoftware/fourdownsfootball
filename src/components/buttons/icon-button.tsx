@@ -5,7 +5,6 @@ import {
 } from '../../utilities/style-builder';
 import {Icon, IconProps} from '../primitives/icon';
 import {Pressable, PressableProps} from '../primitives/pressable';
-import {View} from '../primitives/view';
 
 export interface IconButtonProps extends ColorProps, StyleIconProps {
   icon: IconProps['name'];
@@ -21,10 +20,11 @@ export const IconButton: React.FC<IconButtonProps> = props => {
         if (onPress) {
           onPress(e);
         }
-      }}>
-      <View flex="none" alignItems="center" justifyContent="center">
-        <Icon name={icon} color={props.color} size={props.size || 'md'} />
-      </View>
+      }}
+      flex="none"
+      alignItems="center"
+      justifyContent="center">
+      <Icon name={icon} color={props.color} size={props.size || 'md'} />
     </Pressable>
   );
 };

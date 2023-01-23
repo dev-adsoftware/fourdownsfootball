@@ -50,14 +50,14 @@ export const MainScreen: React.FC<Properties> = ({}) => {
 
   return (
     <>
-      <View justifyContent="space-between">
+      <View flex={1} justifyContent="space-between">
         {currentScreen === 'home' ? <HomeScreen /> : <SplashScreen />}
         <View
           animated
           position="absolute"
           top={0}
           w="full"
-          translateY={{
+          animatedTranslateY={{
             animatedValue: slideInOutValue,
             range: [height, 0],
           }}>
@@ -68,7 +68,7 @@ export const MainScreen: React.FC<Properties> = ({}) => {
           flex="none"
           mt={-TAB_BAR_HEIGHT}
           h={TAB_BAR_HEIGHT}
-          translateY={{
+          animatedTranslateY={{
             animatedValue: slideInOutValue,
             range: [0, TAB_BAR_HEIGHT],
           }}>

@@ -19,18 +19,18 @@ export const Spinner: React.FC<SpinnerProps> = () => {
         Animated.sequence([
           Animated.timing(scaleAnimationValue, {
             toValue: 1,
-            duration: 1000,
+            duration: 500,
             useNativeDriver: true,
           }),
           Animated.timing(scaleAnimationValue, {
             toValue: 0,
-            duration: 1000,
+            duration: 500,
             useNativeDriver: true,
           }),
         ]),
         Animated.timing(rotationAnimationValue, {
           toValue: 1,
-          duration: 2000,
+          duration: 1000,
           useNativeDriver: true,
         }),
       ]),
@@ -45,8 +45,8 @@ export const Spinner: React.FC<SpinnerProps> = () => {
         name="spinner"
         color="primary"
         size="2xl"
-        scale={{animatedValue: scaleAnimationValue, range: [0.5, 1]}}
-        rotate={{
+        animatedScale={{animatedValue: scaleAnimationValue, range: [0.4, 1.2]}}
+        animatedRotate={{
           animatedValue: rotationAnimationValue,
           range: ['0deg', '720deg'],
         }}

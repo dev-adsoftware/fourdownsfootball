@@ -16,6 +16,7 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
       <CurvedTabBar />
       <View
         row
+        w="full"
         justifyContent="space-around"
         position="absolute"
         bottom={TAB_BAR_BUTTON_BOTTOM}>

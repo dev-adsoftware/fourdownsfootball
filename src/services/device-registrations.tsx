@@ -1,10 +1,6 @@
 import {BaseService} from './base-service';
 import {DeviceRegistrationDto} from './dtos';
 class Service extends BaseService {
-  constructor() {
-    super();
-  }
-
   public async deviceRegistrationExists(id: string): Promise<boolean> {
     try {
       await this.get(`/device-registrations/${id}`, {});

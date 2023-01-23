@@ -5,29 +5,17 @@ import {useTheme} from '../../providers/theme';
 import {ChildrenProps, OnLayoutProps} from '../../types/types';
 import {
   AnimationProps,
-  BackgroundProps,
-  BorderProps,
-  BorderRadiusProps,
   DebugProps,
-  DimensionProps,
-  FlexProps,
-  MarginProps,
-  PaddingProps,
-  PositionProps,
   StyleBuilder,
+  TransformProps,
+  ViewProps,
 } from '../../utilities/style-builder';
 
 interface ContainerProps
   extends ChildrenProps,
     OnLayoutProps,
-    FlexProps,
-    DimensionProps,
-    PositionProps,
-    PaddingProps,
-    MarginProps,
-    BackgroundProps,
-    BorderProps,
-    BorderRadiusProps,
+    ViewProps,
+    TransformProps,
     AnimationProps {}
 
 export const View: React.FC<ContainerProps> = props => {
@@ -35,27 +23,18 @@ export const View: React.FC<ContainerProps> = props => {
 
   const style = React.useMemo(() => {
     const _props: ContainerProps & DebugProps = {
-      ...{
-        flex: 1,
-        w: 'full',
-      },
+      ...{},
       ...props,
     };
     const builder = new StyleBuilder(theme);
     return {
-      static: builder
-        .setFlexProps(_props)
-        .setDimensionProps(_props)
-        .setPositionProps(_props)
-        .setPaddingProps(_props)
-        .setMarginProps(_props)
-        .setBackgroundProps(_props)
-        .setBorderProps(_props)
-        .setBorderRadiusProps(_props)
-        .setAnimationProps(_props)
-        .setDebugProps(_props)
-        .build(),
-      animated: builder.setAnimationProps(props).buildAnimatedStyles(),
+      static: builder.setViewProps(_props).setDebugProps(_props).build(),
+      animated: builder
+        .setAnimationProps(_props, _props.animated)
+        .buildAnimatedStyles(),
+      staticTransform: builder
+        .setStaticTransformProps(_props, _props.animated)
+        .buildStaticTransformStyles(),
     };
   }, [theme, props]);
 
@@ -64,11 +43,17 @@ export const View: React.FC<ContainerProps> = props => {
   return props.animated ? (
     <RNAnimated.View
       {...rest}
-      style={[style.static.ss, {transform: style.animated}]}>
+      style={[
+        style.static.ss,
+        {transform: style.animated.transform},
+        {opacity: style.animated.others.opacity || 1.0},
+      ]}>
       {props.children}
     </RNAnimated.View>
   ) : (
-    <RNView {...rest} style={[style.static.ss]}>
+    <RNView
+      {...rest}
+      style={[style.static.ss, {transform: style.staticTransform}]}>
       {props.children}
     </RNView>
   );

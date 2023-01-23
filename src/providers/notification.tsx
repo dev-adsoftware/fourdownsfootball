@@ -239,7 +239,7 @@ function NotificationProvider({children}: NotificationProviderProps) {
   }, [notificationQueueState, listenerState]);
 
   React.useEffect(() => {
-    if (user?.username && deviceToken) {
+    if (false && user?.username && deviceToken) {
       console.log('updating device registration');
       updateDeviceRegistration(deviceToken, user?.username as string);
     }

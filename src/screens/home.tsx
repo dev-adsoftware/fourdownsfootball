@@ -5,8 +5,25 @@ import {SafeBar} from '../components/primitives/safe-bar';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
+import {Pager} from '../components/navigation/pager';
 
 interface HomeScreenProps {}
+
+const BaseScreen: React.FC<{}> = () => {
+  return (
+    <>
+      <View w="full" h={200} bg="primary" />
+    </>
+  );
+};
+
+const TeamsScreen: React.FC<{}> = ({}) => {
+  return (
+    <>
+      <View w="full" h={200} bg="secondary" />
+    </>
+  );
+};
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
   const data = useData();
@@ -14,34 +31,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
   return (
     <>
       <SafeBar />
-      <View bg="oddLayerSurface">
-        <View row flex="none" bg="white" h={75}>
-          <View flex="none" w={75} alignItems="center" justifyContent="center">
-            <CircleAbbrAvatar text="K" />
+      <View flex={1} w="full" bg="oddLayerSurface">
+        <View row bg="white" h={75}>
+          <View w={75} alignItems="center" justifyContent="center">
+            <CircleAbbrAvatar
+              text={data.owner?.firstName.slice(0, 1).toUpperCase() || '?'}
+            />
           </View>
-          <View>
-            <View row px={0} alignItems="flex-end">
-              <Text
-                text="WELCOME,"
-                typeFace="klavikaCondensedBold"
-                fontSize="callout"
-              />
-            </View>
-            <View row px={0} alignItems="flex-start">
-              <Text
-                text={`${data.owner?.firstName.toUpperCase()}!`}
-                typeFace="klavikaCondensedBold"
-                fontSize="title1"
-                lineHeight={28}
-              />
-            </View>
+          <View flex={1} justifyContent="center" alignItems="flex-start">
+            <Text
+              text="WELCOME,"
+              typeFace="klavikaCondensedBold"
+              fontSize="callout"
+            />
+            <Text
+              text={`${data.owner?.firstName.toUpperCase()}!`}
+              typeFace="klavikaCondensedBold"
+              fontSize="title1"
+              lineHeight={28}
+            />
           </View>
-          <View
-            flex="none"
-            w={75}
-            pt={20}
-            alignItems="center"
-            justifyContent="flex-start">
+          <View w={75} pt={20} alignItems="center" justifyContent="flex-start">
             <IconButton
               onPress={() => {
                 console.log('pressed user settings');
@@ -51,6 +61,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
             />
           </View>
         </View>
+        <Pager
+          pages={[
+            {name: 'NEWS', component: <BaseScreen />},
+            {name: 'SCORES', component: <TeamsScreen />},
+            {name: 'STANDINGS', component: <BaseScreen />},
+            {name: 'RANKINGS', component: <TeamsScreen />},
+            {name: 'TRANSFER MARKET', component: <BaseScreen />},
+          ]}
+        />
       </View>
     </>
   );

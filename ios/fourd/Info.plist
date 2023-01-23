@@ -60,6 +60,8 @@
 		<string>SourceSansPro-Regular.otf</string>
 		<string>SourceSansPro-Semibold.otf</string>
 		<string>SourceSansPro-SemiboldIt.otf</string>
+		<string>klavika-condensed-semibold-italic.ttf</string>
+		<string>klavika-condensed-semibold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

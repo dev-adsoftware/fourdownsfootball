@@ -3,7 +3,7 @@ import {Animated as RNAnimated} from 'react-native';
 import FontAwesome5Icon, {
   FontAwesome5IconProps,
 } from 'react-native-vector-icons/FontAwesome5';
-import {ThemeColorKey, ThemeIconSizeKey, useTheme} from '../../providers/theme';
+import {useTheme} from '../../providers/theme';
 import {
   AnimationProps,
   ColorProps,
@@ -23,33 +23,30 @@ export const Icon: React.FC<IconProps> = props => {
   const theme = useTheme();
 
   const _props = {
-    ...{
-      color: 'white' as ThemeColorKey,
-      size: 'md' as ThemeIconSizeKey,
-    },
+    ...{},
     ...props,
   };
 
   const animatedStyle = React.useMemo(() => {
     return new StyleBuilder(theme)
-      .setAnimationProps(props)
+      .setAnimationProps(props, props.animated)
       .buildAnimatedStyles();
   }, [theme, props]);
 
   return props.animated ? (
     <_AnimatedIcon
       name={props.name}
-      color={theme.colors[_props.color]}
-      size={theme.iconSizes[_props.size]}
+      color={_props.color && theme.colors[_props.color]}
+      size={_props.size && theme.iconSizes[_props.size]}
       style={{
-        transform: animatedStyle,
+        transform: animatedStyle.transform,
       }}
     />
   ) : (
     <FontAwesome5Icon
       name={props.name}
-      color={theme.colors[_props.color]}
-      size={theme.iconSizes[_props.size]}
+      color={_props.color && theme.colors[_props.color]}
+      size={_props.size && theme.iconSizes[_props.size]}
     />
   );
 };

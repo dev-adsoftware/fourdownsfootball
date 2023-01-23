@@ -629,8 +629,14 @@ PODS:
     - React-Core
   - react-native-notifications (4.3.2):
     - React-Core
-  - react-native-pager-view (6.0.2):
+  - react-native-pager-view (6.1.0-rc.2):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - react-native-safe-area-context (4.4.1):
     - RCT-Folly
     - RCTRequired
@@ -1002,7 +1008,7 @@ SPEC CHECKSUMS:
   React-logger: f8071ad48248781d5afdb8a07f778758529d3019
   react-native-netinfo: f80db8cac2151405633324cb645c60af098ee461
   react-native-notifications: f3215821dfd74234f8f3910e2fe37e19fa8673b0
-  react-native-pager-view: 592421df0259bf7a7a4fe85b74c24f3f39905605
+  react-native-pager-view: 13d4bb7f1d9aa88896cde1590a3425b69e99dde4
   react-native-safe-area-context: 2f75b317784a1a8e224562941e50ecbc932d2097
   React-perflogger: 5e41b01b35d97cc1b0ea177181eb33b5c77623b6
   React-RCTActionSheet: 48949f30b24200c82f3dd27847513be34e06a3ae
