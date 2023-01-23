@@ -1,21 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
 import {Amplify} from 'aws-amplify';
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {useColorScheme} from 'react-native';
 import env from './env.json';
 import {AuthProvider} from './src/providers/auth';
 import {DataProvider} from './src/providers/data';
 import {EnvProvider} from './src/providers/env';
-import {ThemeProvider, useTheme} from './src/providers/theme';
+import {ThemeProvider} from './src/providers/theme';
 import {SplashScreen} from './src/screens/splash';
 import {AuthStack} from './src/stacks/auth';
 import {MainScreen} from './src/screens/main';
@@ -41,18 +30,12 @@ Amplify.configure({
 
 const Main = () => {
   const globalState = useGlobalState();
-  const colorScheme = useColorScheme();
-  const theme = useTheme();
 
   switch (globalState.appState.get()) {
     case AppState.LOADING:
       return <SplashScreen />;
     case AppState.UNAUTHENTICATED:
-      return (
-        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-          <AuthStack />
-        </NavigationContainer>
-      );
+      return <AuthStack />;
     case AppState.AUTHENTICATED:
       return <SplashScreen />;
     case AppState.ONBOARDING:
@@ -63,11 +46,7 @@ const Main = () => {
     //   </NavigationContainer>
     // );
     default:
-      return (
-        <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-          <MainScreen />
-        </NavigationContainer>
-      );
+      return <MainScreen />;
   }
 };
 

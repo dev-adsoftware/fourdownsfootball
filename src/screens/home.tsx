@@ -6,13 +6,14 @@ import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
 import {Pager} from '../components/navigation/pager';
+import {FadeInScreen} from '../components/navigation/fade-in-screen';
 
 interface HomeScreenProps {}
 
 const BaseScreen: React.FC<{}> = () => {
   return (
     <>
-      <View w="full" h={200} bg="primary" />
+      <View w="full" flex={1} bg="primary" />
     </>
   );
 };
@@ -20,14 +21,16 @@ const BaseScreen: React.FC<{}> = () => {
 const TeamsScreen: React.FC<{}> = ({}) => {
   return (
     <>
-      <View w="full" h={200} bg="secondary" />
+      <View w="full" flex={1} bg="secondary" />
     </>
   );
 };
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
-  const data = useData();
+  const [isSettingsScreenVisible, setIsSettingsScreenVisible] =
+    React.useState(false);
 
+  const data = useData();
   return (
     <>
       <SafeBar />
@@ -54,7 +57,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
           <View w={75} pt={20} alignItems="center" justifyContent="flex-start">
             <IconButton
               onPress={() => {
-                console.log('pressed user settings');
+                setIsSettingsScreenVisible(true);
               }}
               icon="cog"
               color="primaryText"
@@ -71,6 +74,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
           ]}
         />
       </View>
+      <FadeInScreen
+        isVisible={isSettingsScreenVisible}
+        onClose={() => {
+          setIsSettingsScreenVisible(false);
+        }}>
+        <View h={200} w={200} debugColor="purple" />
+      </FadeInScreen>
     </>
   );
 };

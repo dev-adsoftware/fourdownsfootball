@@ -1,8 +1,4 @@
 import React from 'react';
-import {
-  DefaultTheme as NavigationDefaultTheme,
-  DarkTheme as NavigationDarkTheme,
-} from '@react-navigation/native';
 import {ColorSchemeName, useColorScheme} from 'react-native';
 import {noop} from 'lodash';
 import TinyColor from 'tinycolor2';
@@ -128,27 +124,6 @@ export class Theme {
 
   constructor(colorScheme: ColorSchemeName) {
     noop(colorScheme);
-  }
-
-  public mapToNavigation(
-    colorScheme: ColorSchemeName,
-  ): typeof NavigationDefaultTheme {
-    return {
-      ...NavigationDefaultTheme,
-      dark: colorScheme === 'dark',
-      colors: {
-        ...(colorScheme === 'dark'
-          ? NavigationDarkTheme.colors
-          : NavigationDefaultTheme.colors),
-        // primary: this.colors.primary,
-        // background: this.colors.layer1,
-        // card: 'green',
-        // text: 'red',
-        // border: 'orange',
-        // notification: 'purple',
-        // primary: 'red',
-      },
-    };
   }
 
   public getContrastRatio(foreground: string, background: string): number {

@@ -6,12 +6,16 @@ import {View} from '../primitives/view';
 export interface CircleButtonProperties {
   icon: string;
   onPress: PressableProps['onPress'];
+  size?: number;
 }
 
-const CIRCLE_SIZE = 40;
+const DEFAULT_CIRCLE_SIZE = 40;
 
 export const CircleButton: React.FC<CircleButtonProperties> = props => {
   const {icon, onPress} = props;
+
+  const circleSize = props.size || DEFAULT_CIRCLE_SIZE;
+  const iconSize = circleSize > DEFAULT_CIRCLE_SIZE ? 'lg' : 'md';
 
   return (
     <Pressable
@@ -24,11 +28,11 @@ export const CircleButton: React.FC<CircleButtonProperties> = props => {
         flex="none"
         alignItems="center"
         justifyContent="center"
-        h={CIRCLE_SIZE}
-        w={CIRCLE_SIZE}
+        h={circleSize}
+        w={circleSize}
         borderRadius="circle"
         bg="primary">
-        <Icon name={icon} color="white" />
+        <Icon name={icon} color="white" size={iconSize} />
       </View>
     </Pressable>
   );

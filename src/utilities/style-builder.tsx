@@ -119,6 +119,8 @@ export interface AnimationProps {
 
 export interface OpacityProps extends Pick<ViewStyle, 'opacity'> {}
 
+export interface ZIndexProps extends Pick<ViewStyle, 'zIndex'> {}
+
 export interface ViewProps
   extends FlexProps,
     DimensionProps,
@@ -127,7 +129,9 @@ export interface ViewProps
     MarginProps,
     BackgroundProps,
     BorderProps,
-    BorderRadiusProps {}
+    BorderRadiusProps,
+    ZIndexProps,
+    OpacityProps {}
 
 export interface TextProps
   extends Pick<
@@ -420,6 +424,14 @@ export class StyleBuilder {
     return this;
   }
 
+  public setZIndexProps<P extends ZIndexProps>(props: P): StyleBuilder {
+    this.styleObject = {
+      ...this.styleObject,
+      zIndex: props.zIndex,
+    };
+    return this;
+  }
+
   public setViewProps<P extends ViewProps>(props: P): StyleBuilder {
     return this.setFlexProps(props)
       .setDimensionProps(props)
@@ -428,7 +440,9 @@ export class StyleBuilder {
       .setMarginProps(props)
       .setBackgroundProps(props)
       .setBorderProps(props)
-      .setBorderRadiusProps(props);
+      .setBorderRadiusProps(props)
+      .setZIndexProps(props)
+      .setOpacityProps(props);
   }
 
   public setTextProps<P extends TextProps>(props: P): StyleBuilder {
