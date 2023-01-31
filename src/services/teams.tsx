@@ -1,9 +1,17 @@
 import {BaseService} from './base-service';
-import {TeamDetailQueryArgsDto, TeamDetailQueryResponseDto} from './dtos';
+import {
+  TeamDetailQueryArgsDto,
+  TeamDetailQueryResponseDto,
+  TeamDto,
+} from './dtos';
 
 class Service extends BaseService {
-  constructor() {
-    super();
+  public async listTeams(
+    queryStringParameters?: Record<string, unknown>,
+  ): Promise<{items: TeamDto[]}> {
+    return await this.list<TeamDto>('/teams', {
+      queryStringParameters,
+    });
   }
 
   public async queryTeamDetail(

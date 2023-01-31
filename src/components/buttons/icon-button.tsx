@@ -7,6 +7,7 @@ import {Icon, IconProps} from '../primitives/icon';
 import {Pressable, PressableProps} from '../primitives/pressable';
 
 export interface IconButtonProps extends ColorProps, StyleIconProps {
+  pressableAreaPadding?: number;
   icon: IconProps['name'];
   onPress: PressableProps['onPress'];
 }
@@ -23,7 +24,8 @@ export const IconButton: React.FC<IconButtonProps> = props => {
       }}
       flex="none"
       alignItems="center"
-      justifyContent="center">
+      justifyContent="center"
+      p={props.pressableAreaPadding}>
       <Icon name={icon} color={props.color} size={props.size || 'md'} />
     </Pressable>
   );

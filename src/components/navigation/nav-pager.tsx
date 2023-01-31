@@ -1,9 +1,11 @@
+import {truncate} from 'lodash';
 import React from 'react';
 import {
   ScrollView as RNScrollView,
   FlatList as RNFlatList,
   LayoutChangeEvent,
   useWindowDimensions,
+  Animated,
 } from 'react-native';
 import {FlatList} from '../primitives/flatlist';
 import {Pressable} from '../primitives/pressable';
@@ -11,16 +13,16 @@ import {ScrollView} from '../primitives/scroll-view';
 import {Text} from '../primitives/text';
 import {View} from '../primitives/view';
 
-export interface Page {
+export interface NavPage {
   name: string;
   component: React.ReactNode;
 }
 
-interface PagerProps {
-  pages: Page[];
+interface NavPagerProps {
+  pages: NavPage[];
 }
 
-const DISTANCE_BETWEEN_TABS = 30;
+const DISTANCE_BETWEEN_LABELS = 30;
 const DEFAULT_SCROLLBAR_WIDTH = 1000;
 
 const _Label: React.FC<{
@@ -31,7 +33,7 @@ const _Label: React.FC<{
 }> = props => {
   const [width, setWidth] = React.useState(0);
   return (
-    <View alignItems="center" px={DISTANCE_BETWEEN_TABS / 2}>
+    <View alignItems="center" px={DISTANCE_BETWEEN_LABELS / 2}>
       <Pressable onPress={props.onPress}>
         <Text
           text={props.name}
@@ -54,7 +56,7 @@ const _Label: React.FC<{
   );
 };
 
-export const Pager: React.FC<PagerProps> = props => {
+export const NavPager: React.FC<NavPagerProps> = props => {
   const [currentScreenIndex, setCurrentScreenIndex] = React.useState(0);
   const [isLayoutComplete, setIsLayoutComplete] = React.useState(false);
   const [scrollBarWidth, setScrollBarWidth] = React.useState<number>(
@@ -62,7 +64,9 @@ export const Pager: React.FC<PagerProps> = props => {
   );
   const tabWidthsRef = React.useRef<(number | undefined)[]>([]);
   const scrollViewRef = React.useRef<RNScrollView>(null);
-  const flatListRef = React.useRef<RNFlatList<any>>(null);
+  const {current: scrollValue} = React.useRef<Animated.Value>(
+    new Animated.Value(0),
+  );
 
   const {width} = useWindowDimensions();
 
@@ -86,11 +90,13 @@ export const Pager: React.FC<PagerProps> = props => {
     });
   }, [props.pages, currentScreenIndex, width]);
 
-  const getItemLayout = (_data: any, index: number) => ({
-    length: width,
-    offset: width * index,
-    index,
-  });
+  React.useEffect(() => {
+    Animated.timing(scrollValue, {
+      toValue: currentScreenIndex,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [currentScreenIndex]);
 
   return (
     <>
@@ -108,17 +114,11 @@ export const Pager: React.FC<PagerProps> = props => {
                 selected={currentScreenIndex === index}
                 onPress={() => {
                   setCurrentScreenIndex(index);
-                  if (flatListRef.current) {
-                    flatListRef.current.scrollToIndex({
-                      animated: true,
-                      index: index,
-                    });
-                  }
                 }}
                 onLayout={(event: LayoutChangeEvent) => {
                   const {width: layoutWidth} = event.nativeEvent.layout;
                   tabWidthsRef.current[index] =
-                    layoutWidth + DISTANCE_BETWEEN_TABS;
+                    layoutWidth + DISTANCE_BETWEEN_LABELS;
                   if (!tabWidthsRef.current.includes(undefined)) {
                     setIsLayoutComplete(true);
                   }
@@ -128,9 +128,26 @@ export const Pager: React.FC<PagerProps> = props => {
           })}
         </ScrollView>
       </View>
-      <View flex={1}>
-        <FlatList
-          ref={flatListRef}
+      <View
+        animated
+        flex={1}
+        w={width * Math.max(props.pages.length, 2)}
+        animatedTranslateX={{
+          animatedValue: scrollValue,
+          range: [0, -width],
+        }}>
+        <View flex={1} row>
+          {props.pages.map((page, index) => {
+            return (
+              <View key={index} w={width} flex={1}>
+                {page.component}
+              </View>
+            );
+          })}
+        </View>
+
+        {/* <FlatList
+          myRef={flatListRef}
           horizontal
           data={props.pages}
           renderItem={({item}) => {
@@ -144,7 +161,7 @@ export const Pager: React.FC<PagerProps> = props => {
           showsHorizontalScrollIndicator={false}
           initialScrollIndex={0}
           scrollEnabled={false}
-        />
+        /> */}
       </View>
     </>
   );

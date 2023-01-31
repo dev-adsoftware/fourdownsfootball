@@ -1,0 +1,14 @@
+import React from 'react';
+import {Stack} from '../components/navigation/stack-pager';
+import {SafeBar} from '../components/primitives/safe-bar';
+import {View} from '../components/primitives/view';
+
+interface EditNameScreenProps {}
+
+export const EditNameScreen: React.FC<EditNameScreenProps> = props => {
+  return (
+    <>
+      <View flex={1} w="full" debugColor="purple" px={15} />
+    </>
+  );
+};

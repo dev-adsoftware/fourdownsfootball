@@ -1,4 +1,5 @@
 import React from 'react';
+import {StateProp} from '../types/types';
 
 const GlobalStateContext = React.createContext<GlobalState | undefined>(
   undefined,
@@ -13,10 +14,7 @@ export enum AppState {
 }
 
 interface GlobalState {
-  appState: {
-    get: () => AppState;
-    set: (newAppState: AppState) => void;
-  };
+  appState: StateProp<AppState>;
 }
 
 type Properties = {
@@ -38,6 +36,7 @@ const GlobalStateProvider: React.FC<Properties> = ({children}) => {
     }
     if (appState === AppState.ONBOARDING) {
       console.log('onboarding state');
+      // setAppState(AppState.MAIN);
     }
     if (appState === AppState.MAIN) {
       console.log('main state');
@@ -48,7 +47,7 @@ const GlobalStateProvider: React.FC<Properties> = ({children}) => {
     <GlobalStateContext.Provider
       value={{
         appState: {
-          get: () => appState,
+          value: appState,
           set: setAppState,
         },
       }}>

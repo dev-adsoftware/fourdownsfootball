@@ -20,7 +20,7 @@ interface ScrollViewProps
     OnLayoutProps,
     ViewProps,
     AnimationProps {
-  contentProps: ViewProps;
+  contentProps?: ViewProps;
 }
 
 export const ScrollView = React.forwardRef<RNScrollView, ScrollViewProps>(
@@ -45,7 +45,7 @@ export const ScrollView = React.forwardRef<RNScrollView, ScrollViewProps>(
           .build(),
         animated: builder.setAnimationProps(props).buildAnimatedStyles(),
         content: new StyleBuilder(theme)
-          .setDimensionProps(_props.contentProps)
+          .setDimensionProps(_props.contentProps || {})
           .build(),
       };
     }, [theme, props]);

@@ -22,10 +22,13 @@ interface User {
 interface Auth {
   isLoading: boolean;
   isAuthenticated: boolean;
-  signIn: (username: string, password: string) => Promise<void>;
+  signIn: (credentials: {username: string; password: string}) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (credentials: {username: string; password: string}) => Promise<void>;
-  verifyConfirmationCode: (username: string, code: string) => Promise<void>;
+  verifyConfirmationCode: (confirmation: {
+    username: string;
+    code: string;
+  }) => Promise<void>;
   sendPasswordRecoveryCode: (username: string) => Promise<void>;
   resetPassword: (
     username: string,
@@ -49,7 +52,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
 
   React.useEffect(() => {
     const init = async () => {
-      if (globalState.appState.get() === AppState.LOADING) {
+      if (globalState.appState.value === AppState.LOADING) {
         try {
           const {username, attributes} =
             await AWSAuth.currentAuthenticatedUser();
@@ -67,13 +70,13 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
     init();
   }, [globalState.appState]);
 
-  const signIn = async (signInUsername: string, password: string) => {
+  const signIn = async (credentials: {username: string; password: string}) => {
     try {
-      await AWSAuth.signIn(signInUsername, password);
+      await AWSAuth.signIn(credentials.username, credentials.password);
       const {username, attributes} = await AWSAuth.currentAuthenticatedUser();
       setUser({username, email: attributes.email});
       setIsAuthenticated(true);
-      globalState.appState.set(AppState.ONBOARDING);
+      globalState.appState.set(AppState.AUTHENTICATED);
     } catch (e) {
       const typedE = e as {code: string};
       if (typedE.code === 'UserNotFoundException') {
@@ -88,14 +91,18 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
   const signOut = async () => {
     await AWSAuth.signOut();
     setIsAuthenticated(false);
+    globalState.appState.set(AppState.UNAUTHENTICATED);
   };
 
   const signUp = async (credentials: {username: string; password: string}) => {
     await AWSAuth.signUp(credentials.username, credentials.password);
   };
 
-  const verifyConfirmationCode = async (username: string, code: string) => {
-    await AWSAuth.confirmSignUp(username, code);
+  const verifyConfirmationCode = async (confirmation: {
+    username: string;
+    code: string;
+  }) => {
+    await AWSAuth.confirmSignUp(confirmation.username, confirmation.code);
   };
 
   const sendPasswordRecoveryCode = async (username: string) => {

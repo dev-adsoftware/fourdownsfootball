@@ -5,6 +5,7 @@ import {OwnerDto} from '../services/dtos';
 import {OwnersService} from '../services/owners';
 import {useAuth} from './auth';
 import {AppState, useGlobalState} from './global-state';
+import {TeamsService} from '../services/teams';
 // import {useNotification} from './notification';
 
 const DataContext = React.createContext<Data | undefined>(undefined);
@@ -40,6 +41,7 @@ interface Data {
   };
   services: {
     owners: OwnersService;
+    teams: TeamsService;
   };
 }
 
@@ -84,7 +86,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
 
   const fetchOwner = React.useCallback(
     async (id: string) => {
-      if (globalState.appState.get() === AppState.AUTHENTICATED) {
+      if (globalState.appState.value === AppState.AUTHENTICATED) {
         console.log('fetching owner', {id});
         const ownersService = new OwnersService(
           auth.secureClient,
@@ -155,6 +157,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         },
         services: {
           owners: new OwnersService(auth.secureClient, env.apiEndpoint),
+          teams: new TeamsService(auth.secureClient, env.apiEndpoint),
         },
       }}>
       {children}

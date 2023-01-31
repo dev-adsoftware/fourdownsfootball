@@ -1,3 +1,4 @@
+import {omit} from 'lodash';
 import React from 'react';
 import {
   FlatList as RNFlatList,
@@ -6,8 +7,8 @@ import {
 
 interface FlatListProps<T> extends Omit<RNFlatListProps<T>, 'style'> {}
 
-export const FlatList = React.forwardRef<RNFlatList, FlatListProps<any>>(
-  (props: FlatListProps<any>, ref) => {
-    return <RNFlatList ref={ref} {...props} />;
-  },
-);
+export const FlatList = <T extends {}>(
+  props: FlatListProps<T> & {myRef: React.Ref<RNFlatList<T>>},
+) => {
+  return <RNFlatList ref={props.myRef} {...omit(props, 'ref')} />;
+};

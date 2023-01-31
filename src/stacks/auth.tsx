@@ -1,5 +1,5 @@
 import React from 'react';
-import {AuthSignInScreen} from '../screens/auth/signin';
+import {AuthSignInScreen} from '../screens/signin';
 
 type Properties = {};
 

@@ -1,25 +1,28 @@
 import React from 'react';
-import {Spinner} from '../../components/activity-indicators/spinner';
-import {CircleButton} from '../../components/buttons/circle-button';
-import {Link} from '../../components/buttons/link';
-import {Input} from '../../components/inputs/input';
-import {SafeBar} from '../../components/primitives/safe-bar';
-import {Text} from '../../components/primitives/text';
-import {View} from '../../components/primitives/view';
-import {LogoSvg} from '../../components/svg/logo-svg';
-import {useAuth} from '../../providers/auth';
+import {Spinner} from '../components/activity-indicators/spinner';
+import {CircleIconButton} from '../components/buttons/circle-icon-button';
+import {Link} from '../components/buttons/link';
+import {Input} from '../components/inputs/input';
+import {SafeBar} from '../components/primitives/safe-bar';
+import {Text} from '../components/primitives/text';
+import {View} from '../components/primitives/view';
+import {LogoSvg} from '../components/svg/logo-svg';
+import {useAuth} from '../providers/auth';
 import validate from 'validate.js';
-import {SAFE_AREA_PADDING_BOTTOM} from '../../constants/safe-area';
+import {SAFE_AREA_PADDING_BOTTOM} from '../constants/safe-area';
+import {Stack} from '../components/navigation/stack-pager';
+import {CreateAccountScreen} from './create-account';
 
-interface AuthSignInScreenProperties {}
+interface SignInScreenProperties {}
 
-export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
+export const SignInScreen: React.FC<SignInScreenProperties> = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   const auth = useAuth();
+  const stack = Stack.useStack();
 
   return (
     <>
@@ -52,6 +55,7 @@ export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
               color="primary"
               onPress={() => {
                 console.log('create an account');
+                stack.push({component: <CreateAccountScreen />});
               }}
             />
           </View>
@@ -94,7 +98,7 @@ export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
               {isProcessing ? (
                 <Spinner />
               ) : (
-                <CircleButton
+                <CircleIconButton
                   icon="arrow-right"
                   onPress={async () => {
                     if (
@@ -114,7 +118,7 @@ export const AuthSignInScreen: React.FC<AuthSignInScreenProperties> = () => {
                     } else {
                       setIsProcessing(true);
                       try {
-                        await auth.signIn(username, password);
+                        await auth.signIn({username, password});
                       } catch (e) {
                         // console.error(e);
                         setError(`${e}`);

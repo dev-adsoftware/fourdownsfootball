@@ -252,7 +252,9 @@ export class StyleBuilder {
         ? this.theme.colors[props.borderVerticalColor]
         : undefined,
       borderTopWidth:
-        props.borderTopWidth || props.borderVerticalWidth || props.borderWidth,
+        props.borderTopWidth ||
+        props.borderHorizontalWidth ||
+        props.borderWidth,
       borderRightWidth:
         props.borderRightWidth ||
         props.borderVerticalWidth ||

@@ -1,6 +1,8 @@
 import React from 'react';
+import {version} from '../../package.json';
 
 interface Env {
+  version?: string;
   environment: string;
   region: string;
   userPoolId: string;
@@ -16,7 +18,7 @@ type EnvProviderProps = {
 };
 
 function EnvProvider({children, initialEnv}: EnvProviderProps) {
-  const [env] = React.useState(initialEnv);
+  const [env] = React.useState({version, ...initialEnv});
 
   return <EnvContext.Provider value={env}>{children}</EnvContext.Provider>;
 }

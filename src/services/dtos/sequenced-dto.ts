@@ -1,4 +1,4 @@
-import {IsNumberString, IsString} from 'class-validator';
+import {IsNumberString, IsSemVer, IsString} from 'class-validator';
 import {Dto} from './dto';
 
 export class SequencedDto extends Dto {
@@ -13,4 +13,7 @@ export class SequencedDto extends Dto {
 
   @IsString()
   lastUpdateDate: string;
+
+  @IsSemVer()
+  version = '1.0.0';
 }

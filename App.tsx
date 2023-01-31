@@ -6,7 +6,6 @@ import {DataProvider} from './src/providers/data';
 import {EnvProvider} from './src/providers/env';
 import {ThemeProvider} from './src/providers/theme';
 import {SplashScreen} from './src/screens/splash';
-import {AuthStack} from './src/stacks/auth';
 import {MainScreen} from './src/screens/main';
 import {NotificationProvider} from './src/providers/notification';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -16,6 +15,9 @@ import {
   GlobalStateProvider,
   useGlobalState,
 } from './src/providers/global-state';
+import {AuthStack} from './src/screens/auth-stack';
+import {OnboardingStack} from './src/screens/onboarding-stack';
+import {FadeInScreenProvider} from './src/components/navigation/fade-in-screen';
 
 Amplify.configure({
   Auth: {
@@ -31,7 +33,7 @@ Amplify.configure({
 const Main = () => {
   const globalState = useGlobalState();
 
-  switch (globalState.appState.get()) {
+  switch (globalState.appState.value) {
     case AppState.LOADING:
       return <SplashScreen />;
     case AppState.UNAUTHENTICATED:
@@ -39,7 +41,7 @@ const Main = () => {
     case AppState.AUTHENTICATED:
       return <SplashScreen />;
     case AppState.ONBOARDING:
-      return <SplashScreen />;
+      return <OnboardingStack />;
     // return (
     //   <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
     //     <OnboardingStack />
@@ -59,7 +61,9 @@ const App = () => {
             <NotificationProvider>
               <DataProvider>
                 <SafeAreaProvider>
-                  <Main />
+                  <FadeInScreenProvider>
+                    <Main />
+                  </FadeInScreenProvider>
                 </SafeAreaProvider>
               </DataProvider>
             </NotificationProvider>

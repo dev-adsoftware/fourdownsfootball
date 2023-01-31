@@ -18,7 +18,7 @@ import {
   ViewProps,
 } from '../../utilities/style-builder';
 
-interface TextProps
+export interface TextProps
   extends Pick<RNTextProps, 'numberOfLines'>,
     ViewProps,
     ColorProps,

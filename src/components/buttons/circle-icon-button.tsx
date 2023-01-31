@@ -1,4 +1,9 @@
 import React from 'react';
+import {
+  BorderProps,
+  ColorProps,
+  ViewProps,
+} from '../../utilities/style-builder';
 import {Icon} from '../primitives/icon';
 import {Pressable, PressableProps} from '../primitives/pressable';
 import {View} from '../primitives/view';
@@ -7,15 +12,24 @@ export interface CircleButtonProperties {
   icon: string;
   onPress: PressableProps['onPress'];
   size?: number;
+  bg?: ViewProps['bg'];
+  color?: ColorProps['color'];
+  borderColor?: BorderProps['borderColor'];
 }
 
 const DEFAULT_CIRCLE_SIZE = 40;
+const SMALL_CIRCLE_SIZE = 30;
 
-export const CircleButton: React.FC<CircleButtonProperties> = props => {
+export const CircleIconButton: React.FC<CircleButtonProperties> = props => {
   const {icon, onPress} = props;
 
   const circleSize = props.size || DEFAULT_CIRCLE_SIZE;
-  const iconSize = circleSize > DEFAULT_CIRCLE_SIZE ? 'lg' : 'md';
+  const iconSize =
+    circleSize > DEFAULT_CIRCLE_SIZE
+      ? 'lg'
+      : circleSize > SMALL_CIRCLE_SIZE
+      ? 'md'
+      : '3xs';
 
   return (
     <Pressable
@@ -31,8 +45,10 @@ export const CircleButton: React.FC<CircleButtonProperties> = props => {
         h={circleSize}
         w={circleSize}
         borderRadius="circle"
-        bg="primary">
-        <Icon name={icon} color="white" size={iconSize} />
+        borderWidth={props.borderColor && 1}
+        borderColor={props.borderColor}
+        bg={props.bg || 'primary'}>
+        <Icon name={icon} color={props.color || 'white'} size={iconSize} />
       </View>
     </Pressable>
   );

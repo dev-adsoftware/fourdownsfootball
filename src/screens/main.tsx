@@ -10,6 +10,7 @@ import {HomeScreen} from './home';
 import {View} from '../components/primitives/view';
 import {NewGameButton} from '../components/buttons/new-game-button';
 import {Splash3Screen} from './splash3';
+import {NewGameScreen} from './new-game';
 
 type Properties = {};
 
@@ -57,11 +58,12 @@ export const MainScreen: React.FC<Properties> = ({}) => {
           position="absolute"
           top={0}
           w="full"
+          h={height}
           animatedTranslateY={{
             animatedValue: slideInOutValue,
             range: [height, 0],
           }}>
-          <Splash3Screen />
+          {isTabBarHidden && <NewGameScreen />}
         </View>
         <View
           animated
