@@ -2,11 +2,11 @@ import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Input} from '../components/inputs/input';
-import {Stack} from '../components/navigation/stack-pager';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import validate from 'validate.js';
 import {useAuth} from '../providers/auth';
+import {useStack} from '../components/navigation/stack-pager';
 
 interface VerifyConfirmationCodeScreenProps {
   username: string;
@@ -20,7 +20,7 @@ export const VerifyConfirmationCodeScreen: React.FC<
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   const auth = useAuth();
-  const stack = Stack.useStack();
+  const stack = useStack();
   return (
     <>
       <View flex={1} w="full" bg="white" px={15}>

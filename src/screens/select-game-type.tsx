@@ -1,6 +1,6 @@
 import React from 'react';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
-import {Stack} from '../components/navigation/stack-pager';
+import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
 import {SafeBar} from '../components/primitives/safe-bar';
@@ -15,7 +15,7 @@ interface SelectGameTypeScreenProps {}
 export const SelectGameTypeScreen: React.FC<
   SelectGameTypeScreenProps
 > = props => {
-  const stack = Stack.useStack();
+  const stack = useStack();
   const newGame = useNewGame();
 
   return (

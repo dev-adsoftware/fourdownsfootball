@@ -9,14 +9,16 @@ import {MainTabBar} from '../components/navigation/main-tab-bar';
 import {HomeScreen} from './home';
 import {View} from '../components/primitives/view';
 import {NewGameButton} from '../components/buttons/new-game-button';
-import {Splash3Screen} from './splash3';
-import {NewGameScreen} from './new-game';
+import {NewGameProvider, NewGameScreen} from './new-game';
+import {StackPager, StackProvider} from '../components/navigation/stack-pager';
+import {SelectGameTypeScreen} from './select-game-type';
 
 type Properties = {};
 
 export const MainScreen: React.FC<Properties> = ({}) => {
   const [currentScreen, setCurrentScreen] = React.useState('home');
   const [isTabBarHidden, setIsTabBarHidden] = React.useState(false);
+  const [isTabBarHiding, setIsTabBarHiding] = React.useState(false);
   const [isNewGameButtonRotated, setIsNewGameButtonRotated] =
     React.useState(false);
   const [isNewGameButtonWrapped, setIsNewGameButtonWrapped] =
@@ -29,14 +31,16 @@ export const MainScreen: React.FC<Properties> = ({}) => {
   );
 
   React.useEffect(() => {
-    if (isTabBarHidden) {
+    if (isTabBarHiding) {
       setIsNewGameButtonRotated(true);
       setIsNewGameButtonWrapped(false);
       Animated.timing(slideInOutValue, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        setIsTabBarHidden(true);
+      });
     } else {
       setIsNewGameButtonRotated(false);
       Animated.timing(slideInOutValue, {
@@ -45,12 +49,17 @@ export const MainScreen: React.FC<Properties> = ({}) => {
         useNativeDriver: true,
       }).start(() => {
         setIsNewGameButtonWrapped(true);
+        setIsTabBarHidden(false);
       });
     }
-  }, [isTabBarHidden, slideInOutValue]);
+  }, [isTabBarHiding, slideInOutValue]);
+
+  console.log('rendering');
 
   return (
     <>
+      {/* <NewGameProvider>
+        <StackProvider> */}
       <View flex={1} justifyContent="space-between">
         {currentScreen === 'home' ? <HomeScreen /> : <SplashScreen />}
         <View
@@ -63,7 +72,13 @@ export const MainScreen: React.FC<Properties> = ({}) => {
             animatedValue: slideInOutValue,
             range: [height, 0],
           }}>
-          {isTabBarHidden && <NewGameScreen />}
+          {(isTabBarHiding || (!isTabBarHiding && isTabBarHidden)) && (
+            <NewGameScreen
+              onGameCreated={() => {
+                setIsTabBarHiding(!isTabBarHiding);
+              }}
+            />
+          )}
         </View>
         <View
           animated
@@ -96,8 +111,7 @@ export const MainScreen: React.FC<Properties> = ({}) => {
             rotated={isNewGameButtonRotated}
             wrapped={isNewGameButtonWrapped}
             onPress={() => {
-              setIsTabBarHidden(!isTabBarHidden);
-              // setCurrentScreen(currentScreen === 'home' ? 'popup' : 'home');
+              setIsTabBarHiding(!isTabBarHiding);
             }}
           />
         </View>

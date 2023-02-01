@@ -2,16 +2,15 @@ import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Input} from '../components/inputs/input';
-import {Stack} from '../components/navigation/stack-pager';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import validate from 'validate.js';
 import {useAuth} from '../providers/auth';
-import {VerifyConfirmationCodeScreen} from './verify-confirmation-code';
 import {useData} from '../providers/data';
 import {OwnerDto} from '../services/dtos';
 import {SafeBar} from '../components/primitives/safe-bar';
 import {AppState, useGlobalState} from '../providers/global-state';
+import {useStack} from '../components/navigation/stack-pager';
 
 interface CreateNameScreenProps {}
 
@@ -23,7 +22,7 @@ export const CreateNameScreen: React.FC<CreateNameScreenProps> = props => {
 
   const auth = useAuth();
   const data = useData();
-  const stack = Stack.useStack();
+  const stack = useStack();
   const globalState = useGlobalState();
   return (
     <>

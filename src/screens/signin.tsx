@@ -10,8 +10,8 @@ import {LogoSvg} from '../components/svg/logo-svg';
 import {useAuth} from '../providers/auth';
 import validate from 'validate.js';
 import {SAFE_AREA_PADDING_BOTTOM} from '../constants/safe-area';
-import {Stack} from '../components/navigation/stack-pager';
 import {CreateAccountScreen} from './create-account';
+import {useStack} from '../components/navigation/stack-pager';
 
 interface SignInScreenProperties {}
 
@@ -22,7 +22,7 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   const auth = useAuth();
-  const stack = Stack.useStack();
+  const stack = useStack();
 
   return (
     <>

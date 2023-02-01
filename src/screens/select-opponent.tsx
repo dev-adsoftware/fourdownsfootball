@@ -1,9 +1,7 @@
 import React from 'react';
-import {CircleIconButton} from '../components/buttons/circle-icon-button';
-import {Stack} from '../components/navigation/stack-pager';
+import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
-import {SafeBar} from '../components/primitives/safe-bar';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {SELECT_OPTION_DELAY} from '../constants/timers';
@@ -21,7 +19,7 @@ export const SelectOpponentScreen: React.FC<
   const [owners, setOwners] = React.useState<OwnerDto[]>([]);
 
   const data = useData();
-  const stack = Stack.useStack();
+  const stack = useStack();
   const newGame = useNewGame();
 
   const fetchOwners = React.useCallback(async () => {

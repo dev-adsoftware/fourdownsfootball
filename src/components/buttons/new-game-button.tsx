@@ -59,7 +59,7 @@ export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
         color="white"
         animatedRotate={{
           animatedValue: rotationAnimationValue,
-          range: ['0deg', '135deg'],
+          range: ['0deg', '225deg'],
         }}
       />
     </Pressable>

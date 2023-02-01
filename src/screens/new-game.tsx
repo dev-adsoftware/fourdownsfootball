@@ -1,24 +1,36 @@
 import React from 'react';
-import {Stack} from '../components/navigation/stack-pager';
+import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 import {ChildrenProps, StateProp} from '../types/types';
 import {SelectGameTypeScreen} from './select-game-type';
 
-interface NewGameScreenProps {}
+interface NewGameScreenProps {
+  onGameCreated: () => void;
+}
 
 interface NewGameContextProps {
   gameType: StateProp<string | undefined>;
   opponent: StateProp<string | undefined>;
   team: StateProp<string | undefined>;
+  createGame: () => Promise<void>;
+  onGameCreated: () => void;
 }
 const NewGameContext = React.createContext<NewGameContextProps | undefined>(
   undefined,
 );
 
-interface NewGameProviderProps extends ChildrenProps {}
+interface NewGameProviderProps extends ChildrenProps {
+  onGameCreated: () => void;
+}
+
 export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
   const [gameType, setGameType] = React.useState<string>();
   const [opponent, setOpponent] = React.useState<string>();
   const [team, setTeam] = React.useState<string>();
+
+  const createGame = React.useCallback(async () => {
+    console.log('new game provider creating game');
+    props.onGameCreated();
+  }, []);
 
   return (
     <NewGameContext.Provider
@@ -35,6 +47,8 @@ export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
           value: team,
           set: setTeam,
         },
+        createGame,
+        onGameCreated: props.onGameCreated,
       }}>
       {props.children}
     </NewGameContext.Provider>
@@ -52,10 +66,10 @@ export const useNewGame = () => {
 export const NewGameScreen: React.FC<NewGameScreenProps> = props => {
   return (
     <>
-      <NewGameProvider>
-        <Stack.StackProvider>
-          <Stack.StackPager initialPage={<SelectGameTypeScreen />} />
-        </Stack.StackProvider>
+      <NewGameProvider onGameCreated={props.onGameCreated}>
+        <StackProvider>
+          <StackPager initialPage={<SelectGameTypeScreen />} />
+        </StackProvider>
       </NewGameProvider>
     </>
   );

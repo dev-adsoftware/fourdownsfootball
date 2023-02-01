@@ -6,14 +6,9 @@ import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
 import {NavPager} from '../components/navigation/nav-pager';
-import {
-  FadeInScreen,
-  useFadeInScreen,
-} from '../components/navigation/fade-in-screen';
-import {SettingsStack} from './settings-stack';
+import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 import {SettingsScreen} from './settings';
-import {Stack} from '../components/navigation/stack-pager';
-// import {SettingsStack} from './settings-stack';
+import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 
 interface HomeScreenProps {}
 
@@ -26,8 +21,6 @@ const BaseScreen: React.FC<{}> = () => {
 };
 
 const TeamsScreen: React.FC<{}> = ({}) => {
-  const data = useData();
-  console.log(data.owner?.email);
   return (
     <>
       <View w="full" flex={1} bg="secondary" />
@@ -36,9 +29,6 @@ const TeamsScreen: React.FC<{}> = ({}) => {
 };
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
-  const [isSettingsScreenVisible, setIsSettingsScreenVisible] =
-    React.useState(false);
-
   const data = useData();
   const fadeInScreen = useFadeInScreen();
 
@@ -68,18 +58,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
           <View w={75} pt={20} alignItems="center" justifyContent="flex-start">
             <IconButton
               onPress={() => {
-                // setIsSettingsScreenVisible(true);
                 fadeInScreen.push({
                   component: (
-                    <Stack.StackProvider>
-                      <Stack.StackPager
+                    <StackProvider>
+                      <StackPager
                         initialPage={<SettingsScreen />}
                         onStackEmpty={() => {
-                          // setIsSettingsScreenVisible(false);
                           fadeInScreen.pop();
                         }}
                       />
-                    </Stack.StackProvider>
+                    </StackProvider>
                   ),
                 });
               }}
@@ -98,16 +86,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
           ]}
         />
       </View>
-      {/* <FadeInScreen isVisible={isSettingsScreenVisible}>
-        <Stack.StackProvider>
-          <Stack.StackPager
-            initialPage={<SettingsScreen />}
-            onStackEmpty={() => {
-              setIsSettingsScreenVisible(false);
-            }}
-          />
-        </Stack.StackProvider>
-      </FadeInScreen> */}
     </>
   );
 };

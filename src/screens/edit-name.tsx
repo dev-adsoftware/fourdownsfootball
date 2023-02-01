@@ -1,6 +1,4 @@
 import React from 'react';
-import {Stack} from '../components/navigation/stack-pager';
-import {SafeBar} from '../components/primitives/safe-bar';
 import {View} from '../components/primitives/view';
 
 interface EditNameScreenProps {}

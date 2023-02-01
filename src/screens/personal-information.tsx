@@ -1,8 +1,7 @@
 import React from 'react';
-import {Stack} from '../components/navigation/stack-pager';
+import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
-import {SafeBar} from '../components/primitives/safe-bar';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
@@ -14,7 +13,7 @@ export const PersonalInformationScreen: React.FC<
   PersonalInformationScreenProps
 > = props => {
   const data = useData();
-  const stack = Stack.useStack();
+  const stack = useStack();
   return (
     <>
       <View flex={1} w="full" bg="white" px={15}>

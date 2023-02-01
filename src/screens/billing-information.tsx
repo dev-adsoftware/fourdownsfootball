@@ -1,5 +1,4 @@
 import React from 'react';
-import {SafeBar} from '../components/primitives/safe-bar';
 import {View} from '../components/primitives/view';
 
 interface BillingInformationScreenProps {}

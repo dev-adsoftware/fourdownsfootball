@@ -5,7 +5,7 @@ import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Link} from '../components/buttons/link';
 import {TextButton} from '../components/buttons/text-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Stack} from '../components/navigation/stack-pager';
+import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
 import {SafeBar} from '../components/primitives/safe-bar';
@@ -26,7 +26,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
   const {version} = useEnv();
   const data = useData();
   const auth = useAuth();
-  const stack = Stack.useStack();
+  const stack = useStack();
   const fadeInScreen = useFadeInScreen();
 
   const {height} = useWindowDimensions();
