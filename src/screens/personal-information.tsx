@@ -25,7 +25,6 @@ export const PersonalInformationScreen: React.FC<
         />
         <Pressable
           onPress={() => {
-            console.log('navigate to edit name');
             stack.push({component: <EditNameScreen />});
           }}>
           <View row h={40} justifyContent="space-between" alignItems="center">

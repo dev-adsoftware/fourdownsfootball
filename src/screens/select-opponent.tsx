@@ -1,4 +1,5 @@
 import React from 'react';
+import {Spinner} from '../components/activity-indicators/spinner';
 import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
@@ -47,34 +48,42 @@ export const SelectOpponentScreen: React.FC<
           py={20}
         />
         <View>
-          {owners.map(owner => {
-            return (
-              <Pressable
-                key={owner.id}
-                borderHorizontalColor="grayButton"
-                borderHorizontalWidth={1}
-                mt={-1}
-                onPress={() => {
-                  newGame.opponent.set(owner.id);
-                  setTimeout(() => {
-                    stack.push({component: <SelectTeamScreen />});
-                  }, SELECT_OPTION_DELAY);
-                }}>
-                <View row alignItems="center" justifyContent="space-between">
-                  <Text
-                    py={10}
-                    text={`${owner.firstName} ${owner.lastName}`}
-                    typeFace="sourceSansProRegular"
-                    fontSize="body"
-                    color="primaryText"
-                  />
-                  {newGame.opponent.value === owner.id && (
-                    <Icon name="check" color="primary" size="2xs" />
-                  )}
-                </View>
-              </Pressable>
-            );
-          })}
+          {isLoading ? (
+            <>
+              <View flex={1} alignItems="center">
+                <Spinner />
+              </View>
+            </>
+          ) : (
+            owners.map(owner => {
+              return (
+                <Pressable
+                  key={owner.id}
+                  borderHorizontalColor="grayButton"
+                  borderHorizontalWidth={1}
+                  mt={-1}
+                  onPress={() => {
+                    newGame.opponent.set(owner);
+                    setTimeout(() => {
+                      stack.push({component: <SelectTeamScreen />});
+                    }, SELECT_OPTION_DELAY);
+                  }}>
+                  <View row alignItems="center" justifyContent="space-between">
+                    <Text
+                      py={10}
+                      text={`${owner.firstName} ${owner.lastName}`}
+                      typeFace="sourceSansProRegular"
+                      fontSize="body"
+                      color="primaryText"
+                    />
+                    {newGame.opponent.value?.id === owner.id && (
+                      <Icon name="check" color="primary" size="2xs" />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })
+          )}
         </View>
       </View>
     </>

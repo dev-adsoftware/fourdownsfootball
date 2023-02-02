@@ -54,7 +54,6 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
               text="CREATE AN ACCOUNT"
               color="primary"
               onPress={() => {
-                console.log('create an account');
                 stack.push({component: <CreateAccountScreen />});
               }}
             />

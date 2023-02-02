@@ -2,10 +2,6 @@ import {BaseService} from './base-service';
 import {GameRequestDto} from './dtos';
 
 class Service extends BaseService {
-  constructor() {
-    super();
-  }
-
   public async createGameRequest(
     gameRequest: GameRequestDto,
   ): Promise<GameRequestDto> {

@@ -6,6 +6,7 @@ import {OwnersService} from '../services/owners';
 import {useAuth} from './auth';
 import {AppState, useGlobalState} from './global-state';
 import {TeamsService} from '../services/teams';
+import {GameRequestsService} from '../services/game-requests';
 // import {useNotification} from './notification';
 
 const DataContext = React.createContext<Data | undefined>(undefined);
@@ -42,6 +43,7 @@ interface Data {
   services: {
     owners: OwnersService;
     teams: TeamsService;
+    gameRequests: GameRequestsService;
   };
 }
 
@@ -158,6 +160,10 @@ const DataProvider: React.FC<Properties> = ({children}) => {
         services: {
           owners: new OwnersService(auth.secureClient, env.apiEndpoint),
           teams: new TeamsService(auth.secureClient, env.apiEndpoint),
+          gameRequests: new GameRequestsService(
+            auth.secureClient,
+            env.apiEndpoint,
+          ),
         },
       }}>
       {children}

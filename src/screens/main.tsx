@@ -54,8 +54,6 @@ export const MainScreen: React.FC<Properties> = ({}) => {
     }
   }, [isTabBarHiding, slideInOutValue]);
 
-  console.log('rendering');
-
   return (
     <>
       {/* <NewGameProvider>

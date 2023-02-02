@@ -1,5 +1,8 @@
 import React from 'react';
+import uuid from 'react-native-uuid';
 import {StackPager, StackProvider} from '../components/navigation/stack-pager';
+import {useData} from '../providers/data';
+import {GameRequestDto, OwnerDto, TeamDto} from '../services/dtos';
 import {ChildrenProps, StateProp} from '../types/types';
 import {SelectGameTypeScreen} from './select-game-type';
 
@@ -9,8 +12,8 @@ interface NewGameScreenProps {
 
 interface NewGameContextProps {
   gameType: StateProp<string | undefined>;
-  opponent: StateProp<string | undefined>;
-  team: StateProp<string | undefined>;
+  opponent: StateProp<OwnerDto | undefined>;
+  team: StateProp<TeamDto | undefined>;
   createGame: () => Promise<void>;
   isCreatingGame: boolean;
   onGameCreated: () => void;
@@ -25,16 +28,32 @@ interface NewGameProviderProps extends ChildrenProps {
 
 export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
   const [gameType, setGameType] = React.useState<string>();
-  const [opponent, setOpponent] = React.useState<string>();
-  const [team, setTeam] = React.useState<string>();
+  const [opponent, setOpponent] = React.useState<OwnerDto>();
+  const [team, setTeam] = React.useState<TeamDto>();
   const [isCreatingGame, setIsCreatingGame] = React.useState<boolean>(false);
+
+  const data = useData();
 
   const createGame = React.useCallback(async () => {
     setIsCreatingGame(true);
-    setTimeout(() => {
-      props.onGameCreated();
-    }, 2000);
-  }, []);
+
+    const gameRequest = new GameRequestDto().init({
+      id: uuid.v4(),
+      ownerId: data.owner?.id,
+      teamId: team?.id,
+      invitedOwnerId: opponent?.id,
+      status: 'Submitted',
+      sequence: '0',
+      lastUpdateDate: new Date().toISOString(),
+      lastUpdatedBy: data.owner?.id,
+    });
+
+    const newGameRequest = await data.services.gameRequests.createGameRequest(
+      gameRequest,
+    );
+    console.log(newGameRequest);
+    props.onGameCreated();
+  }, [gameType, opponent, team]);
 
   return (
     <NewGameContext.Provider
