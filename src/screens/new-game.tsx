@@ -12,6 +12,7 @@ interface NewGameContextProps {
   opponent: StateProp<string | undefined>;
   team: StateProp<string | undefined>;
   createGame: () => Promise<void>;
+  isCreatingGame: boolean;
   onGameCreated: () => void;
 }
 const NewGameContext = React.createContext<NewGameContextProps | undefined>(
@@ -26,10 +27,13 @@ export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
   const [gameType, setGameType] = React.useState<string>();
   const [opponent, setOpponent] = React.useState<string>();
   const [team, setTeam] = React.useState<string>();
+  const [isCreatingGame, setIsCreatingGame] = React.useState<boolean>(false);
 
   const createGame = React.useCallback(async () => {
-    console.log('new game provider creating game');
-    props.onGameCreated();
+    setIsCreatingGame(true);
+    setTimeout(() => {
+      props.onGameCreated();
+    }, 2000);
   }, []);
 
   return (
@@ -48,6 +52,7 @@ export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
           set: setTeam,
         },
         createGame,
+        isCreatingGame,
         onGameCreated: props.onGameCreated,
       }}>
       {props.children}

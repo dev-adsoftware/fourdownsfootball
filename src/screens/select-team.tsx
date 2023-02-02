@@ -1,4 +1,5 @@
 import React from 'react';
+import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {
   FadeInScreen,
@@ -35,6 +36,39 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
   React.useEffect(() => {
     fetchTeams();
   }, [fetchTeams]);
+
+  React.useEffect(() => {
+    console.log(newGame.isCreatingGame);
+    if (newGame.isCreatingGame) {
+      fadeInScreen.push({
+        component: (
+          <View flex={1} alignItems="center" justifyContent="center">
+            <View>
+              <View
+                borderRadius={8}
+                bg="white"
+                alignItems="center"
+                justifyContent="space-between">
+                <View px={30} py={20} alignItems="center">
+                  <View
+                    w="full"
+                    alignItems="center"
+                    justifyContent="center"
+                    debugColor="red">
+                    <Spinner />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        ),
+      });
+
+      return () => {
+        fadeInScreen.pop();
+      };
+    }
+  }, [newGame.isCreatingGame]);
 
   return (
     <>
@@ -98,7 +132,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
                                 w="full"
                                 onPress={async () => {
                                   fadeInScreen.pop();
-                                  await newGame.createGame();
+                                  newGame.createGame();
                                 }}>
                                 <View
                                   bg="success"
