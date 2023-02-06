@@ -70,7 +70,6 @@ const listenerReducer = (
 };
 
 function NotificationProvider({children}: NotificationProviderProps) {
-  // const [deviceToken, setDeviceToken] = React.useState<string>();
   const [isRegistered, setIsRegistered] = React.useState(false);
 
   const [notificationQueueState, notificationQueueDispatch] = React.useReducer(
@@ -85,68 +84,12 @@ function NotificationProvider({children}: NotificationProviderProps) {
 
   const {user} = useAuth();
 
-  // const getOrCreateDeviceRegistration = async (
-  //   id: string,
-  //   ownerId: string,
-  // ): Promise<DeviceRegistrationDto> => {
-  //   const service = new DeviceRegistrationsService();
-  //   if (!(await service.deviceRegistrationExists(id))) {
-  //     const deviceRegistrationDto = new DeviceRegistrationDto();
-  //     deviceRegistrationDto.id = id;
-  //     deviceRegistrationDto.token = id;
-  //     deviceRegistrationDto.ownerId = ownerId;
-  //     await service.createDeviceRegistration(deviceRegistrationDto);
-  //   }
-
-  //   return await service.getDeviceRegistration(id);
-  // };
-
-  // const updateDeviceRegistration = React.useCallback(
-  //   async (localDeviceToken: string, ownerId: string) => {
-  //     try {
-  //       const deviceRegistration = await getOrCreateDeviceRegistration(
-  //         localDeviceToken,
-  //         ownerId,
-  //       );
-  //       if (deviceRegistration.ownerId !== ownerId) {
-  //         await new DeviceRegistrationsService().updateDeviceRegistration(
-  //           localDeviceToken,
-  //           deviceRegistration,
-  //           {
-  //             ownerId: ownerId,
-  //           },
-  //           ['ownerId'],
-  //         );
-  //       }
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   },
-  //   [],
-  // );
-
   React.useEffect(() => {
     if (!isRegistered) {
       setIsRegistered(true);
 
       OneSignal.setAppId('9e051574-ebf4-4f71-93e2-1218b7739d5d');
       OneSignal.promptForPushNotificationsWithUserResponse();
-
-      // RNNotifications.registerRemoteNotifications();
-
-      // RNNotifications.events().registerRemoteNotificationsRegistered(
-      //   async (event: RNRegistered) => {
-      //     setDeviceToken(event.deviceToken);
-      //   },
-      // );
-
-      // RNNotifications.events().registerRemoteNotificationsRegistrationFailed(
-      //   (event: RNRegistrationError) => {
-      //     if (!event.localizedDescription.endsWith('simulator')) {
-      //       console.error(event);
-      //     }
-      //   },
-      // );
 
       OneSignal.setNotificationWillShowInForegroundHandler(
         notificationReceivedEvent => {
@@ -157,49 +100,17 @@ function NotificationProvider({children}: NotificationProviderProps) {
           notificationQueueDispatch({
             type: 'queue-notification',
             payload: new NotificationDto().init(
-              JSON.parse(notificationReceivedEvent.getNotification().body),
+              notificationReceivedEvent.getNotification()
+                .additionalData as Record<string, unknown>,
             ),
           });
           notificationReceivedEvent.complete();
         },
       );
 
-      // RNNotifications.events().registerNotificationReceivedForeground(
-      //   (notification: RNNotification, completion) => {
-      //     console.log(
-      //       `Notification received in foreground: ${JSON.stringify(
-      //         notification.payload,
-      //         null,
-      //         2,
-      //       )}`,
-      //     );
-      //     notificationQueueDispatch({
-      //       type: 'queue-notification',
-      //       payload: new NotificationDto().init(
-      //         JSON.parse(notification.payload.notification),
-      //       ),
-      //     });
-      //     completion({alert: false, sound: false, badge: false});
-      //   },
-      // );
-
       OneSignal.setNotificationOpenedHandler(notification => {
         console.log('OneSignal: notification opened:', notification);
       });
-
-      // RNNotifications.events().registerNotificationOpened(
-      //   (notification: RNNotification, completion) => {
-      //     console.log(
-      //       `Notification opened: ${JSON.stringify(
-      //         notification.payload,
-      //         null,
-      //         2,
-      //       )}`,
-      //     );
-      //     completion();
-      //     console.log('completed opened notification');
-      //   },
-      // );
     }
   }, [isRegistered]);
 
@@ -219,57 +130,14 @@ function NotificationProvider({children}: NotificationProviderProps) {
           .map(listener => {
             listener.callback(notification.recordId);
           });
-
-        // if (activeGame?.id === notification.recordId) {
-        //   refreshActiveGame(false)
-        //     .then(() => console.log('refreshed active game'))
-        //     .catch(e => console.log(e));
-        // }
-        // refreshOwnerDashboard(false)
-        //   .then(() => console.log('refreshed owner dashboard'))
-        //   .catch(e => console.log(e));
-      } else if (notification.recordType === 'game-requests') {
-        console.log('received game-requests event');
-        listenerState
-          .filter(listener => {
-            return listener.eventType === 'game-requests';
-          })
-          .map(listener => {
-            listener.callback(notification.recordId);
-          });
-
-        // refreshOwnerDashboard(false)
-        //   .then(() => console.log('refreshed owner dashboard'))
-        //   .catch(e => console.log(e));
-      } else if (notification.recordType === 'game-invites') {
-        console.log('received game-invites event');
-        listenerState
-          .filter(listener => {
-            return listener.eventType === 'game-invites';
-          })
-          .map(listener => {
-            listener.callback(notification.recordId);
-          });
-
-        // refreshOwnerDashboard(false)
-        //   .then(() => console.log('refreshed owner dashboard'))
-        //   .catch(e => console.log(e));
       }
     }
   }, [notificationQueueState, listenerState]);
 
   React.useEffect(() => {
     if (user?.username) {
-      console.log('updating device registration');
-
-      // set external user id here
-
-      // updateDeviceRegistration(deviceToken, user?.username as string);
-
       OneSignal.setExternalUserId(user?.username, results => {
-        // The results will contain push and email success statuses
-        console.log('Results of setting external user id');
-        console.log(results);
+        console.log('Registered external user id', results);
       });
     }
   }, [user?.username]);

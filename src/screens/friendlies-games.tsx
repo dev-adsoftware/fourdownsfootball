@@ -10,8 +10,8 @@ import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
 import {
-  GameRequestsByOwnerQueryArgsDto,
-  GameRequestsByOwnerQueryResponseDto,
+  GamesByOwnerQueryArgsDto,
+  GamesByOwnerQueryResponseDto,
 } from '../services/dtos';
 
 interface FriendliesGamesScreenProps {}
@@ -36,18 +36,19 @@ export const FriendliesGamesScreen: React.FC<
   FriendliesGamesScreenProps
 > = props => {
   const [gameRequestsByOwner, setGameRequestsByOwner] =
-    React.useState<GameRequestsByOwnerQueryResponseDto>();
+    React.useState<GamesByOwnerQueryResponseDto>();
   const data = useData();
   const fadeInScreen = useFadeInScreen();
 
   const fetchGameRequestsByOwner = React.useCallback(async () => {
     if (data.owner?.id) {
       const fetchedGameRequestsByOwner =
-        await data.services.gameRequests.queryGameRequestsByOwner(
-          new GameRequestsByOwnerQueryArgsDto().init({
+        await data.services.games.queryGamesByOwner(
+          new GamesByOwnerQueryArgsDto().init({
             id: data.owner.id,
           }),
         );
+      console.log(fetchedGameRequestsByOwner);
       setGameRequestsByOwner(fetchedGameRequestsByOwner);
     }
   }, [data.owner]);
@@ -59,9 +60,9 @@ export const FriendliesGamesScreen: React.FC<
     <>
       <ScrollView flex={1} w="full">
         {gameRequestsByOwner &&
-          gameRequestsByOwner.gameRequests.map(gameRequest => {
+          gameRequestsByOwner.games.map(game => {
             return (
-              <View key={gameRequest.id} w="full" py={20}>
+              <View key={game.id} w="full" py={20}>
                 <Pressable
                   onPress={() => {
                     fadeInScreen.push({
@@ -78,8 +79,8 @@ export const FriendliesGamesScreen: React.FC<
                               justifyContent="space-between">
                               <CircleAbbrAvatar
                                 text={`${
-                                  gameRequest.invitedTeam
-                                    ? gameRequest.invitedTeam.nickname
+                                  game.awayTeam
+                                    ? game.awayTeam.nickname
                                         .slice(0, 1)
                                         .toUpperCase()
                                     : '?'
@@ -94,8 +95,8 @@ export const FriendliesGamesScreen: React.FC<
                               </View>
                               <CircleAbbrAvatar
                                 text={`${
-                                  gameRequest.team
-                                    ? gameRequest.team.nickname
+                                  game.homeTeam
+                                    ? game.homeTeam.nickname
                                         .slice(0, 1)
                                         .toUpperCase()
                                     : '?'
@@ -144,16 +145,15 @@ export const FriendliesGamesScreen: React.FC<
                     borderColor="oddLayerSurface">
                     <CircleAbbrAvatar
                       text={
-                        gameRequest.invitedOwner.firstName
-                          .slice(0, 1)
-                          .toUpperCase() || '?'
+                        game.awayOwner.firstName.slice(0, 1).toUpperCase() ||
+                        '?'
                       }
                     />
                     <View px={20}>
                       <Text
                         text={
-                          gameRequest.invitedTeam
-                            ? `${gameRequest.invitedTeam.nickname.toUpperCase()}`
+                          game.awayTeam
+                            ? `${game.awayTeam.nickname.toUpperCase()}`
                             : 'TBD'
                         }
                         typeFace="klavikaCondensedMedium"
@@ -161,15 +161,15 @@ export const FriendliesGamesScreen: React.FC<
                       />
                       <Text
                         mt={-5}
-                        text={`${gameRequest.invitedOwner.firstName} ${gameRequest.invitedOwner.lastName}`}
+                        text={`${game.awayOwner.firstName} ${game.awayOwner.lastName}`}
                         typeFace="sourceSansProSemibold"
                         fontSize="footnote"
                       />
                       <Text
                         mt={3}
                         text={
-                          gameRequest.team
-                            ? `${gameRequest.team.town.name.toUpperCase()} ${gameRequest.team.nickname.toUpperCase()}`
+                          game.homeTeam
+                            ? `${game.homeTeam.town.name.toUpperCase()} ${game.homeTeam.nickname.toUpperCase()}`
                             : 'N/A'
                         }
                         typeFace="klavikaCondensedMedium"
@@ -177,7 +177,7 @@ export const FriendliesGamesScreen: React.FC<
                       />
                       <Text
                         mt={-5}
-                        text={`${gameRequest.owner.firstName} ${gameRequest.owner.lastName}`}
+                        text={`${game.homeOwner.firstName} ${game.homeOwner.lastName}`}
                         typeFace="sourceSansProSemibold"
                         fontSize="footnote"
                       />

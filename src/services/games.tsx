@@ -4,11 +4,40 @@ import {
   GameDetailQueryArgsDto,
   GameDetailQueryResponseDto,
   GameDto,
+  GamesByOwnerQueryArgsDto,
+  GamesByOwnerQueryResponseDto,
 } from './dtos';
 
 class Service extends BaseService {
-  constructor() {
-    super();
+  public async createGame(game: GameDto): Promise<GameDto> {
+    return await this.create<GameDto>('/games', game);
+  }
+
+  public async queryGamesByOwner(
+    args: GamesByOwnerQueryArgsDto,
+  ): Promise<GamesByOwnerQueryResponseDto> {
+    let fetchResult = await this.get<GamesByOwnerQueryResponseDto>(
+      '/queries/games-by-owner/:execute',
+      {
+        id: args.id,
+      },
+    );
+
+    const returnResult = new GamesByOwnerQueryResponseDto();
+    returnResult.games = [];
+    while (fetchResult.lastKey) {
+      returnResult.games.push(...fetchResult.games);
+      fetchResult = await this.get<GamesByOwnerQueryResponseDto>(
+        '/queries/games-by-owner/:execute',
+        {
+          id: args.id,
+          afterKey: fetchResult.lastKey,
+        },
+      );
+    }
+    returnResult.games.push(...fetchResult.games);
+    returnResult.lastKey = fetchResult.lastKey;
+    return returnResult;
   }
 
   public async queryGameDetail(

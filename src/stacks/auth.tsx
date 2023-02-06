@@ -1,10 +1,10 @@
 import React from 'react';
-import {AuthSignInScreen} from '../screens/signin';
+import {SignInScreen} from '../screens/signin';
 
 type Properties = {};
 
 const AuthStack: React.FC<Properties> = () => {
-  return <AuthSignInScreen />;
+  return <SignInScreen />;
 };
 
 export {AuthStack};
