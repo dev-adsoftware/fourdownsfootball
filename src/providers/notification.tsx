@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-  Notifications as RNNotifications,
-  Notification as RNNotification,
-  Registered as RNRegistered,
-  RegistrationError as RNRegistrationError,
-} from 'react-native-notifications';
-import {DeviceRegistrationsService} from '../services/device-registrations';
-import {DeviceRegistrationDto, NotificationDto} from '../services/dtos';
+import OneSignal from 'react-native-onesignal';
+import {NotificationDto} from '../services/dtos';
+
 import {useAuth} from './auth';
 
 interface Listener {
@@ -75,7 +70,7 @@ const listenerReducer = (
 };
 
 function NotificationProvider({children}: NotificationProviderProps) {
-  const [deviceToken, setDeviceToken] = React.useState<string>();
+  // const [deviceToken, setDeviceToken] = React.useState<string>();
   const [isRegistered, setIsRegistered] = React.useState(false);
 
   const [notificationQueueState, notificationQueueDispatch] = React.useReducer(
@@ -90,103 +85,128 @@ function NotificationProvider({children}: NotificationProviderProps) {
 
   const {user} = useAuth();
 
-  const getOrCreateDeviceRegistration = async (
-    id: string,
-    ownerId: string,
-  ): Promise<DeviceRegistrationDto> => {
-    const service = new DeviceRegistrationsService();
-    if (!(await service.deviceRegistrationExists(id))) {
-      const deviceRegistrationDto = new DeviceRegistrationDto();
-      deviceRegistrationDto.id = id;
-      deviceRegistrationDto.token = id;
-      deviceRegistrationDto.ownerId = ownerId;
-      await service.createDeviceRegistration(deviceRegistrationDto);
-    }
+  // const getOrCreateDeviceRegistration = async (
+  //   id: string,
+  //   ownerId: string,
+  // ): Promise<DeviceRegistrationDto> => {
+  //   const service = new DeviceRegistrationsService();
+  //   if (!(await service.deviceRegistrationExists(id))) {
+  //     const deviceRegistrationDto = new DeviceRegistrationDto();
+  //     deviceRegistrationDto.id = id;
+  //     deviceRegistrationDto.token = id;
+  //     deviceRegistrationDto.ownerId = ownerId;
+  //     await service.createDeviceRegistration(deviceRegistrationDto);
+  //   }
 
-    return await service.getDeviceRegistration(id);
-  };
+  //   return await service.getDeviceRegistration(id);
+  // };
 
-  const updateDeviceRegistration = React.useCallback(
-    async (localDeviceToken: string, ownerId: string) => {
-      try {
-        const deviceRegistration = await getOrCreateDeviceRegistration(
-          localDeviceToken,
-          ownerId,
-        );
-        if (deviceRegistration.ownerId !== ownerId) {
-          await new DeviceRegistrationsService().updateDeviceRegistration(
-            localDeviceToken,
-            deviceRegistration,
-            {
-              ownerId: ownerId,
-            },
-            ['ownerId'],
-          );
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [],
-  );
+  // const updateDeviceRegistration = React.useCallback(
+  //   async (localDeviceToken: string, ownerId: string) => {
+  //     try {
+  //       const deviceRegistration = await getOrCreateDeviceRegistration(
+  //         localDeviceToken,
+  //         ownerId,
+  //       );
+  //       if (deviceRegistration.ownerId !== ownerId) {
+  //         await new DeviceRegistrationsService().updateDeviceRegistration(
+  //           localDeviceToken,
+  //           deviceRegistration,
+  //           {
+  //             ownerId: ownerId,
+  //           },
+  //           ['ownerId'],
+  //         );
+  //       }
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   },
+  //   [],
+  // );
 
   React.useEffect(() => {
     if (!isRegistered) {
       setIsRegistered(true);
 
-      RNNotifications.registerRemoteNotifications();
+      OneSignal.setAppId('9e051574-ebf4-4f71-93e2-1218b7739d5d');
+      OneSignal.promptForPushNotificationsWithUserResponse();
 
-      RNNotifications.events().registerRemoteNotificationsRegistered(
-        async (event: RNRegistered) => {
-          setDeviceToken(event.deviceToken);
-        },
-      );
-      RNNotifications.events().registerRemoteNotificationsRegistrationFailed(
-        (event: RNRegistrationError) => {
-          if (!event.localizedDescription.endsWith('simulator')) {
-            console.error(event);
-          }
-        },
-      );
+      // RNNotifications.registerRemoteNotifications();
 
-      RNNotifications.events().registerNotificationReceivedForeground(
-        (notification: RNNotification, completion) => {
+      // RNNotifications.events().registerRemoteNotificationsRegistered(
+      //   async (event: RNRegistered) => {
+      //     setDeviceToken(event.deviceToken);
+      //   },
+      // );
+
+      // RNNotifications.events().registerRemoteNotificationsRegistrationFailed(
+      //   (event: RNRegistrationError) => {
+      //     if (!event.localizedDescription.endsWith('simulator')) {
+      //       console.error(event);
+      //     }
+      //   },
+      // );
+
+      OneSignal.setNotificationWillShowInForegroundHandler(
+        notificationReceivedEvent => {
           console.log(
-            `Notification received in foreground: ${JSON.stringify(
-              notification.payload,
-              null,
-              2,
-            )}`,
+            'Notification received in foreground',
+            notificationReceivedEvent,
           );
           notificationQueueDispatch({
             type: 'queue-notification',
             payload: new NotificationDto().init(
-              JSON.parse(notification.payload.notification),
+              JSON.parse(notificationReceivedEvent.getNotification().body),
             ),
           });
-          completion({alert: false, sound: false, badge: false});
+          notificationReceivedEvent.complete();
         },
       );
 
-      RNNotifications.events().registerNotificationOpened(
-        (notification: RNNotification, completion) => {
-          console.log(
-            `Notification opened: ${JSON.stringify(
-              notification.payload,
-              null,
-              2,
-            )}`,
-          );
-          completion();
-          console.log('completed opened notification');
-        },
-      );
+      // RNNotifications.events().registerNotificationReceivedForeground(
+      //   (notification: RNNotification, completion) => {
+      //     console.log(
+      //       `Notification received in foreground: ${JSON.stringify(
+      //         notification.payload,
+      //         null,
+      //         2,
+      //       )}`,
+      //     );
+      //     notificationQueueDispatch({
+      //       type: 'queue-notification',
+      //       payload: new NotificationDto().init(
+      //         JSON.parse(notification.payload.notification),
+      //       ),
+      //     });
+      //     completion({alert: false, sound: false, badge: false});
+      //   },
+      // );
+
+      OneSignal.setNotificationOpenedHandler(notification => {
+        console.log('OneSignal: notification opened:', notification);
+      });
+
+      // RNNotifications.events().registerNotificationOpened(
+      //   (notification: RNNotification, completion) => {
+      //     console.log(
+      //       `Notification opened: ${JSON.stringify(
+      //         notification.payload,
+      //         null,
+      //         2,
+      //       )}`,
+      //     );
+      //     completion();
+      //     console.log('completed opened notification');
+      //   },
+      // );
     }
   }, [isRegistered]);
 
   React.useEffect(() => {
     if (notificationQueueState.length > 0) {
       const notification = notificationQueueState[0];
+      console.log('handling notification', notification);
       notificationQueueDispatch({type: 'pop-notification'});
 
       if (notification.recordType === 'games') {
@@ -239,11 +259,20 @@ function NotificationProvider({children}: NotificationProviderProps) {
   }, [notificationQueueState, listenerState]);
 
   React.useEffect(() => {
-    if (false && user?.username && deviceToken) {
+    if (user?.username) {
       console.log('updating device registration');
-      updateDeviceRegistration(deviceToken, user?.username as string);
+
+      // set external user id here
+
+      // updateDeviceRegistration(deviceToken, user?.username as string);
+
+      OneSignal.setExternalUserId(user?.username, results => {
+        // The results will contain push and email success statuses
+        console.log('Results of setting external user id');
+        console.log(results);
+      });
     }
-  }, [deviceToken, updateDeviceRegistration, user?.username]);
+  }, [user?.username]);
 
   const addListener = React.useCallback((listener: Listener) => {
     listenerDispatch({type: 'add-listener', payload: listener});
