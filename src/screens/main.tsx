@@ -12,6 +12,7 @@ import {NewGameButton} from '../components/buttons/new-game-button';
 import {NewGameProvider, NewGameScreen} from './new-game';
 import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 import {SelectGameTypeScreen} from './select-game-type';
+import {FriendliesScreen} from './friendlies';
 
 type Properties = {};
 
@@ -59,7 +60,7 @@ export const MainScreen: React.FC<Properties> = ({}) => {
       {/* <NewGameProvider>
         <StackProvider> */}
       <View flex={1} justifyContent="space-between">
-        {currentScreen === 'home' ? <HomeScreen /> : <SplashScreen />}
+        {currentScreen === 'home' ? <HomeScreen /> : <FriendliesScreen />}
         <View
           animated
           position="absolute"
