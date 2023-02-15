@@ -1,57 +1,53 @@
 import React from 'react';
+import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleAbbrAvatar} from '../components/avatars/circle-abbr-avatar';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {NavPager} from '../components/navigation/nav-pager';
+import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
-import {SafeBar} from '../components/primitives/safe-bar';
 import {ScrollView} from '../components/primitives/scroll-view';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {useData} from '../providers/data';
+import {GamesByOwnerQueryArgsDto} from '../services/dtos';
 import {
-  GamesByOwnerQueryArgsDto,
-  GamesByOwnerQueryResponseDto,
-} from '../services/dtos';
+  GamesByOwnerExtendedGameDto,
+  GamesByOwnerExtendedGameRequestDto,
+} from '../services/dtos/queries/games-by-owner/games-by-owner-query-response.dto';
+import {GameEngine} from '../utilities/game-engine';
+import {GameDetailScreen} from './game-detail';
 
 interface FriendliesGamesScreenProps {}
-
-const BaseScreen: React.FC<{}> = () => {
-  return (
-    <>
-      <View w="full" flex={1} bg="primary" />
-    </>
-  );
-};
-
-const TeamsScreen: React.FC<{}> = ({}) => {
-  return (
-    <>
-      <View w="full" flex={1} bg="secondary" />
-    </>
-  );
-};
 
 export const FriendliesGamesScreen: React.FC<
   FriendliesGamesScreenProps
 > = props => {
-  const [gameRequestsByOwner, setGameRequestsByOwner] =
-    React.useState<GamesByOwnerQueryResponseDto>();
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [games, setGames] = React.useState<
+    (GamesByOwnerExtendedGameRequestDto | GamesByOwnerExtendedGameDto)[]
+  >([]);
   const data = useData();
   const fadeInScreen = useFadeInScreen();
 
-  const fetchGameRequestsByOwner = React.useCallback(async () => {
-    if (data.owner?.id) {
-      const fetchedGameRequestsByOwner =
-        await data.services.games.queryGamesByOwner(
-          new GamesByOwnerQueryArgsDto().init({
-            id: data.owner.id,
-          }),
-        );
-      console.log(fetchedGameRequestsByOwner);
-      setGameRequestsByOwner(fetchedGameRequestsByOwner);
-    }
-  }, [data.owner]);
+  const fetchGameRequestsByOwner = React.useCallback(
+    async (showLoadingIndicator?: boolean) => {
+      if (data.owner?.id) {
+        if (showLoadingIndicator) {
+          setIsLoading(true);
+        }
+        console.log('fetching game requests');
+        const fetchedGameRequestsByOwner =
+          await data.services.games.queryGamesByOwner(
+            new GamesByOwnerQueryArgsDto().init({
+              id: data.owner.id,
+            }),
+          );
+        setGames(fetchedGameRequestsByOwner);
+        setIsLoading(false);
+      }
+    },
+    [data.owner],
+  );
 
   React.useEffect(() => {
     fetchGameRequestsByOwner();
@@ -59,142 +55,155 @@ export const FriendliesGamesScreen: React.FC<
   return (
     <>
       <ScrollView flex={1} w="full">
-        {gameRequestsByOwner &&
-          gameRequestsByOwner.games.map(game => {
-            return (
-              <View key={game.id} w="full" py={20}>
-                <Pressable
-                  onPress={() => {
-                    fadeInScreen.push({
-                      component: (
-                        <>
-                          <View flex={1} debugColor="green">
-                            <SafeBar bg="white" />
-                            <View
-                              row
-                              bg="white"
-                              py={20}
-                              px={20}
-                              alignItems="center"
-                              justifyContent="space-between">
-                              <CircleAbbrAvatar
-                                text={`${
-                                  game.awayTeam
-                                    ? game.awayTeam.nickname
-                                        .slice(0, 1)
-                                        .toUpperCase()
-                                    : '?'
-                                }`}
-                              />
-                              <View>
-                                <Text
-                                  text="Awaiting RSVP"
-                                  typeFace="sourceSansProRegular"
-                                  fontSize="footnote"
-                                />
-                              </View>
-                              <CircleAbbrAvatar
-                                text={`${
-                                  game.homeTeam
-                                    ? game.homeTeam.nickname
-                                        .slice(0, 1)
-                                        .toUpperCase()
-                                    : '?'
-                                }`}
+        {isLoading ? (
+          <>
+            <View flex={1} py={20} alignItems="center">
+              <Spinner />
+            </View>
+          </>
+        ) : games.length === 0 ? (
+          <>
+            <View w="full" py={20} alignItems="center">
+              <Icon name="exclamation-triangle" color="error" size="3xl" />
+              <Text
+                py={20}
+                text="Oops! No friendly games were found."
+                typeFace="sourceSansProRegular"
+                fontSize="body"
+              />
+            </View>
+          </>
+        ) : (
+          <View mt={20}>
+            {games.map((game, index) => {
+              return (
+                <View key={`${game.id}-${index}`} w="full" mt={-1}>
+                  <Pressable
+                    onPress={() => {
+                      fadeInScreen.push({
+                        component: <GameDetailScreen gameId={game.id} />,
+                      });
+                    }}>
+                    <View
+                      row
+                      bg="white"
+                      alignItems="center"
+                      px={10}
+                      py={5}
+                      borderHorizontalWidth={1}
+                      borderColor="separator">
+                      <CircleAbbrAvatar
+                        text={
+                          game.awayOwner.firstName.slice(0, 1).toUpperCase() ||
+                          '?'
+                        }
+                      />
+                      <View flex={1} px={20}>
+                        <View
+                          flex={1}
+                          row
+                          justifyContent="space-between"
+                          alignItems="center">
+                          <View>
+                            <Text
+                              text={
+                                game.awayTeam
+                                  ? `${game.awayTeam.town.name.toUpperCase()} ${game.awayTeam.nickname.toUpperCase()}`
+                                  : 'TBD'
+                              }
+                              typeFace="klavikaCondensedMedium"
+                              fontSize="headline"
+                            />
+                            <Text
+                              mt={-5}
+                              text={`${game.awayOwner.firstName} ${game.awayOwner.lastName}`}
+                              typeFace="sourceSansProRegular"
+                              fontSize="footnote"
+                            />
+                          </View>
+                          <Text
+                            text="7"
+                            typeFace="klavikaCondensedMedium"
+                            fontSize="title2"
+                          />
+                        </View>
+                        <View
+                          flex={1}
+                          row
+                          justifyContent="space-between"
+                          alignItems="center">
+                          <View>
+                            <Text
+                              mt={3}
+                              text={
+                                game.homeTeam
+                                  ? `${game.homeTeam.town.name.toUpperCase()} ${game.homeTeam.nickname.toUpperCase()}`
+                                  : 'N/A'
+                              }
+                              typeFace="klavikaCondensedMedium"
+                              fontSize="headline"
+                            />
+                            <Text
+                              mt={-5}
+                              text={`${game.homeOwner.firstName} ${game.homeOwner.lastName}`}
+                              typeFace="sourceSansProRegular"
+                              fontSize="footnote"
+                            />
+                          </View>
+                          {GameEngine.isOnOffense(
+                            game as GamesByOwnerExtendedGameDto,
+                            data.owner?.id as string,
+                          ) ? (
+                            <View flex={1} pl={10}>
+                              <Icon
+                                name="football-ball"
+                                color="football"
+                                size="xs"
                               />
                             </View>
-                            <NavPager
-                              pages={[
-                                {
-                                  name: 'PLAY',
-                                  component: <TeamsScreen />,
-                                },
-                                {
-                                  name: 'PLAY BY PLAY',
-                                  component: <BaseScreen />,
-                                },
-                                {
-                                  name: 'BOX SCORE',
-                                  component: <TeamsScreen />,
-                                },
-                                {
-                                  name: 'CHAT',
-                                  component: <BaseScreen />,
-                                },
-                              ]}
-                            />
-                            <Pressable
-                              alignItems="center"
-                              onPress={() => {
-                                fadeInScreen.pop();
-                              }}>
-                              <View w={100} h={100} debugColor="red" />
-                            </Pressable>
-                          </View>
-                        </>
-                      ),
-                    });
-                  }}>
-                  <View
-                    row
-                    bg="white"
-                    alignItems="center"
-                    px={10}
-                    py={5}
-                    borderHorizontalWidth={1}
-                    borderColor="oddLayerSurface">
-                    <CircleAbbrAvatar
-                      text={
-                        game.awayOwner.firstName.slice(0, 1).toUpperCase() ||
-                        '?'
-                      }
-                    />
-                    <View px={20}>
-                      <Text
-                        text={
-                          game.awayTeam
-                            ? `${game.awayTeam.nickname.toUpperCase()}`
-                            : 'TBD'
-                        }
-                        typeFace="klavikaCondensedMedium"
-                        fontSize="headline"
-                      />
-                      <Text
-                        mt={-5}
-                        text={`${game.awayOwner.firstName} ${game.awayOwner.lastName}`}
-                        typeFace="sourceSansProSemibold"
-                        fontSize="footnote"
-                      />
-                      <Text
-                        mt={3}
-                        text={
-                          game.homeTeam
-                            ? `${game.homeTeam.town.name.toUpperCase()} ${game.homeTeam.nickname.toUpperCase()}`
-                            : 'N/A'
-                        }
-                        typeFace="klavikaCondensedMedium"
-                        fontSize="headline"
-                      />
-                      <Text
-                        mt={-5}
-                        text={`${game.homeOwner.firstName} ${game.homeOwner.lastName}`}
-                        typeFace="sourceSansProSemibold"
-                        fontSize="footnote"
-                      />
+                          ) : (
+                            <></>
+                          )}
+                          <Text
+                            text="10"
+                            typeFace="klavikaCondensedMedium"
+                            fontSize="title2"
+                          />
+                        </View>
+                      </View>
+                      <View alignItems="flex-end">
+                        <CircleIconButton
+                          icon={
+                            GameEngine.canNudgeOrWithdraw(
+                              game,
+                              data.owner?.id as string,
+                            )
+                              ? 'hourglass-half'
+                              : GameEngine.canRSVP(
+                                  game,
+                                  data.owner?.id as string,
+                                )
+                              ? 'envelope'
+                              : GameEngine.canAct(
+                                  game as GamesByOwnerExtendedGameDto,
+                                  data.owner?.id as string,
+                                )
+                              ? 'play'
+                              : 'clock'
+                          }
+                          onPress={() => {}}
+                          bg="white"
+                          color="primary"
+                          // borderColor="primary"
+                        />
+                      </View>
                     </View>
-                    <View flex={1} alignItems="flex-end">
-                      <CircleIconButton
-                        icon="clock"
-                        onPress={() => {}}
-                        bg="white"
-                        color="primary"
-                      />
-                    </View>
-                  </View>
-                </Pressable>
-              </View>
-            );
-          })}
+                  </Pressable>
+                </View>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </>
   );

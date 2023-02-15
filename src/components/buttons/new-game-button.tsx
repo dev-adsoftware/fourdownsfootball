@@ -49,6 +49,7 @@ export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
       alignItems="center"
       justifyContent="center"
       bg="primary"
+      overflow="hidden"
       borderWidth={wrapped ? BORDER_WIDTH : 0}
       borderColor="navSurface"
       borderRadius="circle">

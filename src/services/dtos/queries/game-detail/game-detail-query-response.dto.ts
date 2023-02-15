@@ -1,5 +1,5 @@
-import {Type} from 'class-transformer';
-import {IsArray, IsObject, IsOptional, ValidateNested} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsObject, IsOptional, ValidateIf, ValidateNested } from 'class-validator';
 import {
   GameActionDto,
   GameDto,
@@ -14,6 +14,7 @@ import {
   TeamSnapshotDto,
   TownDto,
 } from '../..';
+import { GameState } from '../../types/game-state';
 
 export class GameDetailExtendedTownDto extends TownDto {
   @ValidateNested()
@@ -23,7 +24,7 @@ export class GameDetailExtendedTownDto extends TownDto {
 
 export class GameDetailExtendedPlaySnapshotDto extends PlaySnapshotDto {
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => PlayChanceSnapshotDto)
   playChances: PlayChanceSnapshotDto[];
 
@@ -32,7 +33,6 @@ export class GameDetailExtendedPlaySnapshotDto extends PlaySnapshotDto {
   @Type(() => PlayAptitudeSnapshotDto)
   playAptitude: PlayAptitudeSnapshotDto;
 }
-
 export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   @IsObject()
   @ValidateNested()
@@ -50,12 +50,12 @@ export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   town: GameDetailExtendedTownDto;
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => PlayerSnapshotDto)
   players: PlayerSnapshotDto[];
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => GameDetailExtendedPlaySnapshotDto)
   plays: GameDetailExtendedPlaySnapshotDto[];
 }
@@ -85,16 +85,28 @@ export class GameDetailExtendedGameLogDto extends GameLogDto {
 export class GameDetailQueryResponseDto extends GameDto {
   @IsObject()
   @ValidateNested()
-  @Type(() => GameDetailExtendedTeamSnapshotDto)
-  homeTeam: GameDetailExtendedTeamSnapshotDto;
+  @Type(() => OwnerDto)
+  homeOwner: OwnerDto;
 
   @IsObject()
   @ValidateNested()
+  @Type(() => OwnerDto)
+  awayOwner: OwnerDto;
+
+  @ValidateIf(o => o.state !== GameState.AwaitingRSVP)
+  @IsObject()
+  @ValidateNested()
   @Type(() => GameDetailExtendedTeamSnapshotDto)
-  awayTeam: GameDetailExtendedTeamSnapshotDto;
+  homeTeam?: GameDetailExtendedTeamSnapshotDto;
+
+  @ValidateIf(o => o.state !== GameState.AwaitingRSVP)
+  @IsObject()
+  @ValidateNested()
+  @Type(() => GameDetailExtendedTeamSnapshotDto)
+  awayTeam?: GameDetailExtendedTeamSnapshotDto;
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => GameDetailExtendedGameLogDto)
   logs: GameDetailExtendedGameLogDto[];
 }

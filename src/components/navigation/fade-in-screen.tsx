@@ -3,35 +3,6 @@ import {Animated} from 'react-native';
 import {ChildrenProps, StateProp} from '../../types/types';
 import {View} from '../primitives/view';
 
-// interface FadeInScreenContextProps
-//   extends StateProp<React.ReactNode | undefined> {}
-
-// const FadeInScreenContext = React.createContext<
-//   FadeInScreenContextProps | undefined
-// >(undefined);
-
-// interface FadeInScreenProviderProps extends ChildrenProps {}
-// export const FadeInScreenProvider: React.FC<
-//   FadeInScreenProviderProps
-// > = props => {
-//   const [fadeInScreen, setFadeInScreen] = React.useState<
-//     React.ReactNode | undefined
-//   >();
-
-//   return (
-//     <FadeInScreenContext.Provider
-//       value={{
-//         value: fadeInScreen,
-//         set: setFadeInScreen,
-//       }}>
-//       {props.children}
-//       <FadeInScreen isVisible={fadeInScreen !== undefined}>
-//         {fadeInScreen}
-//       </FadeInScreen>
-//     </FadeInScreenContext.Provider>
-//   );
-// };
-
 interface FadeInScreenPage {
   component: React.ReactNode;
   isVisible?: boolean;
@@ -68,6 +39,9 @@ const stackReducer = (
         currentPageIndex: state.currentPageIndex + 1,
       };
     case 'pop-stack':
+      if (state.currentPageIndex < 0) {
+        return defaultFadeInScreenState;
+      }
       return {
         pages: [
           ...state.pages.slice(0, state.currentPageIndex),

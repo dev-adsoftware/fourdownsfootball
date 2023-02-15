@@ -7,7 +7,7 @@ import {IconButton} from '../buttons/icon-button';
 export interface MainTabBarProps {
   activeIcon: string;
   onPressHome: () => void;
-  onPressBell: () => void;
+  onPressFriends: () => void;
 }
 
 export const MainTabBar: React.FC<MainTabBarProps> = props => {
@@ -29,11 +29,11 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
           }}
         />
         <IconButton
-          icon="bell"
-          color={props.activeIcon === 'bell' ? 'primary' : 'disabled'}
+          icon="users"
+          color={props.activeIcon === 'friends' ? 'primary' : 'disabled'}
           size="md"
           onPress={() => {
-            props.onPressBell();
+            props.onPressFriends();
           }}
         />
       </View>

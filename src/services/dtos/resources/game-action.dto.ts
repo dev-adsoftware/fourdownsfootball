@@ -1,13 +1,7 @@
-import {Type} from 'class-transformer';
-import {
-  IsString,
-  IsBoolean,
-  IsArray,
-  ValidateNested,
-  IsOptional,
-} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
-import {AssignmentDto} from './play.dto';
+// import { Type } from 'class-transformer';
+import { IsString, IsJSON } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
+// import { AssignmentDto } from './play.dto';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -17,28 +11,34 @@ class Dto extends SequencedDto {
   gameSequence: string;
 
   @IsString()
-  actingTeamSnapshotId: string;
+  action: string;
 
-  @IsString()
-  playSnapshotId: string;
+  @IsJSON()
+  payload: string;
 
-  @IsOptional()
-  @IsString()
-  initiatingGameActionId?: string;
+  // @IsString()
+  // actingTeamSnapshotId: string;
 
-  @IsBoolean()
-  flipped: boolean;
+  // @IsString()
+  // playSnapshotId: string;
 
-  @IsBoolean()
-  noHuddle: boolean;
+  // @IsOptional()
+  // @IsString()
+  // initiatingGameActionId?: string;
 
-  @IsBoolean()
-  hurryUp: boolean;
+  // @IsBoolean()
+  // flipped: boolean;
 
-  @IsArray()
-  @ValidateNested({each: true})
-  @Type(() => AssignmentDto)
-  assignments: AssignmentDto[];
+  // @IsBoolean()
+  // noHuddle: boolean;
+
+  // @IsBoolean()
+  // hurryUp: boolean;
+
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => AssignmentDto)
+  // assignments: AssignmentDto[];
 }
 
-export {Dto as GameActionDto};
+export { Dto as GameActionDto };

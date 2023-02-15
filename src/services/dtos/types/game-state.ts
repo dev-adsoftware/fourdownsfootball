@@ -1,6 +1,6 @@
 export enum GameState {
-  Submitted,
   AwaitingRSVP,
+  Loading,
   Kickoff,
   KickoffReturn,
   Offense,

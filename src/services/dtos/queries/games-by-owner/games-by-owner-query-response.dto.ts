@@ -7,7 +7,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { GameDto, LeagueDto, OwnerDto, StateDto, TeamDto, TownDto } from '../..';
+import { GameDto, GameRequestDto, LeagueDto, OwnerDto, StateDto, TeamDto, TownDto } from '../..';
 import { Dto } from '../../dto';
 
 export class GamesByOwnerExtendedTownDto extends TownDto {
@@ -20,11 +20,6 @@ export class GamesByOwnerExtendedTeamDto extends TeamDto {
   @ValidateNested()
   @Type(() => LeagueDto)
   league: LeagueDto;
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => OwnerDto)
-  owner: OwnerDto;
 
   @IsObject()
   @ValidateNested()
@@ -56,11 +51,45 @@ export class GamesByOwnerExtendedGameDto extends GameDto {
   awayTeam: GamesByOwnerExtendedTeamDto;
 }
 
+export class GamesByOwnerExtendedGameRequestDto extends GameRequestDto {
+  @IsObject()
+  @ValidateNested()
+  @Type(() => OwnerDto)
+  homeOwner: OwnerDto;
+
+  @ValidateIf(o => o.homeAway === 'home' || o.invitedTeamId)
+  @IsObject()
+  @ValidateNested()
+  @Type(() => GamesByOwnerExtendedTeamDto)
+  homeTeam: GamesByOwnerExtendedTeamDto;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => OwnerDto)
+  awayOwner: OwnerDto;
+
+  @ValidateIf(o => o.homeAway === 'away' || o.invitedTeamId)
+  @IsObject()
+  @ValidateNested()
+  @Type(() => GamesByOwnerExtendedTeamDto)
+  awayTeam: GamesByOwnerExtendedTeamDto;
+}
+
 export class GamesByOwnerQueryResponseDto extends Dto {
   @IsArray()
   @ValidateNested({ each: true })
+  @Type(() => GamesByOwnerExtendedGameRequestDto)
+  pendingGames: GamesByOwnerExtendedGameRequestDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
   @Type(() => GamesByOwnerExtendedGameDto)
-  games: GamesByOwnerExtendedGameDto[];
+  inProgressGames: GamesByOwnerExtendedGameDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => GamesByOwnerExtendedGameDto)
+  historicalGames: GamesByOwnerExtendedGameDto[];
 
   @IsOptional()
   @IsString()

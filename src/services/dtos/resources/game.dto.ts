@@ -1,7 +1,7 @@
-import {IsEnum, IsNumber, IsString, ValidateIf} from 'class-validator';
-import {SequencedDto} from '../sequenced-dto';
-import {Direction} from '../types/directions';
-import {GameState} from '../types/game-state';
+import { IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
+import { SequencedDto } from '../sequenced-dto';
+import { Direction } from '../types/directions';
+import { GameState } from '../types/game-state';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -12,16 +12,16 @@ class Dto extends SequencedDto {
 
   @ValidateIf(
     o =>
-      [GameState.Submitted, GameState.AwaitingRSVP].indexOf(o.state) === -1 &&
-      o.awayTeamId !== undefined,
+      o.state !== GameState.AwaitingRSVP ||
+      (o.state === GameState.AwaitingRSVP && o.awayTeamId === undefined),
   )
   @IsString()
   homeTeamId?: string;
 
   @ValidateIf(
     o =>
-      [GameState.Submitted, GameState.AwaitingRSVP].indexOf(o.state) === -1 &&
-      o.homeTeamId !== undefined,
+      o.state !== GameState.AwaitingRSVP ||
+      (o.state === GameState.AwaitingRSVP && o.homeTeamId === undefined),
   )
   @IsString()
   awayTeamId?: string;
@@ -44,20 +44,16 @@ class Dto extends SequencedDto {
   @IsEnum(Direction)
   direction = Direction.North;
 
-  @ValidateIf(
-    o => [GameState.Submitted, GameState.AwaitingRSVP].indexOf(o.state) === -1,
-  )
+  @ValidateIf(o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading)
   @IsString()
   offenseTeamId: string;
 
-  @ValidateIf(
-    o => [GameState.Submitted, GameState.AwaitingRSVP].indexOf(o.state) === -1,
-  )
+  @ValidateIf(o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading)
   @IsString()
   actingTeamId: string;
 
   @IsEnum(GameState)
-  state = GameState.Submitted;
+  state = GameState.AwaitingRSVP;
 
   @IsNumber()
   seed = 0;
@@ -78,4 +74,4 @@ class Dto extends SequencedDto {
   awayTeamTimeRemaining = 0;
 }
 
-export {Dto as GameDto};
+export { Dto as GameDto };

@@ -93,8 +93,8 @@ export const MainScreen: React.FC<Properties> = ({}) => {
             onPressHome={() => {
               setCurrentScreen('home');
             }}
-            onPressBell={() => {
-              setCurrentScreen('bell');
+            onPressFriends={() => {
+              setCurrentScreen('friends');
             }}
           />
         </View>

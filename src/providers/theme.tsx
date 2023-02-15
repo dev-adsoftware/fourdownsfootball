@@ -2,29 +2,7 @@ import React from 'react';
 import {ColorSchemeName, useColorScheme} from 'react-native';
 import {noop} from 'lodash';
 import TinyColor from 'tinycolor2';
-import {
-  COLOR_PALETTE_BLACK,
-  COLOR_PALETTE_BLUE_500,
-  COLOR_PALETTE_BLUE_800,
-  COLOR_PALETTE_BLUE_900,
-  COLOR_PALETTE_GRAY_100,
-  COLOR_PALETTE_GRAY_200,
-  COLOR_PALETTE_GRAY_300,
-  COLOR_PALETTE_GRAY_400,
-  COLOR_PALETTE_GRAY_500,
-  COLOR_PALETTE_GRAY_700,
-  COLOR_PALETTE_GRAY_800,
-  COLOR_PALETTE_GREEN_700,
-  COLOR_PALETTE_ORANGE_700,
-  COLOR_PALETTE_RED_500,
-  COLOR_PALETTE_RED_700,
-  COLOR_PALETTE_RED_900,
-  COLOR_PALETTE_TRANSPARENT_300,
-  COLOR_PALETTE_TRANSPARENT_500,
-  COLOR_PALETTE_TRANSPARENT_700,
-  COLOR_PALETTE_TRANSPARENT_FULL,
-  COLOR_PALETTE_WHITE,
-} from '../constants/color-palette';
+import {ColorPalette} from '../constants/color-palette';
 
 export type ThemeColorKey = keyof Theme['colors'];
 export type ThemeIconSizeKey = keyof Theme['iconSizes'];
@@ -32,32 +10,39 @@ export type ThemeFontSizeKey = keyof Theme['fontSizes'];
 export type ThemeTypeFacesKey = keyof Theme['typeFaces'];
 export class Theme {
   public colors = {
-    primary: COLOR_PALETTE_BLUE_800,
-    primaryLight: COLOR_PALETTE_BLUE_500,
-    primaryDark: COLOR_PALETTE_BLUE_900,
-    secondary: COLOR_PALETTE_RED_700,
-    secondaryLight: COLOR_PALETTE_RED_500,
-    secondaryDark: COLOR_PALETTE_RED_900,
-    error: COLOR_PALETTE_RED_500,
-    warning: COLOR_PALETTE_ORANGE_700,
-    success: COLOR_PALETTE_GREEN_700,
-    disabled: COLOR_PALETTE_GRAY_500,
-    navSurface: COLOR_PALETTE_WHITE,
-    separator: COLOR_PALETTE_GRAY_300,
-    white: COLOR_PALETTE_WHITE,
-    black: COLOR_PALETTE_BLACK,
-    primaryText: COLOR_PALETTE_GRAY_800,
-    placeholder: COLOR_PALETTE_GRAY_700,
-    inputBorder: COLOR_PALETTE_GRAY_700,
-    grayLink: COLOR_PALETTE_GRAY_700,
-    grayButton: COLOR_PALETTE_GRAY_400,
-    lightGrayButton: COLOR_PALETTE_GRAY_300,
-    oddLayerSurface: COLOR_PALETTE_GRAY_100,
-    evenLayerSurface: COLOR_PALETTE_GRAY_200,
-    transparentDark: COLOR_PALETTE_TRANSPARENT_700,
-    transparentMedium: COLOR_PALETTE_TRANSPARENT_500,
-    transparentLight: COLOR_PALETTE_TRANSPARENT_300,
-    transparent: COLOR_PALETTE_TRANSPARENT_FULL,
+    primary: ColorPalette.BLUE_800,
+    primaryLight: ColorPalette.BLUE_500,
+    primaryDark: ColorPalette.BLUE_900,
+    secondary: ColorPalette.RED_700,
+    secondaryLight: ColorPalette.RED_500,
+    secondaryDark: ColorPalette.RED_900,
+    error: ColorPalette.RED_500,
+    warning: ColorPalette.ORANGE_700,
+    success: ColorPalette.GREEN_700,
+    disabled: ColorPalette.GRAY_500,
+    navSurface: ColorPalette.WHITE,
+    separator: ColorPalette.GRAY_300,
+    white: ColorPalette.WHITE,
+    black: ColorPalette.BLACK,
+    primaryText: ColorPalette.GRAY_800,
+    placeholder: ColorPalette.GRAY_700,
+    inputBorder: ColorPalette.GRAY_700,
+    grayLink: ColorPalette.GRAY_700,
+    grayButton: ColorPalette.GRAY_400,
+    lightGrayButton: ColorPalette.GRAY_300,
+    oddLayerSurface: ColorPalette.GRAY_100,
+    evenLayerSurface: ColorPalette.GRAY_200,
+    transparentDark: ColorPalette.TRANSPARENT_700,
+    transparentMedium: ColorPalette.TRANSPARENT_500,
+    transparentLight: ColorPalette.TRANSPARENT_300,
+    transparent: ColorPalette.TRANSPARENT_FULL,
+
+    football: ColorPalette.BROWN_500,
+  };
+
+  public teamColors: {[key: string]: ColorPalette} = {
+    red: ColorPalette.RED_500,
+    black: ColorPalette.BLACK,
   };
 
   public fontSizes = {

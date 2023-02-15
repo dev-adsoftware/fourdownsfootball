@@ -1,26 +1,31 @@
 import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
+import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
+import {SafeBar} from '../components/primitives/safe-bar';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
+import {SAFE_AREA_PADDING_BOTTOM} from '../constants/safe-area';
 import {SELECT_OPTION_DELAY} from '../constants/timers';
 import {useData} from '../providers/data';
-import {TeamDto} from '../services/dtos';
+import {GameDetailQueryResponseDto, TeamDto} from '../services/dtos';
 import {ConfirmActionScreen} from './confirm-action';
-import {useNewGame} from './new-game';
 
-interface SelectTeamScreenProps {}
+interface SelectRSVPTeamScreenProps {
+  game: GameDetailQueryResponseDto;
+}
 
-export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
+export const SelectRSVPTeamScreen: React.FC<
+  SelectRSVPTeamScreenProps
+> = props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [teams, setTeams] = React.useState<TeamDto[]>([]);
-  const [isNewGameCreationConfirmed, setIsNewGameCreationConfirmed] =
-    React.useState(false);
+  const [selectedTeam, setSelectedTeam] = React.useState<TeamDto>();
+  const [isRSVPing, setIsRSVPing] = React.useState(false);
 
   const data = useData();
-  const newGame = useNewGame();
   const fadeInScreen = useFadeInScreen();
 
   const fetchTeams = React.useCallback(async () => {
@@ -34,14 +39,18 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
     fetchTeams();
   }, [fetchTeams]);
 
-  React.useEffect(() => {
-    if (isNewGameCreationConfirmed) {
-      newGame.createGame();
-    }
-  }, [isNewGameCreationConfirmed]);
+  const sendRSVP = React.useCallback(async () => {
+    await data.services.games.rsvpToGame(
+      props.game,
+      selectedTeam!.id,
+      data.owner!.id,
+    );
+    fadeInScreen.reset();
+  }, [selectedTeam]);
 
   React.useEffect(() => {
-    if (newGame.isCreatingGame) {
+    if (isRSVPing) {
+      sendRSVP();
       fadeInScreen.push({
         component: (
           <View flex={1} alignItems="center" justifyContent="center">
@@ -51,15 +60,12 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
           </View>
         ),
       });
-
-      return () => {
-        fadeInScreen.pop();
-      };
     }
-  }, [newGame.isCreatingGame]);
+  }, [isRSVPing, sendRSVP]);
 
   return (
     <>
+      <SafeBar bg="white" />
       <View flex={1} w="full" bg="white" px={15}>
         <Text
           text="SELECT TEAM"
@@ -83,16 +89,16 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
                   borderHorizontalWidth={1}
                   mt={-1}
                   onPress={() => {
-                    newGame.team.set(team);
+                    setSelectedTeam(team);
                     setTimeout(() => {
                       fadeInScreen.push({
                         component: (
                           <ConfirmActionScreen
                             icon="check-double"
-                            questionText={`Are you sure you want to send\nthis game request?`}
-                            buttonText="Create game request"
+                            questionText={`Are you sure you want to RSVP\nfor this game?`}
+                            buttonText="Send RSVP"
                             onConfirm={() => {
-                              setIsNewGameCreationConfirmed(true);
+                              setIsRSVPing(true);
                             }}
                           />
                         ),
@@ -107,7 +113,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
                       fontSize="body"
                       color="primaryText"
                     />
-                    {newGame.team.value?.id === team.id && (
+                    {selectedTeam?.id === team.id && (
                       <Icon name="check" color="primary" size="2xs" />
                     )}
                   </View>
@@ -116,6 +122,22 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
             })
           )}
         </View>
+      </View>
+      <View
+        position="absolute"
+        bottom={SAFE_AREA_PADDING_BOTTOM}
+        right={20}
+        w={75}
+        h={75}
+        alignItems="center"
+        justifyContent="center">
+        <CircleIconButton
+          icon="times"
+          onPress={e => {
+            fadeInScreen.pop();
+          }}
+          size={60}
+        />
       </View>
     </>
   );

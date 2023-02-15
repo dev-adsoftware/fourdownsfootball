@@ -7,6 +7,7 @@ import {useTheme} from '../../providers/theme';
 import {ChildrenProps} from '../../types/types';
 import {
   DebugProps,
+  OverflowProps,
   StyleBuilder,
   ViewProps,
 } from '../../utilities/style-builder';
@@ -14,7 +15,8 @@ import {
 export interface PressableProps
   extends Pick<RNPressableProps, 'onPress' | 'disabled'>,
     ChildrenProps,
-    ViewProps {
+    ViewProps,
+    OverflowProps {
   opaque?: boolean;
 }
 
@@ -28,6 +30,7 @@ export const Pressable: React.FC<PressableProps> = props => {
     };
     return new StyleBuilder(theme)
       .setViewProps(_props)
+      .setOverflowProps(_props)
       .setDebugProps(_props)
       .build();
   }, [theme, props]);

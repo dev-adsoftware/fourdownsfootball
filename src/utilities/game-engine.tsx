@@ -1,8 +1,15 @@
+import {OwnerDashboardExtendedGameInviteDto} from '../../backup/services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
 import {
   GameDetailQueryResponseDto,
+  GameDto,
+  GameRequestDto,
   PlayChanceSnapshotDto,
 } from '../services/dtos';
 import {GameDetailExtendedTeamSnapshotDto} from '../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {
+  GamesByOwnerExtendedGameDto,
+  GamesByOwnerExtendedTeamDto,
+} from '../services/dtos/queries/games-by-owner/games-by-owner-query-response.dto';
 import {Alignment} from '../services/dtos/types/alignment';
 import {Formation} from '../services/dtos/types/formation';
 import {GameState} from '../services/dtos/types/game-state';
@@ -11,44 +18,104 @@ import {PlaySubCategory} from '../services/dtos/types/play-sub-category';
 
 export class GameEngine {
   public static getActingTeam(
-    game: GameDetailQueryResponseDto,
+    game: GamesByOwnerExtendedGameDto,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.actingTeamId === game.homeTeamId) {
-      return game.homeTeam;
+      return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
     }
-    return game.awayTeam;
+    return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
   }
 
   public static getOffenseTeam(
-    game: GameDetailQueryResponseDto,
+    game: GamesByOwnerExtendedGameDto,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.offenseTeamId === game.homeTeamId) {
-      return game.homeTeam;
+      return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
     }
-    return game.awayTeam;
+    return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
   }
 
   public static getOwnerTeam(
-    game: GameDetailQueryResponseDto,
+    game: GamesByOwnerExtendedGameDto,
     ownerId: string,
   ): GameDetailExtendedTeamSnapshotDto {
-    if (game.homeTeam.ownerId === ownerId) {
-      return game.homeTeam;
+    if (game.homeTeam?.ownerId === ownerId) {
+      return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
     }
-    return game.awayTeam;
+    return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
   }
 
   public static getOpposingTeam(
-    game: GameDetailQueryResponseDto,
+    game: GamesByOwnerExtendedGameDto,
     ownerId: string,
   ): GameDetailExtendedTeamSnapshotDto {
-    if (game.homeTeam.ownerId === ownerId) {
-      return game.awayTeam;
+    if (game.homeTeam?.ownerId === ownerId) {
+      return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
     }
-    return game.homeTeam;
+    return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
   }
 
-  public static getTeamAbbreviation(team: GameDetailExtendedTeamSnapshotDto) {
+  public static canNudgeOrWithdraw(
+    game: GameRequestDto | GameDto,
+    ownerId: string,
+  ): boolean {
+    if ((game as GameRequestDto).ownerId === ownerId) {
+      return true;
+    }
+    const gameDto = game as GameDto;
+    if (
+      gameDto.state === GameState.AwaitingRSVP &&
+      ((gameDto.homeOwnerId === ownerId && gameDto.homeTeamId !== 'TBD') ||
+        (gameDto.awayOwnerId === ownerId && gameDto.awayTeamId !== 'TBD'))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  public static canRSVP(
+    game: GameRequestDto | GameDto,
+    ownerId: string,
+  ): boolean {
+    if ((game as GameRequestDto).invitedOwnerId === ownerId) {
+      return true;
+    }
+    const gameDto = game as GameDto;
+    if (
+      gameDto.state === GameState.AwaitingRSVP &&
+      ((gameDto.homeOwnerId === ownerId && gameDto.homeTeamId === 'TBD') ||
+        (gameDto.awayOwnerId === ownerId && gameDto.awayTeamId === 'TBD'))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  public static canAct(
+    game: GameRequestDto | GameDto,
+    ownerId: string,
+  ): boolean {
+    const gameDto = game as GameDto;
+    if (gameDto.actingTeamId === gameDto.homeTeamId) {
+      return gameDto.homeOwnerId === ownerId;
+    }
+    return gameDto.awayOwnerId === ownerId;
+  }
+
+  public static isOnOffense(
+    game: GameRequestDto | GameDto,
+    ownerId: string,
+  ): boolean {
+    const gameDto = game as GameDto;
+    if (gameDto.offenseTeamId === gameDto.homeTeamId) {
+      return gameDto.homeOwnerId === ownerId;
+    }
+    return gameDto.awayOwnerId === ownerId;
+  }
+
+  public static getTeamAbbreviation(
+    team?: GameDetailExtendedTeamSnapshotDto | GamesByOwnerExtendedTeamDto,
+  ) {
     if (!team) {
       return '?';
     }
@@ -60,7 +127,7 @@ export class GameEngine {
     game: GameDetailQueryResponseDto,
     teamId: string,
   ) {
-    if (game.homeTeam.id === teamId) {
+    if (game.homeTeam?.id === teamId) {
       return game.homeTeamTimeRemaining;
     }
     return game.awayTeamTimeRemaining;
@@ -123,6 +190,8 @@ export class GameEngine {
   public static getGameStateName(gameState?: GameState): string {
     if (gameState === GameState.Loading) {
       return 'Loading';
+    } else if (gameState === GameState.AwaitingRSVP) {
+      return 'Awaiting RSVP';
     } else if (gameState === GameState.Kickoff) {
       return 'Kickoff';
     } else {
@@ -143,6 +212,9 @@ export class GameEngine {
   }
 
   public static getPeriodName(period: number): string {
+    if (period === 0) {
+      return 'Pregame';
+    }
     if (period === 1) {
       return '1st';
     }
