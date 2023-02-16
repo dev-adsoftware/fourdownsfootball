@@ -89,7 +89,7 @@ export const FriendliesGamesScreen: React.FC<
                       bg="white"
                       alignItems="center"
                       px={10}
-                      py={5}
+                      py={10}
                       borderHorizontalWidth={1}
                       borderColor="separator">
                       <CircleAbbrAvatar
@@ -171,7 +171,11 @@ export const FriendliesGamesScreen: React.FC<
                           />
                         </View>
                       </View>
-                      <View alignItems="flex-end">
+                      <View
+                        alignItems="center"
+                        w={70}
+                        borderLeftWidth={1}
+                        borderLeftColor="separator">
                         <CircleIconButton
                           icon={
                             GameEngine.canNudgeOrWithdraw(
@@ -196,6 +200,16 @@ export const FriendliesGamesScreen: React.FC<
                           color="primary"
                           // borderColor="primary"
                         />
+                        {GameEngine.isInProgress(game) ? (
+                          <Text
+                            textAlign="center"
+                            text={'OT - 15:00'}
+                            typeFace="klavikaCondensedRegular"
+                            fontSize="caption2"
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </View>
                     </View>
                   </Pressable>

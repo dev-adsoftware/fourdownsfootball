@@ -1,6 +1,7 @@
 import React from 'react';
 import {Animated, LayoutAnimation} from 'react-native';
 import {IconButton} from '../components/buttons/icon-button';
+import {Pressable} from '../components/primitives/pressable';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {LogoSvg} from '../components/svg/logo-svg';
@@ -17,6 +18,8 @@ interface LogGroup {
 }
 
 interface _LogGroupHeader extends LogGroup {
+  first?: boolean;
+  last?: boolean;
   awayTeamAbbr: string;
   awayTeamScore: number;
   homeTeamAbbr: string;
@@ -25,91 +28,166 @@ interface _LogGroupHeader extends LogGroup {
 }
 
 const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
+  const [detailHeight, setDetailHeight] = React.useState(0);
+
+  const {current: animationValue} = React.useRef<Animated.Value>(
+    new Animated.Value(0),
+  );
+
+  React.useEffect(() => {
+    if (props.expanded) {
+      Animated.timing(animationValue, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(animationValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [props.expanded]);
+
   return (
-    <View
-      row
-      w="full"
-      bg="white"
-      alignItems="flex-start"
-      justifyContent="space-between"
-      borderBottomWidth={1}
-      borderBottomColor="separator"
-      py={15}
-      px={15}>
-      <View rotate={props.expanded ? '180deg' : '0deg'}>
-        <IconButton
-          icon={'chevron-down'}
-          color="primaryDark"
-          size="xs"
-          onPress={() => {
-            props.onPress();
+    <>
+      <View
+        row
+        w="full"
+        bg="white"
+        alignItems="flex-start"
+        justifyContent="space-between"
+        borderTopWidth={props.first ? undefined : 1}
+        borderBottomWidth={props.last ? undefined : 1}
+        borderHorizontalColor="separator"
+        pt={15}
+        pb={10}
+        px={15}
+        mt={-1}>
+        <View
+          animated
+          animatedRotate={{
+            animatedValue: animationValue,
+            range: ['0deg', '180deg'],
           }}
-        />
+          mt={-10}>
+          <IconButton
+            icon={'chevron-down'}
+            color="primaryDark"
+            size="xs"
+            pressableAreaPadding={10}
+            onPress={() => {
+              props.onPress();
+            }}
+          />
+        </View>
+        <View pl={15} pr={5}>
+          <LogoSvg size={20} />
+        </View>
+        <View flex={1}>
+          <Text
+            mt={-5}
+            text="GAME STARTED"
+            typeFace="klavikaCondensedMedium"
+            fontSize="body"
+          />
+          <Text
+            mt={-5}
+            text={props.log.headline}
+            typeFace="sourceSansProRegular"
+            fontSize="caption1"
+            color="disabled"
+          />
+        </View>
+        <View alignItems="center">
+          <Text
+            mt={-5}
+            text={props.awayTeamAbbr}
+            typeFace="sourceSansProRegular"
+            fontSize="footnote"
+            color="disabled"
+          />
+          <Text
+            mt={-5}
+            text={String(props.awayTeamScore)}
+            typeFace="klavikaCondensedMedium"
+            fontSize="body"
+          />
+        </View>
+        <View alignItems="center" ml={30}>
+          <Text
+            mt={-5}
+            text={props.homeTeamAbbr}
+            typeFace="sourceSansProRegular"
+            fontSize="footnote"
+            color="disabled"
+          />
+          <Text
+            mt={-5}
+            text={String(props.homeTeamScore)}
+            typeFace="klavikaCondensedMedium"
+            fontSize="body"
+          />
+        </View>
       </View>
-      <View pl={15} pr={5}>
-        <LogoSvg size={20} />
+      <View
+        row
+        animated
+        animatedHeight={{
+          animatedValue: animationValue,
+          range: [0, detailHeight],
+        }}
+        bg="white"
+        w="full"
+        overflow="hidden">
+        <View flex={1}>
+          <Text
+            p={15}
+            position="absolute"
+            text={`(Pregame) ${props.log.details[0]}`}
+            typeFace="sourceSansProRegular"
+            fontSize="footnote"
+            onLayout={
+              detailHeight === 0
+                ? e => {
+                    if (detailHeight === 0) {
+                      setDetailHeight(e.nativeEvent.layout.height);
+                    }
+                  }
+                : undefined
+            }
+          />
+        </View>
       </View>
-      <View flex={1}>
-        <Text
-          mt={-5}
-          text="GAME STARTED"
-          typeFace="klavikaCondensedMedium"
-          fontSize="body"
-        />
-        <Text
-          mt={-5}
-          text={props.log.headline}
-          typeFace="sourceSansProRegular"
-          fontSize="caption1"
-          color="disabled"
-        />
-      </View>
-      <View alignItems="center">
-        <Text
-          mt={-5}
-          text={props.awayTeamAbbr}
-          typeFace="sourceSansProRegular"
-          fontSize="footnote"
-          color="disabled"
-        />
-        <Text
-          mt={-5}
-          text={String(props.awayTeamScore)}
-          typeFace="klavikaCondensedMedium"
-          fontSize="body"
-        />
-      </View>
-      <View alignItems="center" ml={30}>
-        <Text
-          mt={-5}
-          text={props.homeTeamAbbr}
-          typeFace="sourceSansProRegular"
-          fontSize="footnote"
-          color="disabled"
-        />
-        <Text
-          mt={-5}
-          text={String(props.homeTeamScore)}
-          typeFace="klavikaCondensedMedium"
-          fontSize="body"
-        />
-      </View>
-    </View>
+    </>
   );
 };
 
 export const GamePlayByPlayScreen: React.FC<
   GamePlayByPlayScreenProps
 > = props => {
-  const [expandedLogIndex, setExpandedLogIndex] = React.useState(-1);
+  const [logGroups, setLogGroups] = React.useState<LogGroup[]>([]);
+
+  React.useEffect(() => {
+    setLogGroups(
+      props.game.logs.concat(props.game.logs).map(log => {
+        return {
+          log,
+          expanded: false,
+        };
+      }),
+    );
+  }, [props.game.logs]);
 
   return (
     <>
       <View w="full" flex={1} bg="oddLayerSurface" pt={10} alignItems="center">
-        {props.game.logs.concat(props.game.logs).map((logGroup, index) => {
+        {logGroups.map((logGroup, index) => {
           return (
             <View key={index}>
-              {/* <_LogGroupHeader
+              <_LogGroupHeader
+                first={index === 0}
                 log={logGroup.log}
                 expanded={logGroup.expanded}
                 awayTeamAbbr="LR"
@@ -117,9 +195,6 @@ export const GamePlayByPlayScreen: React.FC<
                 homeTeamAbbr="KC"
                 homeTeamScore={10}
                 onPress={() => {
-                  LayoutAnimation.configureNext(
-                    LayoutAnimation.Presets.easeInEaseOut,
-                  );
                   setLogGroups(
                     logGroups.map((thisLogGroup, thisIndex) => {
                       return {
@@ -132,103 +207,7 @@ export const GamePlayByPlayScreen: React.FC<
                     }),
                   );
                 }}
-              /> */}
-              <View
-                row
-                w="full"
-                bg="white"
-                alignItems="flex-start"
-                justifyContent="space-between"
-                borderBottomWidth={1}
-                borderBottomColor="separator"
-                py={15}
-                px={15}>
-                <View rotate={index === expandedLogIndex ? '180deg' : '0deg'}>
-                  <IconButton
-                    icon={
-                      'chevron-down'
-                      // expandedLogSequence === log.sequence
-                      //   ? 'chevron-up'
-                      //   : 'chevron-down'
-                    }
-                    color="primaryDark"
-                    size="xs"
-                    onPress={() => {
-                      LayoutAnimation.configureNext(
-                        LayoutAnimation.Presets.easeInEaseOut,
-                      );
-                      if (expandedLogIndex === index) {
-                        setExpandedLogIndex(-1);
-                      } else {
-                        setExpandedLogIndex(index);
-                      }
-                    }}
-                  />
-                </View>
-                <View pl={15} pr={5}>
-                  <LogoSvg size={20} />
-                </View>
-                <View flex={1}>
-                  <Text
-                    mt={-5}
-                    text="GAME STARTED"
-                    typeFace="klavikaCondensedMedium"
-                    fontSize="body"
-                  />
-                  <Text
-                    mt={-5}
-                    text={logGroup.headline}
-                    typeFace="sourceSansProRegular"
-                    fontSize="caption1"
-                    color="disabled"
-                  />
-                </View>
-                <View alignItems="center">
-                  <Text
-                    mt={-5}
-                    text="LR"
-                    typeFace="sourceSansProRegular"
-                    fontSize="footnote"
-                    color="disabled"
-                  />
-                  <Text
-                    mt={-5}
-                    text={String(props.game.awayTeamScore)}
-                    typeFace="klavikaCondensedMedium"
-                    fontSize="body"
-                  />
-                </View>
-                <View alignItems="center" ml={30}>
-                  <Text
-                    mt={-5}
-                    text="KC"
-                    typeFace="sourceSansProRegular"
-                    fontSize="footnote"
-                    color="disabled"
-                  />
-                  <Text
-                    mt={-5}
-                    text={String(props.game.homeTeamScore)}
-                    typeFace="klavikaCondensedMedium"
-                    fontSize="body"
-                  />
-                </View>
-              </View>
-              <View
-                row
-                h={index === expandedLogIndex ? undefined : 0}
-                borderBottomWidth={index === expandedLogIndex ? 1 : 0}
-                bg="white"
-                w="full"
-                borderBottomColor="separator">
-                <View flex={1} p={15}>
-                  <Text
-                    text={`(Pregame) ${logGroup.details[0]}`}
-                    typeFace="sourceSansProRegular"
-                    fontSize="footnote"
-                  />
-                </View>
-              </View>
+              />
             </View>
           );
         })}

@@ -115,6 +115,7 @@ export interface AnimationProps {
   animatedScale?: {animatedValue: AnimatedValueType; range: number[]};
   animatedScaleX?: {animatedValue: AnimatedValueType; range: number[]};
   animatedOpacity?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedHeight?: {animatedValue: AnimatedValueType; range: number[]};
 }
 
 export interface OpacityProps extends Pick<ViewStyle, 'opacity'> {}
@@ -159,8 +160,9 @@ export class StyleBuilder {
     >;
     others: Animated.AnimatedProps<{
       opacity: ViewStyle['opacity'] | TextStyle['opacity'];
+      height: ViewStyle['height'] | TextStyle['height'];
     }>;
-  } = {transform: [], others: {opacity: undefined}};
+  } = {transform: [], others: {opacity: undefined, height: undefined}};
 
   constructor(public readonly theme: Theme) {}
 
@@ -372,9 +374,19 @@ export class StyleBuilder {
     }
     if (props.animatedOpacity) {
       this.animatedStyleObjects.others = {
+        ...this.animatedStyleObjects.others,
         opacity: props.animatedOpacity.animatedValue.interpolate<number>({
           inputRange: props.animatedOpacity.range.map((_, i) => i),
           outputRange: props.animatedOpacity.range,
+        }),
+      };
+    }
+    if (props.animatedHeight) {
+      this.animatedStyleObjects.others = {
+        ...this.animatedStyleObjects.others,
+        height: props.animatedHeight.animatedValue.interpolate<number>({
+          inputRange: props.animatedHeight.range.map((_, i) => i),
+          outputRange: props.animatedHeight.range,
         }),
       };
     }

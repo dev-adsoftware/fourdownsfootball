@@ -125,28 +125,6 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
           </>
         )}
       </View>
-      <View row justifyContent="space-between" h={90}>
-        <View px={20} pt={10}>
-          <IconButton
-            icon="cogs"
-            color="primary"
-            size="xl"
-            onPress={() => {
-              fadeInScreen.pop();
-            }}
-          />
-        </View>
-        <View px={20} pt={10}>
-          <IconButton
-            icon="times"
-            color="primary"
-            size="3xl"
-            onPress={() => {
-              fadeInScreen.pop();
-            }}
-          />
-        </View>
-      </View>
     </>
   );
 };

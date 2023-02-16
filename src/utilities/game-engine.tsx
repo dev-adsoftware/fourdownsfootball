@@ -113,6 +113,12 @@ export class GameEngine {
     return gameDto.awayOwnerId === ownerId;
   }
 
+  public static isInProgress(game: GameRequestDto | GameDto): boolean {
+    return ![GameState.AwaitingRSVP, GameState.Loading].includes(
+      (game as GameDto).state || (game as GameRequestDto).status,
+    );
+  }
+
   public static getTeamAbbreviation(
     team?: GameDetailExtendedTeamSnapshotDto | GamesByOwnerExtendedTeamDto,
   ) {

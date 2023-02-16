@@ -6,6 +6,7 @@ import {ChildrenProps, OnLayoutProps} from '../../types/types';
 import {
   AnimationProps,
   DebugProps,
+  OverflowProps,
   StyleBuilder,
   TransformProps,
   ViewProps,
@@ -15,6 +16,7 @@ interface ContainerProps
   extends ChildrenProps,
     OnLayoutProps,
     ViewProps,
+    OverflowProps,
     TransformProps,
     AnimationProps {}
 
@@ -28,7 +30,11 @@ export const View: React.FC<ContainerProps> = props => {
     };
     const builder = new StyleBuilder(theme);
     return {
-      static: builder.setViewProps(_props).setDebugProps(_props).build(),
+      static: builder
+        .setViewProps(_props)
+        .setOverflowProps(_props)
+        .setDebugProps(_props)
+        .build(),
       animated: builder
         .setAnimationProps(_props, _props.animated)
         .buildAnimatedStyles(),
@@ -47,6 +53,7 @@ export const View: React.FC<ContainerProps> = props => {
         style.static.ss,
         {transform: style.animated.transform},
         {opacity: style.animated.others.opacity || 1.0},
+        {height: style.animated.others.height || style.static.ss.height},
       ]}>
       {props.children}
     </RNAnimated.View>

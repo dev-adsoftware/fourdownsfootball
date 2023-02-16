@@ -1,5 +1,7 @@
 import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
+import {IconButton} from '../components/buttons/icon-button';
+import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 import {NavPager} from '../components/navigation/nav-pager';
 import {SafeBar} from '../components/primitives/safe-bar';
 import {View} from '../components/primitives/view';
@@ -20,6 +22,7 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [game, setGame] = React.useState<GameDetailQueryResponseDto>();
   const data = useData();
+  const fadeInScreen = useFadeInScreen();
 
   const fetchGameDetail = React.useCallback(
     async (showLoadingIndicator?: boolean) => {
@@ -73,6 +76,28 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
                 },
               ]}
             />
+            <View row justifyContent="space-between" h={90}>
+              <View px={20} pt={10}>
+                <IconButton
+                  icon="cogs"
+                  color="primary"
+                  size="xl"
+                  onPress={() => {
+                    fadeInScreen.pop();
+                  }}
+                />
+              </View>
+              <View px={20} pt={10}>
+                <IconButton
+                  icon="times"
+                  color="primary"
+                  size="3xl"
+                  onPress={() => {
+                    fadeInScreen.pop();
+                  }}
+                />
+              </View>
+            </View>
           </>
         )
       )}
