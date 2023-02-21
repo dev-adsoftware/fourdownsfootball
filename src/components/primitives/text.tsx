@@ -27,7 +27,7 @@ export interface TextProps
     OnLayoutProps,
     AnimationProps,
     TransformProps {
-  text: string;
+  text: string | number;
 }
 
 export const Text: React.FC<TextProps> = props => {

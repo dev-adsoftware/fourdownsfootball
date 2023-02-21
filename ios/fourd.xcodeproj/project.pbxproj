@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* fourdTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* fourdTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-fourd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-fourd.a */; };
 		0F2B6622F20E453FB5AF28FC /* SourceSansPro-BlackIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = D52A8D15DAAE40DDB52694C7 /* SourceSansPro-BlackIt.otf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		239B2941EC5042AD70D5EBE2 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E02F93B75C413529626BFE /* libPods-OneSignalNotificationServiceExtension.a */; };
 		2749BD5829914FF8008B0E97 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2749BD5729914FF8008B0E97 /* NotificationService.swift */; };
 		2749BD5C29914FF8008B0E97 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2749BD5529914FF8008B0E97 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		27EA62CF294CDB20006E4841 /* klavika-condensed-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27EA62CB294CDB1F006E4841 /* klavika-condensed-regular.ttf */; };
@@ -20,17 +20,17 @@
 		27EA62D1294CDB20006E4841 /* klavika-condensed-bold-italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27EA62CD294CDB20006E4841 /* klavika-condensed-bold-italic.ttf */; };
 		290E448CFB7846748373ECDD /* SourceSansPro-SemiboldIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = F01DFA3CED8C4544A480EDF1 /* SourceSansPro-SemiboldIt.otf */; };
 		2D9551F7C9584B2085AA7CC8 /* klavika-condensed-semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0FBD3137C789461B82FB8513 /* klavika-condensed-semibold.ttf */; };
+		5BC1FC6E365C72B7494D0D3F /* libPods-fourd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD919D9C95F0A7F99B71F933 /* libPods-fourd.a */; };
 		5C70413DCC7D42B9AD397725 /* SourceSansPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8ED12A6153A5481FA1281F01 /* SourceSansPro-Bold.otf */; };
 		73BC3CC162024377A6425CD4 /* SourceSansPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 54AD78B7974A49D7A41DCFAB /* SourceSansPro-Semibold.otf */; };
-		7699B88040F8A987B510C191 /* libPods-fourd-fourdTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-fourd-fourdTests.a */; };
 		78ADCB5DC6C8467E96C172EA /* proxima-nova-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8C2419790795F367E334ECE1 /* libPods-fourd-fourdTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6D3F59CCF5001373DE37AE5 /* libPods-fourd-fourdTests.a */; };
 		A6EA7C0EE46F40DCB4FC4277 /* SourceSansPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = EA0E55B3AF5B487ABE4249A3 /* SourceSansPro-Light.otf */; };
 		A6FCE7ABE07440F8A33AB51E /* SourceSansPro-ExtraLightIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08A0CCED1C72418DAEA4D09B /* SourceSansPro-ExtraLightIt.otf */; };
 		C1C44CA9DE4C47BFA815DC16 /* SourceSansPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2ECB71E7047F416B900E7C74 /* SourceSansPro-Black.otf */; };
 		C3EEFD237C7A48ADB2876E5C /* proxima-nova-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */; };
 		C79E7F0454E64A06807894ED /* SourceSansPro-BoldIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 327631864312471E9D3F68FB /* SourceSansPro-BoldIt.otf */; };
-		CFC551038B85B3A8670958E0 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B1235CE758BB7D817A0E1ED /* libPods-OneSignalNotificationServiceExtension.a */; };
 		D3758705954F4F1EA950AC05 /* SourceSansPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BDE94682B82B4414A0026BED /* SourceSansPro-It.otf */; };
 		D6C022DE8D124AB98F54907B /* klavika-condensed-semibold-italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 814A9EB584AD46F08E12574C /* klavika-condensed-semibold-italic.ttf */; };
 		EA7C8C0EE5B04BE8BA6A24A8 /* SourceSansPro-LightIt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47C63C33923044C280D625DF /* SourceSansPro-LightIt.otf */; };
@@ -75,15 +75,16 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* fourdTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fourdTests.m; sourceTree = "<group>"; };
 		08A0CCED1C72418DAEA4D09B /* SourceSansPro-ExtraLightIt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-ExtraLightIt.otf"; path = "../assets/fonts/SourceSansPro-ExtraLightIt.otf"; sourceTree = "<group>"; };
+		0DB1DC8FFA76E80F09FB07C3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		0F5943230CD24B8A9769EB0B /* klavika-condensed-italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "klavika-condensed-italic.ttf"; path = "../assets/fonts/klavika-condensed-italic.ttf"; sourceTree = "<group>"; };
 		0FBD3137C789461B82FB8513 /* klavika-condensed-semibold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "klavika-condensed-semibold.ttf"; path = "../assets/fonts/klavika-condensed-semibold.ttf"; sourceTree = "<group>"; };
+		123051601B2F0A7F966413A5 /* Pods-fourd.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.release.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* fourd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fourd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = fourd/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = fourd/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = fourd/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = fourd/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = fourd/main.m; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-fourd-fourdTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-fourd-fourdTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		213B6D90405D44309C272D5B /* SourceSansPro-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-Regular.otf"; path = "../assets/fonts/SourceSansPro-Regular.otf"; sourceTree = "<group>"; };
 		2749BD5529914FF8008B0E97 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2749BD5729914FF8008B0E97 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -111,27 +112,26 @@
 		27EA62CD294CDB20006E4841 /* klavika-condensed-bold-italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "klavika-condensed-bold-italic.ttf"; path = "../assets/fonts/klavika-condensed-bold-italic.ttf"; sourceTree = "<group>"; };
 		2ECB71E7047F416B900E7C74 /* SourceSansPro-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-Black.otf"; path = "../assets/fonts/SourceSansPro-Black.otf"; sourceTree = "<group>"; };
 		327631864312471E9D3F68FB /* SourceSansPro-BoldIt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-BoldIt.otf"; path = "../assets/fonts/SourceSansPro-BoldIt.otf"; sourceTree = "<group>"; };
-		3B4392A12AC88292D35C810B /* Pods-fourd.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.debug.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.debug.xcconfig"; sourceTree = "<group>"; };
 		47C63C33923044C280D625DF /* SourceSansPro-LightIt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-LightIt.otf"; path = "../assets/fonts/SourceSansPro-LightIt.otf"; sourceTree = "<group>"; };
 		54AD78B7974A49D7A41DCFAB /* SourceSansPro-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-Semibold.otf"; path = "../assets/fonts/SourceSansPro-Semibold.otf"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-fourd.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.release.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-fourd-fourdTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.debug.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-fourd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-fourd.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F060F2F2DC7A4E8EF001F99 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		6B1235CE758BB7D817A0E1ED /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E67B2F7AF97BFD9BD58F43D /* Pods-fourd-fourdTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.debug.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6F798E9CC6EF430F85C61DE6 /* proxima-nova-bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "proxima-nova-bold.ttf"; path = "../assets/fonts/proxima-nova-bold.ttf"; sourceTree = "<group>"; };
 		814A9EB584AD46F08E12574C /* klavika-condensed-semibold-italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "klavika-condensed-semibold-italic.ttf"; path = "../assets/fonts/klavika-condensed-semibold-italic.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = fourd/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-fourd-fourdTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.release.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.release.xcconfig"; sourceTree = "<group>"; };
 		8ED12A6153A5481FA1281F01 /* SourceSansPro-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-Bold.otf"; path = "../assets/fonts/SourceSansPro-Bold.otf"; sourceTree = "<group>"; };
+		94E02F93B75C413529626BFE /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9218F0EC284F178FCC11CB /* SourceSansPro-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-ExtraLight.otf"; path = "../assets/fonts/SourceSansPro-ExtraLight.otf"; sourceTree = "<group>"; };
-		A2A1F43E94366ABAF7B6823B /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
+		A704C3B7AB84655BDFBD1374 /* Pods-fourd.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd.debug.xcconfig"; path = "Target Support Files/Pods-fourd/Pods-fourd.debug.xcconfig"; sourceTree = "<group>"; };
+		AC219E32AB91BE9F0E0B1537 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		BDE94682B82B4414A0026BED /* SourceSansPro-It.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-It.otf"; path = "../assets/fonts/SourceSansPro-It.otf"; sourceTree = "<group>"; };
 		BE04FD8384DE4C2685C75E15 /* proxima-nova-regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "proxima-nova-regular.ttf"; path = "../assets/fonts/proxima-nova-regular.ttf"; sourceTree = "<group>"; };
+		C6D3F59CCF5001373DE37AE5 /* libPods-fourd-fourdTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-fourd-fourdTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D52A8D15DAAE40DDB52694C7 /* SourceSansPro-BlackIt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-BlackIt.otf"; path = "../assets/fonts/SourceSansPro-BlackIt.otf"; sourceTree = "<group>"; };
 		EA0E55B3AF5B487ABE4249A3 /* SourceSansPro-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-Light.otf"; path = "../assets/fonts/SourceSansPro-Light.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F01DFA3CED8C4544A480EDF1 /* SourceSansPro-SemiboldIt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SourceSansPro-SemiboldIt.otf"; path = "../assets/fonts/SourceSansPro-SemiboldIt.otf"; sourceTree = "<group>"; };
+		F6AC7CD192C2753237A3FF85 /* Pods-fourd-fourdTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fourd-fourdTests.release.xcconfig"; path = "Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests.release.xcconfig"; sourceTree = "<group>"; };
+		FD919D9C95F0A7F99B71F933 /* libPods-fourd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-fourd.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,7 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-fourd-fourdTests.a in Frameworks */,
+				8C2419790795F367E334ECE1 /* libPods-fourd-fourdTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,7 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-fourd.a in Frameworks */,
+				5BC1FC6E365C72B7494D0D3F /* libPods-fourd.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFC551038B85B3A8670958E0 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+				239B2941EC5042AD70D5EBE2 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,9 +231,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-fourd.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-fourd-fourdTests.a */,
-				6B1235CE758BB7D817A0E1ED /* libPods-OneSignalNotificationServiceExtension.a */,
+				94E02F93B75C413529626BFE /* libPods-OneSignalNotificationServiceExtension.a */,
+				FD919D9C95F0A7F99B71F933 /* libPods-fourd.a */,
+				C6D3F59CCF5001373DE37AE5 /* libPods-fourd-fourdTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -303,12 +303,12 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-fourd.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-fourd.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-fourd-fourdTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-fourd-fourdTests.release.xcconfig */,
-				5F060F2F2DC7A4E8EF001F99 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */,
-				A2A1F43E94366ABAF7B6823B /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */,
+				0DB1DC8FFA76E80F09FB07C3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */,
+				AC219E32AB91BE9F0E0B1537 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */,
+				A704C3B7AB84655BDFBD1374 /* Pods-fourd.debug.xcconfig */,
+				123051601B2F0A7F966413A5 /* Pods-fourd.release.xcconfig */,
+				6E67B2F7AF97BFD9BD58F43D /* Pods-fourd-fourdTests.debug.xcconfig */,
+				F6AC7CD192C2753237A3FF85 /* Pods-fourd-fourdTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -320,12 +320,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "fourdTests" */;
 			buildPhases = (
-				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
+				06E75715860870273A03834E /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
+				8D3FC83B4CEAF0EC72EE5C11 /* [CP] Embed Pods Frameworks */,
+				E33C916E96701FAB7B941D53 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -341,15 +341,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "fourd" */;
 			buildPhases = (
-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				577F7361DE985C2E1D9DA687 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
 				2749BD5D29914FF8008B0E97 /* Embed Foundation Extensions */,
+				A04AA77D8726793C3B403B40 /* [CP] Embed Pods Frameworks */,
+				9EF970EC0EC79389AB92AB8B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -365,7 +365,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2749BD6029914FF8008B0E97 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
 			buildPhases = (
-				95BE3FA7310E93764E72F5C6 /* [CP] Check Pods Manifest.lock */,
+				4F561E46CC9D621E5C4E6B2B /* [CP] Check Pods Manifest.lock */,
 				2749BD5129914FF8008B0E97 /* Sources */,
 				2749BD5229914FF8008B0E97 /* Frameworks */,
 				2749BD5329914FF8008B0E97 /* Resources */,
@@ -483,46 +483,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		95BE3FA7310E93764E72F5C6 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
+		06E75715860870273A03834E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -544,7 +505,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+		4F561E46CC9D621E5C4E6B2B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		577F7361DE985C2E1D9DA687 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -566,7 +549,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
+		8D3FC83B4CEAF0EC72EE5C11 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -583,7 +566,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-fourd-fourdTests/Pods-fourd-fourdTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
+		9EF970EC0EC79389AB92AB8B /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -600,7 +583,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
+		A04AA77D8726793C3B403B40 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-fourd/Pods-fourd-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E33C916E96701FAB7B941D53 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -682,7 +682,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-fourd-fourdTests.debug.xcconfig */;
+			baseConfigurationReference = 6E67B2F7AF97BFD9BD58F43D /* Pods-fourd-fourdTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -710,7 +710,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-fourd-fourdTests.release.xcconfig */;
+			baseConfigurationReference = F6AC7CD192C2753237A3FF85 /* Pods-fourd-fourdTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -735,7 +735,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-fourd.debug.xcconfig */;
+			baseConfigurationReference = A704C3B7AB84655BDFBD1374 /* Pods-fourd.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -765,7 +765,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-fourd.release.xcconfig */;
+			baseConfigurationReference = 123051601B2F0A7F966413A5 /* Pods-fourd.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -793,7 +793,7 @@
 		};
 		2749BD5E29914FF8008B0E97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5F060F2F2DC7A4E8EF001F99 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */;
+			baseConfigurationReference = 0DB1DC8FFA76E80F09FB07C3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -833,7 +833,7 @@
 		};
 		2749BD5F29914FF8008B0E97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2A1F43E94366ABAF7B6823B /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */;
+			baseConfigurationReference = AC219E32AB91BE9F0E0B1537 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

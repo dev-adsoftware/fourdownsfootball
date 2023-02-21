@@ -4,7 +4,7 @@ import {CreateNameScreen} from './create-name';
 
 interface OnboardingStackProps {}
 
-export const OnboardingStack: React.FC<OnboardingStackProps> = props => {
+export const OnboardingStack: React.FC<OnboardingStackProps> = _props => {
   return (
     <>
       <StackProvider>

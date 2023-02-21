@@ -1,6 +1,6 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
-import { GameState } from '../types/game-state';
+import {IsIn, IsOptional, IsString} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
+import {GameState} from '../types/game-state';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -23,4 +23,4 @@ class Dto extends SequencedDto {
   status: GameState.AwaitingRSVP;
 }
 
-export { Dto as GameRequestDto };
+export {Dto as GameRequestDto};

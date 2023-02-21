@@ -13,7 +13,7 @@ interface CreateAccountScreenProps {}
 
 export const CreateAccountScreen: React.FC<
   CreateAccountScreenProps
-> = props => {
+> = _props => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');

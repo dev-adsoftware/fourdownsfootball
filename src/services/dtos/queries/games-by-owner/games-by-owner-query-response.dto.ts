@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import {Type} from 'class-transformer';
 import {
   IsArray,
   IsObject,
@@ -7,8 +7,16 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { GameDto, GameRequestDto, LeagueDto, OwnerDto, StateDto, TeamDto, TownDto } from '../..';
-import { Dto } from '../../dto';
+import {
+  GameDto,
+  GameRequestDto,
+  LeagueDto,
+  OwnerDto,
+  StateDto,
+  TeamDto,
+  TownDto,
+} from '../..';
+import {Dto} from '../../dto';
 
 export class GamesByOwnerExtendedTownDto extends TownDto {
   @ValidateNested()
@@ -77,17 +85,17 @@ export class GamesByOwnerExtendedGameRequestDto extends GameRequestDto {
 
 export class GamesByOwnerQueryResponseDto extends Dto {
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => GamesByOwnerExtendedGameRequestDto)
   pendingGames: GamesByOwnerExtendedGameRequestDto[];
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => GamesByOwnerExtendedGameDto)
   inProgressGames: GamesByOwnerExtendedGameDto[];
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => GamesByOwnerExtendedGameDto)
   historicalGames: GamesByOwnerExtendedGameDto[];
 

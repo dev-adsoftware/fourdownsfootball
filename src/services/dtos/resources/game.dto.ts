@@ -1,7 +1,7 @@
-import { IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
-import { SequencedDto } from '../sequenced-dto';
-import { Direction } from '../types/directions';
-import { GameState } from '../types/game-state';
+import {IsEnum, IsNumber, IsString, ValidateIf} from 'class-validator';
+import {SequencedDto} from '../sequenced-dto';
+import {Direction} from '../types/directions';
+import {GameState} from '../types/game-state';
 
 class Dto extends SequencedDto {
   @IsString()
@@ -44,11 +44,15 @@ class Dto extends SequencedDto {
   @IsEnum(Direction)
   direction = Direction.North;
 
-  @ValidateIf(o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading)
+  @ValidateIf(
+    o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading,
+  )
   @IsString()
   offenseTeamId: string;
 
-  @ValidateIf(o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading)
+  @ValidateIf(
+    o => o.state !== GameState.AwaitingRSVP && o.state !== GameState.Loading,
+  )
   @IsString()
   actingTeamId: string;
 
@@ -74,4 +78,4 @@ class Dto extends SequencedDto {
   awayTeamTimeRemaining = 0;
 }
 
-export { Dto as GameDto };
+export {Dto as GameDto};

@@ -2,7 +2,7 @@ import React from 'react';
 import uuid from 'react-native-uuid';
 import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 import {useData} from '../providers/data';
-import {GameDto, GameRequestDto, OwnerDto, TeamDto} from '../services/dtos';
+import {GameRequestDto, OwnerDto, TeamDto} from '../services/dtos';
 import {GameState} from '../services/dtos/types/game-state';
 import {ChildrenProps, StateProp} from '../types/types';
 import {SelectGameTypeScreen} from './select-game-type';
@@ -35,6 +35,8 @@ export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
 
   const data = useData();
 
+  const {onGameCreated} = props;
+
   const createGame = React.useCallback(async () => {
     setIsCreatingGame(true);
 
@@ -50,10 +52,10 @@ export const NewGameProvider: React.FC<NewGameProviderProps> = props => {
       lastUpdatedBy: data.owner?.id,
     });
 
-    const newGame = await data.services.games.createGame(game);
-    console.log(newGame);
-    props.onGameCreated();
-  }, [gameType, opponent, team]);
+    await data.services.games.createGame(game);
+    console.log('game creation done');
+    onGameCreated();
+  }, [opponent, team, data.services.games, data.owner, onGameCreated]);
 
   return (
     <NewGameContext.Provider

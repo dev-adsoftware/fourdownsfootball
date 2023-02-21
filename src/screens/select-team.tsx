@@ -13,36 +13,39 @@ import {useNewGame} from './new-game';
 
 interface SelectTeamScreenProps {}
 
-export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
+export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [teams, setTeams] = React.useState<TeamDto[]>([]);
   const [isNewGameCreationConfirmed, setIsNewGameCreationConfirmed] =
     React.useState(false);
 
   const data = useData();
-  const newGame = useNewGame();
-  const fadeInScreen = useFadeInScreen();
+  const {isCreatingGame, createGame, team: newGameTeam} = useNewGame();
+  const {push, pop} = useFadeInScreen();
 
   const fetchTeams = React.useCallback(async () => {
     setIsLoading(true);
     const fetchedTeams = (await data.services.teams.listTeams()).items;
     setTeams(fetchedTeams);
     setIsLoading(false);
-  }, []);
+  }, [data.services.teams]);
 
   React.useEffect(() => {
     fetchTeams();
   }, [fetchTeams]);
 
   React.useEffect(() => {
+    console.log('use effect for game creation');
     if (isNewGameCreationConfirmed) {
-      newGame.createGame();
+      console.log('creating game');
+      setIsNewGameCreationConfirmed(false);
+      createGame();
     }
-  }, [isNewGameCreationConfirmed]);
+  }, [isNewGameCreationConfirmed, createGame]);
 
   React.useEffect(() => {
-    if (newGame.isCreatingGame) {
-      fadeInScreen.push({
+    if (isCreatingGame) {
+      push({
         component: (
           <View flex={1} alignItems="center" justifyContent="center">
             <View>
@@ -53,10 +56,10 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
       });
 
       return () => {
-        fadeInScreen.pop();
+        pop();
       };
     }
-  }, [newGame.isCreatingGame]);
+  }, [isCreatingGame, push, pop]);
 
   return (
     <>
@@ -83,13 +86,15 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
                   borderHorizontalWidth={1}
                   mt={-1}
                   onPress={() => {
-                    newGame.team.set(team);
+                    newGameTeam.set(team);
                     setTimeout(() => {
-                      fadeInScreen.push({
+                      push({
                         component: (
                           <ConfirmActionScreen
                             icon="check-double"
-                            questionText={`Are you sure you want to send\nthis game request?`}
+                            questionText={
+                              'Are you sure you want to send\nthis game request?'
+                            }
                             buttonText="Create game request"
                             onConfirm={() => {
                               setIsNewGameCreationConfirmed(true);
@@ -107,7 +112,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = props => {
                       fontSize="body"
                       color="primaryText"
                     />
-                    {newGame.team.value?.id === team.id && (
+                    {newGameTeam.value?.id === team.id && (
                       <Icon name="check" color="primary" size="2xs" />
                     )}
                   </View>

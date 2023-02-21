@@ -1,20 +1,21 @@
-import { Type } from 'class-transformer';
-import { IsArray, IsObject, IsOptional, ValidateIf, ValidateNested } from 'class-validator';
+import {Type} from 'class-transformer';
+import {IsArray, IsObject, ValidateIf, ValidateNested} from 'class-validator';
 import {
-  GameActionDto,
   GameDto,
-  GameLogDto,
   LeagueDto,
   OwnerDto,
   PlayAptitudeSnapshotDto,
+  PlayCallDto,
   PlayChanceSnapshotDto,
   PlayerSnapshotDto,
+  PlayResultDto,
   PlaySnapshotDto,
+  PossessionDto,
   StateDto,
   TeamSnapshotDto,
   TownDto,
 } from '../..';
-import { GameState } from '../../types/game-state';
+import {GameState} from '../../types/game-state';
 
 export class GameDetailExtendedTownDto extends TownDto {
   @ValidateNested()
@@ -24,7 +25,7 @@ export class GameDetailExtendedTownDto extends TownDto {
 
 export class GameDetailExtendedPlaySnapshotDto extends PlaySnapshotDto {
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => PlayChanceSnapshotDto)
   playChances: PlayChanceSnapshotDto[];
 
@@ -50,36 +51,30 @@ export class GameDetailExtendedTeamSnapshotDto extends TeamSnapshotDto {
   town: GameDetailExtendedTownDto;
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => PlayerSnapshotDto)
   players: PlayerSnapshotDto[];
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => GameDetailExtendedPlaySnapshotDto)
   plays: GameDetailExtendedPlaySnapshotDto[];
 }
 
-export class GameDetailExtendedGameActionDto extends GameActionDto {
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => GameDetailExtendedPlaySnapshotDto)
-  playSnapshot: GameDetailExtendedPlaySnapshotDto;
+export class GameDetailExtendedPlayCallDto extends PlayCallDto {}
+
+export class GameDetailExtendedPlayResultDto extends PlayResultDto {
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => GameDetailExtendedPlayCallDto)
+  playCalls: GameDetailExtendedPlayCallDto[];
 }
 
-export class GameDetailExtendedGameLogDto extends GameLogDto {
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => GameDetailExtendedGameActionDto)
-  initiatingGameAction?: GameDetailExtendedGameActionDto;
-
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => GameDetailExtendedGameActionDto)
-  completingGameAction?: GameDetailExtendedGameActionDto;
+export class GameDetailExtendedPossessionDto extends PossessionDto {
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => GameDetailExtendedPlayResultDto)
+  playResults: GameDetailExtendedPlayResultDto[];
 }
 
 export class GameDetailQueryResponseDto extends GameDto {
@@ -106,7 +101,7 @@ export class GameDetailQueryResponseDto extends GameDto {
   awayTeam?: GameDetailExtendedTeamSnapshotDto;
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => GameDetailExtendedGameLogDto)
-  logs: GameDetailExtendedGameLogDto[];
+  @ValidateNested({each: true})
+  @Type(() => GameDetailExtendedPossessionDto)
+  possessions: GameDetailExtendedPossessionDto[];
 }

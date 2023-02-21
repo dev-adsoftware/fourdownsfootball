@@ -38,6 +38,7 @@ export class Theme {
     transparent: ColorPalette.TRANSPARENT_FULL,
 
     football: ColorPalette.BROWN_500,
+    grass: '#71A92C',
   };
 
   public teamColors: {[key: string]: ColorPalette} = {

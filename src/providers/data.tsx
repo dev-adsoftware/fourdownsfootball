@@ -113,7 +113,6 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   }, [auth.user, fetchOwner]);
 
   React.useEffect(() => {
-    console.log('mounting data provider');
     // addListener({
     //   eventType: 'games',
     //   id: 'data-provider-games-listener',

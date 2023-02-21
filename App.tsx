@@ -18,7 +18,6 @@ import {
 import {AuthStack} from './src/screens/auth-stack';
 import {OnboardingStack} from './src/screens/onboarding-stack';
 import {FadeInScreenProvider} from './src/components/navigation/fade-in-screen';
-import LayoutScreen from './src/screens/layout';
 
 Amplify.configure({
   Auth: {
@@ -43,11 +42,6 @@ const Main = () => {
       return <SplashScreen />;
     case AppState.ONBOARDING:
       return <OnboardingStack />;
-    // return (
-    //   <NavigationContainer theme={theme.mapToNavigation(colorScheme)}>
-    //     <OnboardingStack />
-    //   </NavigationContainer>
-    // );
     default:
       return <MainScreen />;
   }
@@ -64,7 +58,6 @@ const App = () => {
                 <SafeAreaProvider>
                   <FadeInScreenProvider>
                     <Main />
-                    {/* <LayoutScreen /> */}
                   </FadeInScreenProvider>
                 </SafeAreaProvider>
               </DataProvider>

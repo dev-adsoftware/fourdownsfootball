@@ -32,11 +32,10 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
       const fetchedGame = await data.services.games.queryGameDetail(
         new GameDetailQueryArgsDto().init({id: props.gameId}),
       );
-      console.log(fetchedGame);
       setGame(fetchedGame);
       setIsLoading(false);
     },
-    [],
+    [data.services.games, props.gameId],
   );
 
   React.useEffect(() => {
@@ -76,7 +75,7 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
                 },
               ]}
             />
-            <View row justifyContent="space-between" h={90}>
+            <View row justifyContent="space-between" h={90} bg="white">
               <View px={20} pt={10}>
                 <IconButton
                   icon="cogs"

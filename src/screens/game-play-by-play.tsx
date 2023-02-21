@@ -1,23 +1,23 @@
 import React from 'react';
-import {Animated, LayoutAnimation} from 'react-native';
+import {Animated} from 'react-native';
 import {IconButton} from '../components/buttons/icon-button';
-import {Pressable} from '../components/primitives/pressable';
 import {Text} from '../components/primitives/text';
 import {View} from '../components/primitives/view';
 import {LogoSvg} from '../components/svg/logo-svg';
 import {GameDetailQueryResponseDto} from '../services/dtos';
-import {GameDetailExtendedGameLogDto} from '../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {GameDetailExtendedPossessionDto} from '../services/dtos/queries/game-detail/game-detail-query-response.dto';
+import {GameEngine} from '../utilities/game-engine';
 
 interface GamePlayByPlayScreenProps {
   game: GameDetailQueryResponseDto;
 }
 
-interface LogGroup {
-  log: GameDetailExtendedGameLogDto;
+interface Possession {
+  possession: GameDetailExtendedPossessionDto;
   expanded: boolean;
 }
 
-interface _LogGroupHeader extends LogGroup {
+interface _PossessionListItem extends Possession {
   first?: boolean;
   last?: boolean;
   awayTeamAbbr: string;
@@ -27,8 +27,10 @@ interface _LogGroupHeader extends LogGroup {
   onPress: () => void;
 }
 
-const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
+const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
   const [detailHeight, setDetailHeight] = React.useState(0);
+
+  const detailHeightsRef = React.useRef<(number | undefined)[]>([]);
 
   const {current: animationValue} = React.useRef<Animated.Value>(
     new Animated.Value(0),
@@ -48,7 +50,7 @@ const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
         useNativeDriver: false,
       }).start();
     }
-  }, [props.expanded]);
+  }, [props.expanded, animationValue]);
 
   return (
     <>
@@ -88,13 +90,13 @@ const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
         <View flex={1}>
           <Text
             mt={-5}
-            text="GAME STARTED"
+            text={props.possession.headline.toUpperCase()}
             typeFace="klavikaCondensedMedium"
             fontSize="body"
           />
           <Text
             mt={-5}
-            text={props.log.headline}
+            text={props.possession.summary.toUpperCase()}
             typeFace="sourceSansProRegular"
             fontSize="caption1"
             color="disabled"
@@ -132,7 +134,6 @@ const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
         </View>
       </View>
       <View
-        row
         animated
         animatedHeight={{
           animatedValue: animationValue,
@@ -141,24 +142,43 @@ const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
         bg="white"
         w="full"
         overflow="hidden">
-        <View flex={1}>
-          <Text
-            p={15}
-            position="absolute"
-            text={`(Pregame) ${props.log.details[0]}`}
-            typeFace="sourceSansProRegular"
-            fontSize="footnote"
-            onLayout={
-              detailHeight === 0
-                ? e => {
-                    if (detailHeight === 0) {
-                      setDetailHeight(e.nativeEvent.layout.height);
-                    }
+        {props.possession.playResults.map((playResult, index) => {
+          return (
+            <View
+              key={index}
+              h={detailHeightsRef.current[index]}
+              w="full"
+              borderBottomColor="separator"
+              borderBottomWidth={1}>
+              <Text
+                p={15}
+                position="absolute"
+                text={`(${GameEngine.formatGameTime(
+                  playResult.startTimeRemaining,
+                )} - ${GameEngine.getPeriodName(playResult.period)}) ${
+                  playResult.description
+                }`}
+                typeFace="sourceSansProRegular"
+                fontSize="footnote"
+                onLayout={e => {
+                  detailHeightsRef.current[index] = e.nativeEvent.layout.height;
+                  if (
+                    detailHeight === 0 &&
+                    !detailHeightsRef.current.includes(undefined)
+                  ) {
+                    const totalHeight = detailHeightsRef.current.reduce(
+                      (prev, curr) => {
+                        return (prev || 0) + (curr || 0);
+                      },
+                      0,
+                    );
+                    setDetailHeight(totalHeight || 0);
                   }
-                : undefined
-            }
-          />
-        </View>
+                }}
+              />
+            </View>
+          );
+        })}
       </View>
     </>
   );
@@ -167,42 +187,46 @@ const _LogGroupHeader: React.FC<_LogGroupHeader> = props => {
 export const GamePlayByPlayScreen: React.FC<
   GamePlayByPlayScreenProps
 > = props => {
-  const [logGroups, setLogGroups] = React.useState<LogGroup[]>([]);
+  const [possessions, setPossessions] = React.useState<Possession[]>([]);
 
   React.useEffect(() => {
-    setLogGroups(
-      props.game.logs.concat(props.game.logs).map(log => {
+    setPossessions(
+      props.game.possessions.map(possession => {
         return {
-          log,
+          possession,
           expanded: false,
         };
       }),
     );
-  }, [props.game.logs]);
+  }, [props.game.possessions]);
 
   return (
     <>
       <View w="full" flex={1} bg="oddLayerSurface" pt={10} alignItems="center">
-        {logGroups.map((logGroup, index) => {
+        {possessions.map((possession, index) => {
           return (
-            <View key={index}>
-              <_LogGroupHeader
+            <View key={index} w="full">
+              <_PossessionListItemComponent
                 first={index === 0}
-                log={logGroup.log}
-                expanded={logGroup.expanded}
-                awayTeamAbbr="LR"
-                awayTeamScore={0}
-                homeTeamAbbr="KC"
-                homeTeamScore={10}
+                possession={possession.possession}
+                expanded={possession.expanded}
+                awayTeamAbbr={GameEngine.getTeamAbbreviation(
+                  props.game.awayTeam,
+                )}
+                awayTeamScore={props.game.awayTeamScore}
+                homeTeamAbbr={GameEngine.getTeamAbbreviation(
+                  props.game.homeTeam,
+                )}
+                homeTeamScore={props.game.homeTeamScore}
                 onPress={() => {
-                  setLogGroups(
-                    logGroups.map((thisLogGroup, thisIndex) => {
+                  setPossessions(
+                    possessions.map((thisPossession, thisIndex) => {
                       return {
-                        ...thisLogGroup,
+                        ...thisPossession,
                         expanded:
                           thisIndex === index
-                            ? !thisLogGroup.expanded
-                            : thisLogGroup.expanded,
+                            ? !thisPossession.expanded
+                            : thisPossession.expanded,
                       };
                     }),
                   );
@@ -215,3 +239,17 @@ export const GamePlayByPlayScreen: React.FC<
     </>
   );
 };
+
+// games/id/possessions
+// games/id/play-results
+// games/id/play-calls
+// game: { currentPossession }
+// possesion: { number, result }
+// play-result: { }
+// play-call: { id: game-offense/defense-play#, formation, personnel, play, options }
+
+// id format:  gameId-playResultsNumber(do not reset to 0 on new possession)-offense/defense
+// example: uuid-0-offense would be the play-call ids
+//          uuid-0-defense
+//          uuid-0 would be the play-result id
+//          uuid-0 would be the possession id

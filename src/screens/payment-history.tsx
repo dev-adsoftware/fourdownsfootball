@@ -5,7 +5,7 @@ interface PaymentHistoryScreenProps {}
 
 export const PaymentHistoryScreen: React.FC<
   PaymentHistoryScreenProps
-> = props => {
+> = _props => {
   return (
     <>
       <View flex={1} w="full" debugColor="yellow" px={15} />

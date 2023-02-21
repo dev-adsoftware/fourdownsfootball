@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  useWindowDimensions,
-  FlatList as RNFlatList,
-  Animated,
-} from 'react-native';
+import {useWindowDimensions, Animated} from 'react-native';
 import {ChildrenProps} from '../../types/types';
 import {IconButton} from '../buttons/icon-button';
 import {SafeBar} from '../primitives/safe-bar';
@@ -116,17 +112,14 @@ export const StackPager: React.FC<StackPagerProps> = props => {
 
   React.useEffect(() => {
     if (!isInitialized) {
-      console.log('resetting stack pager', isInitialized);
       stack.reset();
       stack.push({component: props.initialPage});
       setIsInitialized(true);
     }
-  }, [props.initialPage]);
+  }, [props.initialPage, isInitialized, stack]);
 
   React.useEffect(() => {
-    console.log(stack.state);
     if (stack.state.currentPageIndex === -1 && isInitialized) {
-      console.log('empty stack');
       props.onStackEmpty && props.onStackEmpty();
     }
     if (stack.state.currentPageIndex === 0) {
@@ -158,7 +151,7 @@ export const StackPager: React.FC<StackPagerProps> = props => {
         useNativeDriver: true,
       }).start();
     }
-  }, [stack.state, isInitialized]);
+  }, [stack.state, isInitialized, childScrollView, parentScrollView, props]);
 
   return (
     <>
@@ -207,7 +200,7 @@ export const StackPager: React.FC<StackPagerProps> = props => {
   );
 };
 
-export const StackToolbar: React.FC<{}> = props => {
+export const StackToolbar: React.FC<{}> = _props => {
   const stack = useStack();
   return (
     <>

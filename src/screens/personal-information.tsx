@@ -11,7 +11,7 @@ interface PersonalInformationScreenProps {}
 
 export const PersonalInformationScreen: React.FC<
   PersonalInformationScreenProps
-> = props => {
+> = () => {
   const data = useData();
   const stack = useStack();
   return (

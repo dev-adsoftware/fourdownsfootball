@@ -1,6 +1,5 @@
 import React from 'react';
 import {useWindowDimensions} from 'react-native';
-import App from '../../App';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleAbbrAvatar} from '../components/avatars/circle-abbr-avatar';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
@@ -26,7 +25,7 @@ import {PersonalInformationScreen} from './personal-information';
 
 interface SettingsScreenProps {}
 
-export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
+export const SettingsScreen: React.FC<SettingsScreenProps> = () => {
   const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   const {version} = useEnv();
@@ -52,13 +51,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
         ),
       });
     }
-  }, [isSigningOut]);
+  }, [isSigningOut, auth, fadeInScreen]);
 
   React.useEffect(() => {
     if (globalState.appState.value === AppState.UNAUTHENTICATED) {
       fadeInScreen.reset();
     }
-  }, [globalState.appState.value]);
+  }, [globalState.appState.value, fadeInScreen]);
 
   return (
     <>
@@ -191,7 +190,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
                 component: (
                   <ConfirmActionScreen
                     icon="sign-out-alt"
-                    questionText={`Are you sure you want\nto sign out?`}
+                    questionText={'Are you sure you want\nto sign out?'}
                     buttonText="Sign out"
                     onConfirm={async () => {
                       setIsSigningOut(true);
@@ -271,7 +270,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
             pt={10}
             mb={height / 3}
             textAlign="center"
-            text={`Copyright 2023 American Dreams Software, LLC.\nAll rights reserved.`}
+            text={
+              'Copyright 2023 American Dreams Software, LLC.\nAll rights reserved.'
+            }
             fontSize="footnote"
             typeFace="sourceSansProRegular"
           />
@@ -287,8 +288,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = props => {
         justifyContent="center">
         <CircleIconButton
           icon="times"
-          onPress={e => {
-            // props.onClose && props.onClose(e);
+          onPress={() => {
             stack.pop();
           }}
           size={60}

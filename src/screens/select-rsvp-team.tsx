@@ -26,14 +26,14 @@ export const SelectRSVPTeamScreen: React.FC<
   const [isRSVPing, setIsRSVPing] = React.useState(false);
 
   const data = useData();
-  const fadeInScreen = useFadeInScreen();
+  const {push, pop, reset} = useFadeInScreen();
 
   const fetchTeams = React.useCallback(async () => {
     setIsLoading(true);
     const fetchedTeams = (await data.services.teams.listTeams()).items;
     setTeams(fetchedTeams);
     setIsLoading(false);
-  }, []);
+  }, [data.services.teams]);
 
   React.useEffect(() => {
     fetchTeams();
@@ -45,13 +45,13 @@ export const SelectRSVPTeamScreen: React.FC<
       selectedTeam!.id,
       data.owner!.id,
     );
-    fadeInScreen.reset();
-  }, [selectedTeam]);
+    reset();
+  }, [data.services.games, props.game, selectedTeam, data.owner, reset]);
 
   React.useEffect(() => {
     if (isRSVPing) {
       sendRSVP();
-      fadeInScreen.push({
+      push({
         component: (
           <View flex={1} alignItems="center" justifyContent="center">
             <View>
@@ -61,7 +61,7 @@ export const SelectRSVPTeamScreen: React.FC<
         ),
       });
     }
-  }, [isRSVPing, sendRSVP]);
+  }, [isRSVPing, sendRSVP, push]);
 
   return (
     <>
@@ -91,11 +91,13 @@ export const SelectRSVPTeamScreen: React.FC<
                   onPress={() => {
                     setSelectedTeam(team);
                     setTimeout(() => {
-                      fadeInScreen.push({
+                      push({
                         component: (
                           <ConfirmActionScreen
                             icon="check-double"
-                            questionText={`Are you sure you want to RSVP\nfor this game?`}
+                            questionText={
+                              'Are you sure you want to RSVP\nfor this game?'
+                            }
                             buttonText="Send RSVP"
                             onConfirm={() => {
                               setIsRSVPing(true);
@@ -133,8 +135,8 @@ export const SelectRSVPTeamScreen: React.FC<
         justifyContent="center">
         <CircleIconButton
           icon="times"
-          onPress={e => {
-            fadeInScreen.pop();
+          onPress={() => {
+            pop();
           }}
           size={60}
         />

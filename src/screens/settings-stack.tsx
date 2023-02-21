@@ -4,7 +4,7 @@ import {SettingsScreen} from './settings';
 
 interface SettingsStackProps {}
 
-export const SettingsStack: React.FC<SettingsStackProps> = props => {
+export const SettingsStack: React.FC<SettingsStackProps> = () => {
   return (
     <>
       <StackProvider>

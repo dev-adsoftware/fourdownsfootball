@@ -1,5 +1,4 @@
 import React from 'react';
-import {IconButton} from '../components/buttons/icon-button';
 import {Link} from '../components/buttons/link';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 import {Icon} from '../components/primitives/icon';
@@ -10,6 +9,7 @@ import {useData} from '../providers/data';
 import {GameDetailQueryResponseDto} from '../services/dtos';
 import {GameState} from '../services/dtos/types/game-state';
 import {GameEngine} from '../utilities/game-engine';
+import {GameFieldScreen} from './game-field';
 import {SelectRSVPTeamScreen} from './select-rsvp-team';
 
 interface GamePlayScreenProps {
@@ -17,8 +17,17 @@ interface GamePlayScreenProps {
 }
 
 export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
-  const fadeInScreen = useFadeInScreen();
+  const {push} = useFadeInScreen();
   const data = useData();
+
+  const gameFieldAnimateFuncRef =
+    React.useRef<(onAnimationFinished: () => void) => void>();
+
+  React.useEffect(() => {
+    if (gameFieldAnimateFuncRef.current) {
+      gameFieldAnimateFuncRef.current(() => {});
+    }
+  }, []);
 
   return (
     <>
@@ -79,7 +88,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 />
                 <Pressable
                   onPress={() => {
-                    fadeInScreen.push({
+                    push({
                       component: <SelectRSVPTeamScreen game={props.game} />,
                     });
                   }}>
@@ -117,11 +126,15 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
           </>
         ) : (
           <>
-            <Text
-              text="game screen"
-              typeFace="sourceSansProRegular"
-              fontSize="body"
-            />
+            <View flex={1} w="full" bg="grass">
+              <GameFieldScreen
+                game={props.game}
+                animateFuncRef={gameFieldAnimateFuncRef}
+                defendingView={
+                  !GameEngine.isOnOffense(props.game, data.owner?.id)
+                }
+              />
+            </View>
           </>
         )}
       </View>

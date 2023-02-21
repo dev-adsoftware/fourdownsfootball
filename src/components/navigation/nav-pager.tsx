@@ -1,13 +1,10 @@
-import {truncate} from 'lodash';
 import React from 'react';
 import {
   ScrollView as RNScrollView,
-  FlatList as RNFlatList,
   LayoutChangeEvent,
   useWindowDimensions,
   Animated,
 } from 'react-native';
-import {FlatList} from '../primitives/flatlist';
 import {Pressable} from '../primitives/pressable';
 import {ScrollView} from '../primitives/scroll-view';
 import {Text} from '../primitives/text';
@@ -96,7 +93,7 @@ export const NavPager: React.FC<NavPagerProps> = props => {
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [currentScreenIndex]);
+  }, [currentScreenIndex, scrollValue]);
 
   return (
     <>

@@ -16,7 +16,7 @@ interface ConfirmActionScreenProps {
 export const ConfirmActionScreen: React.FC<
   ConfirmActionScreenProps
 > = props => {
-  const fadeInScreen = useFadeInScreen();
+  const {pop} = useFadeInScreen();
   return (
     <View flex={1} alignItems="center" justifyContent="center">
       <View>
@@ -33,7 +33,7 @@ export const ConfirmActionScreen: React.FC<
                 color="black"
                 size={30}
                 onPress={() => {
-                  fadeInScreen.pop();
+                  pop();
                 }}
               />
             </View>
@@ -50,7 +50,7 @@ export const ConfirmActionScreen: React.FC<
           <Pressable
             w="full"
             onPress={async () => {
-              fadeInScreen.pop();
+              pop();
               props.onConfirm();
             }}>
             <View

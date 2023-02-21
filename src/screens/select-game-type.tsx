@@ -1,5 +1,4 @@
 import React from 'react';
-import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {useStack} from '../components/navigation/stack-pager';
 import {Icon} from '../components/primitives/icon';
 import {Pressable} from '../components/primitives/pressable';
@@ -12,9 +11,7 @@ import {SelectOpponentScreen} from './select-opponent';
 
 interface SelectGameTypeScreenProps {}
 
-export const SelectGameTypeScreen: React.FC<
-  SelectGameTypeScreenProps
-> = props => {
+export const SelectGameTypeScreen: React.FC<SelectGameTypeScreenProps> = () => {
   const stack = useStack();
   const newGame = useNewGame();
 
@@ -51,7 +48,7 @@ export const SelectGameTypeScreen: React.FC<
               alignItems="center"
               justifyContent="center"
               py={10}>
-              <View w={50}></View>
+              <View w={50} />
               <View flex={1} alignItems="center">
                 <Text
                   text="FRIENDLY"
@@ -90,7 +87,7 @@ export const SelectGameTypeScreen: React.FC<
               alignItems="center"
               justifyContent="center"
               py={10}>
-              <View w={50}></View>
+              <View w={50} />
               <View flex={1} alignItems="center">
                 <Text
                   text="RATED"

@@ -10,11 +10,10 @@ import {useData} from '../providers/data';
 import {OwnerDto} from '../services/dtos';
 import {SafeBar} from '../components/primitives/safe-bar';
 import {AppState, useGlobalState} from '../providers/global-state';
-import {useStack} from '../components/navigation/stack-pager';
 
 interface CreateNameScreenProps {}
 
-export const CreateNameScreen: React.FC<CreateNameScreenProps> = props => {
+export const CreateNameScreen: React.FC<CreateNameScreenProps> = _props => {
   const [firstname, setFirstname] = React.useState('');
   const [lastname, setLastname] = React.useState('');
   const [error, setError] = React.useState('');
@@ -22,7 +21,6 @@ export const CreateNameScreen: React.FC<CreateNameScreenProps> = props => {
 
   const auth = useAuth();
   const data = useData();
-  const stack = useStack();
   const globalState = useGlobalState();
   return (
     <>

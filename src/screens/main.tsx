@@ -1,5 +1,4 @@
 import React from 'react';
-import {SplashScreen} from './splash';
 import {Animated, useWindowDimensions} from 'react-native';
 import {
   TAB_BAR_NEW_GAME_BUTTON_SIZE,
@@ -9,9 +8,7 @@ import {MainTabBar} from '../components/navigation/main-tab-bar';
 import {HomeScreen} from './home';
 import {View} from '../components/primitives/view';
 import {NewGameButton} from '../components/buttons/new-game-button';
-import {NewGameProvider, NewGameScreen} from './new-game';
-import {StackPager, StackProvider} from '../components/navigation/stack-pager';
-import {SelectGameTypeScreen} from './select-game-type';
+import {NewGameScreen} from './new-game';
 import {FriendliesScreen} from './friendlies';
 
 type Properties = {};

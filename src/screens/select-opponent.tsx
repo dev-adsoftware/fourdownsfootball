@@ -13,9 +13,7 @@ import {SelectTeamScreen} from './select-team';
 
 interface SelectOpponentScreenProps {}
 
-export const SelectOpponentScreen: React.FC<
-  SelectOpponentScreenProps
-> = props => {
+export const SelectOpponentScreen: React.FC<SelectOpponentScreenProps> = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [owners, setOwners] = React.useState<OwnerDto[]>([]);
 
@@ -32,7 +30,7 @@ export const SelectOpponentScreen: React.FC<
     });
     setOwners(fetchedOwners);
     setIsLoading(false);
-  }, []);
+  }, [data.services.owners, data.owner]);
 
   React.useEffect(() => {
     fetchOwners();

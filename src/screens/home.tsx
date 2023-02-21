@@ -30,7 +30,7 @@ const TeamsScreen: React.FC<{}> = ({}) => {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
   const data = useData();
-  const fadeInScreen = useFadeInScreen();
+  const {push, pop} = useFadeInScreen();
 
   return (
     <>
@@ -58,13 +58,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
           <View w={75} pt={20} alignItems="center" justifyContent="flex-start">
             <IconButton
               onPress={() => {
-                fadeInScreen.push({
+                push({
                   component: (
                     <StackProvider>
                       <StackPager
                         initialPage={<SettingsScreen />}
                         onStackEmpty={() => {
-                          fadeInScreen.pop();
+                          pop();
                         }}
                       />
                     </StackProvider>

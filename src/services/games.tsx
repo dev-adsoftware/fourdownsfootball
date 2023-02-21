@@ -1,7 +1,6 @@
 import delay from 'delay';
 import {BaseService} from './base-service';
 import {
-  GameActionDto,
   GameDetailQueryArgsDto,
   GameDetailQueryResponseDto,
   GameDto,

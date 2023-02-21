@@ -1,4 +1,4 @@
-import {OwnerDashboardExtendedGameInviteDto} from '../../backup/services/dtos/queries/owner-dashboard/owner-dashboard-query-response.dto';
+import {noop} from 'lodash';
 import {
   GameDetailQueryResponseDto,
   GameDto,
@@ -104,13 +104,25 @@ export class GameEngine {
 
   public static isOnOffense(
     game: GameRequestDto | GameDto,
-    ownerId: string,
+    ownerId: string | undefined,
   ): boolean {
     const gameDto = game as GameDto;
     if (gameDto.offenseTeamId === gameDto.homeTeamId) {
       return gameDto.homeOwnerId === ownerId;
     }
     return gameDto.awayOwnerId === ownerId;
+  }
+
+  public static isHomeTeamOnOffense(game: GameRequestDto | GameDto): boolean {
+    const gameDto = game as GameDto;
+    return gameDto.offenseTeamId === gameDto.homeTeamId;
+  }
+
+  public static flipBallOn(ballOn: number, defendingView: boolean): number {
+    if (defendingView) {
+      return ballOn;
+    }
+    return 100 - ballOn;
   }
 
   public static isInProgress(game: GameRequestDto | GameDto): boolean {
@@ -279,6 +291,7 @@ export class GameEngine {
   public static calcAvgGain(
     chances: PlayChanceSnapshotDto[],
   ): number | undefined {
+    noop(chances);
     return undefined;
   }
 }

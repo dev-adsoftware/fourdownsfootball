@@ -21,13 +21,13 @@ interface FriendliesGamesScreenProps {}
 
 export const FriendliesGamesScreen: React.FC<
   FriendliesGamesScreenProps
-> = props => {
+> = _props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [games, setGames] = React.useState<
     (GamesByOwnerExtendedGameRequestDto | GamesByOwnerExtendedGameDto)[]
   >([]);
   const data = useData();
-  const fadeInScreen = useFadeInScreen();
+  const {push} = useFadeInScreen();
 
   const fetchGameRequestsByOwner = React.useCallback(
     async (showLoadingIndicator?: boolean) => {
@@ -35,7 +35,6 @@ export const FriendliesGamesScreen: React.FC<
         if (showLoadingIndicator) {
           setIsLoading(true);
         }
-        console.log('fetching game requests');
         const fetchedGameRequestsByOwner =
           await data.services.games.queryGamesByOwner(
             new GamesByOwnerQueryArgsDto().init({
@@ -46,12 +45,12 @@ export const FriendliesGamesScreen: React.FC<
         setIsLoading(false);
       }
     },
-    [data.owner],
+    [data.owner, data.services.games],
   );
 
   React.useEffect(() => {
     fetchGameRequestsByOwner();
-  }, []);
+  }, [fetchGameRequestsByOwner]);
   return (
     <>
       <ScrollView flex={1} w="full">
@@ -80,7 +79,7 @@ export const FriendliesGamesScreen: React.FC<
                 <View key={`${game.id}-${index}`} w="full" mt={-1}>
                   <Pressable
                     onPress={() => {
-                      fadeInScreen.push({
+                      push({
                         component: <GameDetailScreen gameId={game.id} />,
                       });
                     }}>
@@ -121,8 +120,24 @@ export const FriendliesGamesScreen: React.FC<
                               fontSize="footnote"
                             />
                           </View>
+                          {!GameEngine.isHomeTeamOnOffense(
+                            game as GamesByOwnerExtendedGameDto,
+                          ) ? (
+                            <View flex={1} pl={10}>
+                              <Icon
+                                name="football-ball"
+                                color="football"
+                                size="xs"
+                              />
+                            </View>
+                          ) : (
+                            <></>
+                          )}
                           <Text
-                            text="7"
+                            text={
+                              (game as GamesByOwnerExtendedGameDto)
+                                .awayTeamScore
+                            }
                             typeFace="klavikaCondensedMedium"
                             fontSize="title2"
                           />
@@ -150,9 +165,8 @@ export const FriendliesGamesScreen: React.FC<
                               fontSize="footnote"
                             />
                           </View>
-                          {GameEngine.isOnOffense(
+                          {GameEngine.isHomeTeamOnOffense(
                             game as GamesByOwnerExtendedGameDto,
-                            data.owner?.id as string,
                           ) ? (
                             <View flex={1} pl={10}>
                               <Icon
@@ -165,7 +179,10 @@ export const FriendliesGamesScreen: React.FC<
                             <></>
                           )}
                           <Text
-                            text="10"
+                            text={
+                              (game as GamesByOwnerExtendedGameDto)
+                                .homeTeamScore
+                            }
                             typeFace="klavikaCondensedMedium"
                             fontSize="title2"
                           />
@@ -203,7 +220,12 @@ export const FriendliesGamesScreen: React.FC<
                         {GameEngine.isInProgress(game) ? (
                           <Text
                             textAlign="center"
-                            text={'OT - 15:00'}
+                            text={`${GameEngine.getPeriodName(
+                              (game as GamesByOwnerExtendedGameDto).period,
+                            )} - ${GameEngine.formatGameTime(
+                              (game as GamesByOwnerExtendedGameDto)
+                                .timeRemaining,
+                            )}`}
                             typeFace="klavikaCondensedRegular"
                             fontSize="caption2"
                           />
