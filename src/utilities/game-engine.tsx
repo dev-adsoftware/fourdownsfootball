@@ -18,7 +18,7 @@ import {PlaySubCategory} from '../services/dtos/types/play-sub-category';
 
 export class GameEngine {
   public static getActingTeam(
-    game: GamesByOwnerExtendedGameDto,
+    game: GamesByOwnerExtendedGameDto | GameDetailQueryResponseDto,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.actingTeamId === game.homeTeamId) {
       return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
@@ -27,7 +27,7 @@ export class GameEngine {
   }
 
   public static getOffenseTeam(
-    game: GamesByOwnerExtendedGameDto,
+    game: GamesByOwnerExtendedGameDto | GameDetailQueryResponseDto,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.offenseTeamId === game.homeTeamId) {
       return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
@@ -35,8 +35,17 @@ export class GameEngine {
     return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
   }
 
+  public static getDefenseTeam(
+    game: GamesByOwnerExtendedGameDto | GameDetailQueryResponseDto,
+  ): GameDetailExtendedTeamSnapshotDto {
+    if (game.offenseTeamId !== game.homeTeamId) {
+      return game.homeTeam as GameDetailExtendedTeamSnapshotDto;
+    }
+    return game.awayTeam as GameDetailExtendedTeamSnapshotDto;
+  }
+
   public static getOwnerTeam(
-    game: GamesByOwnerExtendedGameDto,
+    game: GamesByOwnerExtendedGameDto | GameDetailQueryResponseDto,
     ownerId: string,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.homeTeam?.ownerId === ownerId) {
@@ -46,7 +55,7 @@ export class GameEngine {
   }
 
   public static getOpposingTeam(
-    game: GamesByOwnerExtendedGameDto,
+    game: GamesByOwnerExtendedGameDto | GameDetailQueryResponseDto,
     ownerId: string,
   ): GameDetailExtendedTeamSnapshotDto {
     if (game.homeTeam?.ownerId === ownerId) {
@@ -93,7 +102,7 @@ export class GameEngine {
 
   public static canAct(
     game: GameRequestDto | GameDto,
-    ownerId: string,
+    ownerId: string | undefined,
   ): boolean {
     const gameDto = game as GameDto;
     if (gameDto.actingTeamId === gameDto.homeTeamId) {
@@ -118,11 +127,15 @@ export class GameEngine {
     return gameDto.offenseTeamId === gameDto.homeTeamId;
   }
 
-  public static flipBallOn(ballOn: number, defendingView: boolean): number {
-    if (defendingView) {
-      return ballOn;
+  public static flipBallOn(
+    game: GameRequestDto | GameDto,
+    ownerId: string | undefined,
+  ): number {
+    const gameDto = game as GameDto;
+    if (GameEngine.isOnOffense(gameDto, ownerId)) {
+      return 100 - gameDto.ballOn;
     }
-    return 100 - ballOn;
+    return gameDto.ballOn;
   }
 
   public static isInProgress(game: GameRequestDto | GameDto): boolean {
@@ -219,11 +232,11 @@ export class GameEngine {
 
   public static getFormationName(formation: Formation): string {
     if (formation === Formation.Kickoff) {
-      return 'Kickoff';
+      return 'SPECIAL TEAMS';
     } else if (formation === Formation.KickoffReturn) {
-      return 'Kick Return';
+      return 'SPECIAL TEAMS';
     } else if (formation === Formation.SingleBack) {
-      return 'Single Back';
+      return 'SINGLE BACK';
     } else {
       return `${formation}`;
     }

@@ -31,7 +31,8 @@ export class Theme {
     grayButton: ColorPalette.GRAY_400,
     lightGrayButton: ColorPalette.GRAY_300,
     oddLayerSurface: ColorPalette.GRAY_100,
-    evenLayerSurface: ColorPalette.GRAY_200,
+    evenLayerSurface: ColorPalette.GRAY_300,
+    transparentVeryDark: ColorPalette.TRANSPARENT_800,
     transparentDark: ColorPalette.TRANSPARENT_700,
     transparentMedium: ColorPalette.TRANSPARENT_500,
     transparentLight: ColorPalette.TRANSPARENT_300,
@@ -39,6 +40,12 @@ export class Theme {
 
     football: ColorPalette.BROWN_500,
     grass: '#71A92C',
+
+    playbook: ColorPalette.BROWN_700,
+    actionButton: ColorPalette.AMBER_500,
+
+    portraitSurface: ColorPalette.LIGHT_BLUE_100,
+    skinTone: ColorPalette.BROWN_400,
   };
 
   public teamColors: {[key: string]: ColorPalette} = {
@@ -91,6 +98,9 @@ export class Theme {
     sourceSansProSemibold: {
       fontFamily: 'SourceSansPro-Semibold',
     },
+    sourceSansProBold: {
+      fontFamily: 'SourceSansPro-Bold',
+    },
     // SourceSansPro-Regular
     // SourceSansPro-It
     // SourceSansPro-ExtraLight
@@ -115,6 +125,7 @@ export class Theme {
     xl: 26,
     '2xl': 28,
     '3xl': 30,
+    '4xl': 50,
   };
 
   constructor(colorScheme: ColorSchemeName) {
@@ -162,6 +173,13 @@ export class Theme {
 
     return this.colors.black;
   }
+
+  public getRedGreenGradient = (percent: number): string => {
+    if (percent <= 50) {
+      return `rgba(255,${0 + ((percent * 2) / 100) * 255},0,1)`;
+    }
+    return `rgba(${255 - (((percent - 50) * 2) / 100) * 255},255,0,1)`;
+  };
 }
 
 const ThemeContext = React.createContext<Theme | undefined>(undefined);

@@ -17,6 +17,7 @@ export interface NavPage {
 
 interface NavPagerProps {
   pages: NavPage[];
+  width?: number;
 }
 
 const DISTANCE_BETWEEN_LABELS = 30;
@@ -65,7 +66,11 @@ export const NavPager: React.FC<NavPagerProps> = props => {
     new Animated.Value(0),
   );
 
-  const {width} = useWindowDimensions();
+  const {width: windowWidth} = useWindowDimensions();
+  const width = React.useMemo(
+    () => props.width || windowWidth,
+    [props.width, windowWidth],
+  );
 
   React.useEffect(() => {
     if (isLayoutComplete && scrollBarWidth === DEFAULT_SCROLLBAR_WIDTH) {

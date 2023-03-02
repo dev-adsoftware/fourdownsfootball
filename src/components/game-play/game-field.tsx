@@ -11,20 +11,26 @@ import Svg, {
   Text,
   TextPath,
 } from 'react-native-svg';
-import {View} from '../components/primitives/view';
+import {View} from '../primitives/view';
+import {useTheme} from '../../providers/theme';
 // import {View} from '../components/primitives/view';
-import {GameDetailQueryResponseDto} from '../services/dtos';
-import {AssignmentDto} from '../services/dtos/resources/play.dto';
-import {Alignment} from '../services/dtos/types/alignment';
-import {Direction} from '../services/dtos/types/directions';
-import {GameEngine} from '../utilities/game-engine';
+import {AssignmentDto} from '../../services/dtos/resources/play.dto';
+import {Alignment} from '../../services/dtos/types/alignment';
+import {Direction} from '../../services/dtos/types/directions';
 
-interface GameFieldScreenProps {
-  game: GameDetailQueryResponseDto;
+interface GameFieldProps {
+  ballOn: {previous: number; current: number};
+  direction: Direction;
+  homeTeamName: string;
+  homeTeamEndZoneColor: string;
+  awayTeamName: string;
+  awayTeamEndZoneColor: string;
+  offenseAssignments: AssignmentDto[];
+  defenseAssignments: AssignmentDto[];
+  defendingView: boolean;
   animateFuncRef: React.MutableRefObject<
     ((onAnimationFinished: () => void) => void) | undefined
   >;
-  defendingView: boolean;
 }
 
 const huddleAssignments = [
@@ -496,7 +502,7 @@ const renderDefensePlayer = (
 const calculateViewBoxYPos = (yardLine: number, defendingView: boolean) => {
   const viewBoxYPos = Math.min(
     170,
-    Math.max(0, 2 * (yardLine - 12 + (defendingView ? 9 : 0))),
+    Math.max(0, 2 * (yardLine - 22 + (defendingView ? 18 : 0))),
   );
   return viewBoxYPos;
 };
@@ -506,37 +512,31 @@ const grassColor = '#71A92C';
 
 const aspectRatio = 4;
 
-export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
-  const [prevYardLine, setPrevYardLine] = React.useState(0);
-
+export const GameField: React.FC<GameFieldProps> = props => {
   const svgRef = React.useRef<Svg | null>(null);
 
-  const offenseAssignments: AssignmentDto[] = [];
-  const defenseAssignments: AssignmentDto[] = [];
-
+  const theme = useTheme();
   const {width} = useWindowDimensions();
 
   const {current: animationPercent} = React.useRef(new Animated.Value(0));
 
   const animateViewBox = React.useCallback(
     (onFinished: () => void) => {
-      if (prevYardLine !== props.game.ballOn) {
+      if (props.ballOn.previous !== props.ballOn.current) {
         animationPercent.setValue(0);
         Animated.timing(animationPercent, {
           toValue: 1,
-          duration: Math.abs(prevYardLine - props.game.ballOn) * 10,
+          duration: Math.abs(props.ballOn.previous - props.ballOn.current) * 10,
           useNativeDriver: true,
           easing: Easing.linear,
         }).start(({finished}) => {
-          setPrevYardLine(props.game.ballOn);
-          // animationPercent.removeAllListeners();
           if (finished) {
             onFinished();
           }
         });
       }
     },
-    [animationPercent, props.game.ballOn, prevYardLine],
+    [animationPercent, props.ballOn],
   );
 
   const animate = React.useCallback(
@@ -554,10 +554,6 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
     props.animateFuncRef.current = animate;
   }, [animate, props.animateFuncRef]);
 
-  const translatedYardLine = React.useMemo((): number => {
-    return GameEngine.flipBallOn(props.game.ballOn, props.defendingView);
-  }, [props.game.ballOn, props.defendingView]);
-
   return (
     <View overflow="hidden">
       <View
@@ -566,12 +562,9 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
           animatedValue: animationPercent,
           range: [
             -aspectRatio *
-              calculateViewBoxYPos(
-                GameEngine.flipBallOn(prevYardLine, props.defendingView),
-                props.defendingView,
-              ),
+              calculateViewBoxYPos(props.ballOn.previous, props.defendingView),
             -aspectRatio *
-              calculateViewBoxYPos(translatedYardLine, props.defendingView),
+              calculateViewBoxYPos(props.ballOn.current, props.defendingView),
           ],
         }}>
         <Svg
@@ -597,20 +590,15 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
               stroke={'white'}
               strokeWidth="1"
               fill={
-                'blue'
-                //   (
-                //     theme.colors as {
-                //       [x: string]: string;
-                //     }
-                //   )[
-                //     defendingView
-                //       ? direction === Direction.North
-                //         ? homeTeamPrimaryColor.toLowerCase()
-                //         : awayTeamPrimaryColor.toLowerCase()
-                //       : direction === Direction.North
-                //       ? awayTeamPrimaryColor.toLowerCase()
-                //       : homeTeamPrimaryColor.toLowerCase()
-                //   ]
+                theme.teamColors[
+                  props.defendingView
+                    ? props.direction === Direction.North
+                      ? props.homeTeamEndZoneColor.toLowerCase()
+                      : props.awayTeamEndZoneColor.toLowerCase()
+                    : props.direction === Direction.North
+                    ? props.awayTeamEndZoneColor.toLowerCase()
+                    : props.homeTeamEndZoneColor.toLowerCase()
+                ]
               }
             />
             <Text
@@ -621,12 +609,12 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
               y="14"
               textAnchor="middle">
               {props.defendingView
-                ? props.game.direction === Direction.North
-                  ? props.game.homeTeam?.nickname.toUpperCase()
-                  : props.game.awayTeam?.nickname.toUpperCase()
-                : props.game.direction === Direction.North
-                ? props.game.awayTeam?.nickname.toUpperCase()
-                : props.game.homeTeam?.nickname.toUpperCase()}
+                ? props.direction === Direction.North
+                  ? props.homeTeamName.toUpperCase()
+                  : props.awayTeamName.toUpperCase()
+                : props.direction === Direction.North
+                ? props.awayTeamName.toUpperCase()
+                : props.homeTeamName.toUpperCase()}
             </Text>
             <Rect
               x="0"
@@ -636,20 +624,15 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
               stroke={'white'}
               strokeWidth="1"
               fill={
-                'blue'
-                //   (
-                //     theme.colors as {
-                //       [x: string]: string;
-                //     }
-                //   )[
-                //     defendingView
-                //       ? direction === Direction.North
-                //         ? awayTeamPrimaryColor.toLowerCase()
-                //         : homeTeamPrimaryColor.toLowerCase()
-                //       : direction === Direction.North
-                //       ? homeTeamPrimaryColor.toLowerCase()
-                //       : awayTeamPrimaryColor.toLowerCase()
-                //   ]
+                theme.teamColors[
+                  props.defendingView
+                    ? props.direction === Direction.North
+                      ? props.awayTeamEndZoneColor.toLowerCase()
+                      : props.homeTeamEndZoneColor.toLowerCase()
+                    : props.direction === Direction.North
+                    ? props.homeTeamEndZoneColor.toLowerCase()
+                    : props.awayTeamEndZoneColor.toLowerCase()
+                ]
               }
             />
             <Defs>
@@ -662,12 +645,12 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
               textAnchor="middle">
               <TextPath href={'#homeTeamEndzone'} startOffset="50%">
                 {props.defendingView
-                  ? props.game.direction === Direction.North
-                    ? props.game.awayTeam?.nickname.toUpperCase()
-                    : props.game.homeTeam?.nickname.toUpperCase()
-                  : props.game.direction === Direction.North
-                  ? props.game.homeTeam?.nickname.toUpperCase()
-                  : props.game.awayTeam?.nickname.toUpperCase()}
+                  ? props.direction === Direction.North
+                    ? props.awayTeamName.toUpperCase()
+                    : props.homeTeamName.toUpperCase()
+                  : props.direction === Direction.North
+                  ? props.homeTeamName.toUpperCase()
+                  : props.awayTeamName.toUpperCase()}
               </TextPath>
             </Text>
             {[...Array(20)].map((value: any, index: number) => {
@@ -676,28 +659,28 @@ export const GameFieldScreen: React.FC<GameFieldScreenProps> = props => {
             {[...Array(100)].map((value: any, index: number) => {
               return renderHashMark(index);
             })}
-            {renderYardLine(translatedYardLine, 'blue')}
+            {renderYardLine(props.ballOn.current, 'blue')}
             {/* {renderYardLine(40, theme.colors.yellow)} */}
             {renderYardMarkers()}
 
             <G>
-              {(offenseAssignments.length > 0
-                ? offenseAssignments
+              {(props.offenseAssignments.length > 0
+                ? props.offenseAssignments
                 : huddleAssignments
               ).map((assignment: AssignmentDto | {alignment: Alignment}) => {
                 return renderOffensePlayer(
                   assignment.alignment,
-                  translatedYardLine,
+                  props.ballOn.current,
                   props.defendingView,
                 );
               })}
-              {(defenseAssignments.length > 0
-                ? defenseAssignments
+              {(props.defenseAssignments.length > 0
+                ? props.defenseAssignments
                 : huddleAssignments
               ).map((assignment: AssignmentDto | {alignment: Alignment}) => {
                 return renderDefensePlayer(
                   assignment.alignment,
-                  translatedYardLine,
+                  props.ballOn.current,
                   props.defendingView,
                 );
               })}

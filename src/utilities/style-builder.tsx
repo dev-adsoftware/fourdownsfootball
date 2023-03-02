@@ -43,6 +43,7 @@ export interface PaddingProps {
 
 export interface BackgroundProps {
   bg?: ThemeColorKey;
+  customBg?: string;
 }
 
 export interface ColorProps {
@@ -116,6 +117,7 @@ export interface AnimationProps {
   animatedScaleX?: {animatedValue: AnimatedValueType; range: number[]};
   animatedOpacity?: {animatedValue: AnimatedValueType; range: number[]};
   animatedHeight?: {animatedValue: AnimatedValueType; range: number[]};
+  animatedWidth?: {animatedValue: AnimatedValueType; range: number[]};
 }
 
 export interface OpacityProps extends Pick<ViewStyle, 'opacity'> {}
@@ -161,8 +163,12 @@ export class StyleBuilder {
     others: Animated.AnimatedProps<{
       opacity: ViewStyle['opacity'] | TextStyle['opacity'];
       height: ViewStyle['height'] | TextStyle['height'];
+      width: ViewStyle['width'] | TextStyle['width'];
     }>;
-  } = {transform: [], others: {opacity: undefined, height: undefined}};
+  } = {
+    transform: [],
+    others: {opacity: undefined, height: undefined, width: undefined},
+  };
 
   constructor(public readonly theme: Theme) {}
 
@@ -214,7 +220,9 @@ export class StyleBuilder {
   public setBackgroundProps<P extends BackgroundProps>(props: P): StyleBuilder {
     this.styleObject = {
       ...this.styleObject,
-      backgroundColor: props.bg ? this.theme.colors[props.bg] : undefined,
+      backgroundColor: props.bg
+        ? this.theme.colors[props.bg]
+        : props.customBg || undefined,
     };
     return this;
   }
@@ -284,18 +292,22 @@ export class StyleBuilder {
       borderTopLeftRadius:
         convertCircleToNumber(props.borderTopLeftRadius) ||
         convertCircleToNumber(props.borderTopRadius) ||
+        convertCircleToNumber(props.borderLeftRadius) ||
         convertCircleToNumber(props.borderRadius),
       borderTopRightRadius:
         convertCircleToNumber(props.borderTopRightRadius) ||
         convertCircleToNumber(props.borderTopRadius) ||
+        convertCircleToNumber(props.borderRightRadius) ||
         convertCircleToNumber(props.borderRadius),
       borderBottomLeftRadius:
         convertCircleToNumber(props.borderBottomLeftRadius) ||
         convertCircleToNumber(props.borderBottomRadius) ||
+        convertCircleToNumber(props.borderLeftRadius) ||
         convertCircleToNumber(props.borderRadius),
       borderBottomRightRadius:
         convertCircleToNumber(props.borderBottomRightRadius) ||
         convertCircleToNumber(props.borderBottomRadius) ||
+        convertCircleToNumber(props.borderRightRadius) ||
         convertCircleToNumber(props.borderRadius),
     };
     return this;
@@ -387,6 +399,15 @@ export class StyleBuilder {
         height: props.animatedHeight.animatedValue.interpolate<number>({
           inputRange: props.animatedHeight.range.map((_, i) => i),
           outputRange: props.animatedHeight.range,
+        }),
+      };
+    }
+    if (props.animatedWidth) {
+      this.animatedStyleObjects.others = {
+        ...this.animatedStyleObjects.others,
+        width: props.animatedWidth.animatedValue.interpolate<number>({
+          inputRange: props.animatedWidth.range.map((_, i) => i),
+          outputRange: props.animatedWidth.range,
         }),
       };
     }

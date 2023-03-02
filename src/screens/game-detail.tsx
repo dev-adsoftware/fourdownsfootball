@@ -12,7 +12,7 @@ import {
 } from '../services/dtos';
 import {GamePlayScreen} from './game-play';
 import {GamePlayByPlayScreen} from './game-play-by-play';
-import {GameScoreboardScreen} from './game-scoreboard';
+import {GameScoreboardHeader} from '../components/headers/game-scoreboard';
 
 interface GameDetailScreenProps {
   gameId: string;
@@ -54,7 +54,7 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
       ) : (
         game && (
           <>
-            <GameScoreboardScreen game={game} />
+            <GameScoreboardHeader game={game} />
             <NavPager
               pages={[
                 {
@@ -75,22 +75,24 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
                 },
               ]}
             />
-            <View row justifyContent="space-between" h={90} bg="white">
-              <View px={20} pt={10}>
+            <View row justifyContent="space-between" bg="white" px={10} pb={15}>
+              <View>
                 <IconButton
                   icon="cogs"
                   color="primary"
                   size="xl"
+                  pressableAreaPadding={20}
                   onPress={() => {
                     fadeInScreen.pop();
                   }}
                 />
               </View>
-              <View px={20} pt={10}>
+              <View>
                 <IconButton
                   icon="times"
                   color="primary"
                   size="3xl"
+                  pressableAreaPadding={20}
                   onPress={() => {
                     fadeInScreen.pop();
                   }}

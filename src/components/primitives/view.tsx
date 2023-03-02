@@ -54,6 +54,7 @@ export const View: React.FC<ContainerProps> = props => {
         {transform: style.animated.transform},
         {opacity: style.animated.others.opacity || 1.0},
         {height: style.animated.others.height || style.static.ss.height},
+        {width: style.animated.others.width || style.static.ss.width},
       ]}>
       {props.children}
     </RNAnimated.View>

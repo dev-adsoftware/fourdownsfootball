@@ -1,16 +1,16 @@
 import React from 'react';
-import {CircleAbbrAvatar} from '../components/avatars/circle-abbr-avatar';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
-import {GameDetailQueryResponseDto} from '../services/dtos';
-import {GameEngine} from '../utilities/game-engine';
+import {CircleAbbrAvatar} from '../avatars/circle-abbr-avatar';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
+import {GameDetailQueryResponseDto} from '../../services/dtos';
+import {GameEngine} from '../../utilities/game-engine';
 
-interface GameScoreboardScreenProps {
+interface GameScoreboardHeaderProps {
   game: GameDetailQueryResponseDto;
 }
 
-export const GameScoreboardScreen: React.FC<
-  GameScoreboardScreenProps
+export const GameScoreboardHeader: React.FC<
+  GameScoreboardHeaderProps
 > = props => {
   return (
     <View
