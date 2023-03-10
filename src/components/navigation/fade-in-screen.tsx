@@ -1,7 +1,7 @@
 import React from 'react';
 import {Animated} from 'react-native';
-import {ChildrenProps} from '../../types/types';
-import {View} from '../primitives/view';
+import {ChildrenProps} from '../../types';
+import {View} from '../../primitives/view';
 
 interface FadeInScreenPage {
   component: React.ReactNode;

@@ -3,15 +3,16 @@ import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Link} from '../components/buttons/link';
 import {Input} from '../components/inputs/input';
-import {SafeBar} from '../components/primitives/safe-bar';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {SafeBar} from '../primitives/safe-bar';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import {LogoSvg} from '../components/svg/logo-svg';
 import {useAuth} from '../providers/auth';
 import validate from 'validate.js';
-import {SAFE_AREA_PADDING_BOTTOM} from '../constants/safe-area';
+import {SAFE_AREA_PADDING_BOTTOM} from '../constants';
 import {CreateAccountScreen} from './create-account';
 import {useStack} from '../components/navigation/stack-pager';
+import {HorizontalSeparator} from '../components/separators/horizontal-separator';
 
 interface SignInScreenProperties {}
 
@@ -40,8 +41,8 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
             <View pl={10}>
               <Text
                 typeFace="klavikaCondensedBoldItalic"
-                fontSize="title1"
-                color="primaryText"
+                fontSize={24}
+                color="darkText"
                 text="SIGN IN"
               />
             </View>
@@ -58,7 +59,7 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
               }}
             />
           </View>
-          <View flex="none" h={180} justifyContent="space-between" pt={30}>
+          <View flex="none" justifyContent="space-between" pt={30}>
             <Input
               label="Email"
               autoCapitalize="none"
@@ -71,6 +72,7 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
                 setUsername(text);
               }}
             />
+            <HorizontalSeparator thickness={0} margin={10} />
             <Input
               label="Password"
               autoCapitalize="none"
@@ -86,18 +88,15 @@ export const SignInScreen: React.FC<SignInScreenProperties> = () => {
             />
           </View>
           <View flex="none" pl={3} pt={3} h={20}>
-            {error ? (
-              <Text fontSize="footnote" text={error} color="error" />
-            ) : (
-              <></>
-            )}
+            {error ? <Text fontSize={14} text={error} color="error" /> : <></>}
           </View>
           <View>
-            <View row justifyContent="flex-end">
+            <View row h={40} justifyContent="flex-end">
               {isProcessing ? (
                 <Spinner />
               ) : (
                 <CircleIconButton
+                  size={14}
                   icon="arrow-right"
                   onPress={async () => {
                     if (

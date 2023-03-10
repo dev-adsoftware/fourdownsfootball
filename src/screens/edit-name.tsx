@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from '../components/primitives/view';
+import {View} from '../primitives/view';
 
 interface EditNameScreenProps {}
 

@@ -11,7 +11,7 @@ import Svg, {
   Text,
   TextPath,
 } from 'react-native-svg';
-import {View} from '../primitives/view';
+import {View} from '../../primitives/view';
 import {useTheme} from '../../providers/theme';
 // import {View} from '../components/primitives/view';
 import {AssignmentDto} from '../../services/dtos/resources/play.dto';

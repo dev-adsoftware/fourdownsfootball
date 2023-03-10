@@ -1,22 +1,24 @@
 import React from 'react';
-import {IconButton} from '../components/buttons/icon-button';
 import {Link} from '../components/buttons/link';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../components/primitives/icon';
-import {Pressable} from '../components/primitives/pressable';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
-import {ProgressBar} from '../components/progress-indicators/progress-bar';
+import {Icon} from '../primitives/icon';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import {PlayerCarousel} from '../components/scrollables/player-carousel';
 import {useData} from '../providers/data';
-import {useTheme} from '../providers/theme';
-import {GameDetailQueryResponseDto, PlayerSnapshotDto} from '../services/dtos';
+import {
+  GameDetailQueryResponseDto,
+  PlayCallDto,
+  PlayerSnapshotDto,
+} from '../services/dtos';
 import {GameState} from '../services/dtos/types/game-state';
 import {GameEngine} from '../utilities/game-engine';
 import {GameField} from '../components/game-play/game-field';
 import {SelectRSVPTeamScreen} from './select-rsvp-team';
 import {GameControlPanel} from '../components/game-play/game-control-panel';
 import {Alignment} from '../services/dtos/types/alignment';
+import {OpponentToolbar} from '../components/game-play/opponent-toolbar';
+import {OwnerToolbar} from '../components/game-play/owner-toolbar';
 
 interface GamePlayScreenProps {
   game: GameDetailQueryResponseDto;
@@ -28,7 +30,6 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
 
   const {push} = useFadeInScreen();
   const data = useData();
-  const theme = useTheme();
 
   const gameFieldAnimateFuncRef =
     React.useRef<(onAnimationFinished: () => void) => void>();
@@ -38,12 +39,6 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
       gameFieldAnimateFuncRef.current(() => {});
     }
   }, [props.game]);
-
-  const formatTime = React.useCallback((seconds: number): string => {
-    return `${seconds / (24 * 3600)} days, ${
-      (seconds % (24 * 3600)) / 3600
-    } hours, ${((seconds % (24 * 3600)) % 3600) / 60} min, ${seconds % 60} sec`;
-  }, []);
 
   const ownerTeam = React.useMemo(
     () => GameEngine.getOwnerTeam(props.game, data.owner!.id),
@@ -55,10 +50,10 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
     [props.game, data.owner],
   );
 
-  const actingTeam = React.useMemo(
-    () => GameEngine.getActingTeam(props.game),
-    [props.game],
-  );
+  // const actingTeam = React.useMemo(
+  //   () => GameEngine.getActingTeam(props.game),
+  //   [props.game],
+  // );
 
   const offenseTeam = React.useMemo(
     () => GameEngine.getOffenseTeam(props.game),
@@ -87,7 +82,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
           <View flex={1} alignItems="center" justifyContent="space-between">
             <View alignItems="center">
               <View py={20}>
-                <Icon name="hourglass-half" color="primary" size="3xl" />
+                <Icon icon="hourglass-half" color="primary" size={20} />
               </View>
               <Text
                 text={`Awaiting RSVP from ${
@@ -95,7 +90,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                     ? props.game.awayOwner.firstName
                     : props.game.homeOwner.firstName
                 }`}
-                fontSize="body"
+                fontSize={17}
                 typeFace="sourceSansProRegular"
               />
               <View
@@ -109,11 +104,11 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 <Text
                   text="NUDGE"
                   typeFace="klavikaCondensedBoldItalic"
-                  fontSize="title3"
+                  fontSize={20}
                   color="white"
                   mr={10}
                 />
-                <Icon name="hand-point-right" color="white" size="xl" />
+                <Icon icon="hand-point-right" color="white" size={20} />
               </View>
             </View>
             <View pb={30}>
@@ -125,7 +120,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
             <View flex={1} alignItems="center" justifyContent="space-between">
               <View alignItems="center">
                 <View py={20}>
-                  <Icon name="envelope" color="primary" size="3xl" />
+                  <Icon icon="envelope" color="primary" size={24} />
                 </View>
                 <Text
                   textAlign="center"
@@ -134,10 +129,10 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                       ? props.game.homeOwner.firstName
                       : props.game.awayOwner.firstName
                   } invited you to play a game.\nRSVP to start the game.`}
-                  fontSize="body"
+                  fontSize={17}
                   typeFace="sourceSansProRegular"
                 />
-                <Pressable
+                <View
                   onPress={() => {
                     push({
                       component: <SelectRSVPTeamScreen game={props.game} />,
@@ -154,13 +149,13 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                     <Text
                       text="RSVP"
                       typeFace="klavikaCondensedBoldItalic"
-                      fontSize="title3"
+                      fontSize={20}
                       color="white"
                       mr={10}
                     />
-                    <Icon name="reply" color="white" size="xs" />
+                    <Icon icon="reply" color="white" size={12} />
                   </View>
-                </Pressable>
+                </View>
               </View>
               <View pb={30}>
                 <Link text="REJECT INVITATION" onPress={() => {}} />
@@ -172,57 +167,19 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
             <Text
               text="loading screen"
               typeFace="sourceSansProRegular"
-              fontSize="body"
+              fontSize={17}
             />
           </>
         ) : (
           <>
-            <View
-              row
-              alignItems="center"
-              justifyContent="space-between"
-              py={5}
-              w="full"
-              bg="oddLayerSurface"
-              borderBottomColor="separator"
-              borderBottomWidth={1}>
-              <View row alignItems="center" pl={15}>
-                <Icon name="stopwatch" color="primaryText" size="2xs" />
-                <Text
-                  pl={5}
-                  text={formatTime(props.game.homeTeamTimeRemaining)}
-                  typeFace="sourceSansProRegular"
-                  fontSize="caption2"
-                />
-              </View>
-              <View flex={1} bg="evenLayerSurface" />
-              <View
-                row
-                justifyContent="space-between"
-                w={50}
-                mr={15}
-                bg="primary"
-                px={8}
-                py={3}
-                borderRadius={5}>
-                <IconButton
-                  icon="users"
-                  color="white"
-                  size="2xs"
-                  onPress={() => {
-                    setIsOpposingTeamCarouselVisible(
-                      !isOpposingTeamCarouselVisible,
-                    );
-                  }}
-                />
-                <IconButton
-                  icon="caret-down"
-                  color="white"
-                  size="2xs"
-                  onPress={() => {}}
-                />
-              </View>
-            </View>
+            <OpponentToolbar
+              timeRemaining={props.game.homeTeamTimeRemaining}
+              onPressHuddleButton={() => {
+                setIsOpposingTeamCarouselVisible(
+                  !isOpposingTeamCarouselVisible,
+                );
+              }}
+            />
             <View flex={1} w="full" bg="grass">
               <View
                 position="absolute"
@@ -257,6 +214,19 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
             <GameControlPanel
               isWaitingForOpponent={!canAct}
               plays={ownerTeam.plays}
+              currentPlayCall={new PlayCallDto().init({
+                id: `${props.game.id}-${String(
+                  Number(props.game.sequence) + 1,
+                )}-${isOnOffense ? 'offense' : 'defense'}`,
+                sequence: '0',
+                lastUpdateDate: new Date().toISOString(),
+                lastUpdatedBy: data.owner!.id,
+                gameId: props.game.id,
+                possessionNumber: props.game.possessions.length,
+                playResultNumber: Number(props.game.sequence) + 1,
+                playSnapshotId: ownerTeam.plays[0].id,
+                assignments: ownerTeam.plays[0].assignments,
+              })}
             />
             <PlayerCarousel
               players={
@@ -276,42 +246,10 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                   : ownerTeam.players
               }
             />
-            <View
-              row
-              alignItems="center"
-              justifyContent="space-between"
-              py={5}
-              w="full"
-              bg="oddLayerSurface"
-              borderTopColor="separator"
-              borderTopWidth={1}>
-              <View row alignItems="center" pl={15}>
-                <Icon name="stopwatch" color="primaryText" size="2xs" />
-                <Text
-                  pl={5}
-                  text={formatTime(props.game.awayTeamTimeRemaining)}
-                  typeFace="sourceSansProRegular"
-                  fontSize="caption2"
-                />
-              </View>
-              <View flex={1} bg="evenLayerSurface" />
-              <View>
-                <IconButton
-                  icon="tachometer-alt"
-                  color="primaryText"
-                  size="2xs"
-                  onPress={() => {}}
-                />
-              </View>
-              <View pl={5} pr={15}>
-                <ProgressBar
-                  unfilledColor="black"
-                  filledColor={theme.getRedGreenGradient(props.game.momentum)}
-                  percentComplete={props.game.momentum}
-                  height={12}
-                />
-              </View>
-            </View>
+            <OwnerToolbar
+              timeRemaining={props.game.awayTeamTimeRemaining}
+              momentum={props.game.momentum}
+            />
           </>
         )}
       </View>

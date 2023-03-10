@@ -7,10 +7,9 @@ import {
   LayoutChangeEvent,
 } from 'react-native';
 import {MathExtra} from '../../utilities/math-extra';
-import {View} from '../primitives/view';
-import {Pressable} from '../primitives/pressable';
-import {Text} from '../primitives/text';
-import {TextInput} from '../primitives/text-input';
+import {View} from '../../primitives/view';
+import {Text} from '../../primitives/text';
+import {TextInput} from '../../primitives/text-input';
 
 export interface InputProperties
   extends Omit<
@@ -76,72 +75,70 @@ export const Input: React.FC<InputProperties> = props => {
   }, [isFocused, labelAnimatedValue, props.value]);
 
   return (
-    <Pressable
-      opaque
+    <View
       onPress={() => {
         setIsFocused(true);
         forceFocus();
-      }}>
+      }}
+      opaque
+      flex="none"
+      borderWidth={1}
+      borderColor={isFocused ? 'primary' : 'inputBorder'}
+      borderRadius={8}
+      h={INPUT_HEIGHT}>
       <View
-        flex="none"
-        borderWidth={1}
-        borderColor={isFocused ? 'primary' : 'inputBorder'}
-        borderRadius={8}
-        h={INPUT_HEIGHT}>
-        <View
-          animated
-          position="absolute"
-          top={LABEL_INITIAL_Y}
-          left={LABEL_INITIAL_X}
-          h={INPUT_HEIGHT}
-          w="full"
-          onLayout={(e: LayoutChangeEvent) => {
-            const layout = e.nativeEvent.layout;
-            const computedLabelXOffset = MathExtra.round(
-              -1 * (layout.width / 2 - (LABEL_SCALE * layout.width) / 2),
-            );
-            const computedLabelYOffset = MathExtra.round(
-              -1 * (layout.height / 2 - (LABEL_SCALE * layout.height) / 2),
-            );
-            setLabelXOffset(computedLabelXOffset);
-            setLabelYOffset(computedLabelYOffset);
-          }}
-          animatedTranslateY={{
-            animatedValue: labelAnimatedValue,
-            range: [0, labelYOffset - LABEL_INITIAL_Y + 4],
-          }}
-          animatedTranslateX={{
-            animatedValue: labelAnimatedValue,
-            range: [0, labelXOffset],
-          }}
-          animatedScale={{
-            animatedValue: labelAnimatedValue,
-            range: [1, LABEL_SCALE],
-          }}>
-          <View alignItems="flex-start" justifyContent="flex-start">
-            <Text
-              text={props.label || ''}
-              color={props.hasError ? 'error' : 'placeholder'}
-              fontSize="headline"
-            />
-          </View>
-        </View>
-        <View mt={25} ml={12}>
-          <TextInput
-            {...omit(props, ['onFocus', 'onBlur', 'opacity'])}
-            innerRef={(ref: RNTextInput) => {
-              root.current = ref;
-            }}
-            onFocus={() => {
-              setIsFocused(true);
-            }}
-            onBlur={() => {
-              setIsFocused(false);
-            }}
-            opacity={isTextInputVisible ? 1 : 0}
+        animated
+        position="absolute"
+        top={LABEL_INITIAL_Y}
+        left={LABEL_INITIAL_X}
+        h={INPUT_HEIGHT}
+        w="full"
+        onLayout={(e: LayoutChangeEvent) => {
+          const layout = e.nativeEvent.layout;
+          const computedLabelXOffset = MathExtra.round(
+            -1 * (layout.width / 2 - (LABEL_SCALE * layout.width) / 2),
+          );
+          const computedLabelYOffset = MathExtra.round(
+            -1 * (layout.height / 2 - (LABEL_SCALE * layout.height) / 2),
+          );
+          setLabelXOffset(computedLabelXOffset);
+          setLabelYOffset(computedLabelYOffset);
+        }}
+        animatedTranslateY={{
+          animatedValue: labelAnimatedValue,
+          range: [0, labelYOffset - LABEL_INITIAL_Y + 4],
+        }}
+        animatedTranslateX={{
+          animatedValue: labelAnimatedValue,
+          range: [0, labelXOffset],
+        }}
+        animatedScale={{
+          animatedValue: labelAnimatedValue,
+          range: [1, LABEL_SCALE],
+        }}>
+        <View alignItems="flex-start" justifyContent="flex-start">
+          <Text
+            text={props.label || ''}
+            color={props.hasError ? 'error' : 'placeholderText'}
+            fontSize={18}
           />
         </View>
       </View>
-    </Pressable>
+      <View mt={25} ml={12}>
+        <TextInput
+          {...omit(props, ['onFocus', 'onBlur', 'opacity'])}
+          innerRef={(ref: RNTextInput) => {
+            root.current = ref;
+          }}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
+          opacity={isTextInputVisible ? 1 : 0}
+        />
+      </View>
+    </View>
   );
 };

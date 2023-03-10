@@ -1,5 +1,5 @@
 import React from 'react';
-import {Svg} from '../primitives/svg';
+import {Svg} from '../../primitives/svg';
 
 export interface LogoSvgProperties {
   size: number;

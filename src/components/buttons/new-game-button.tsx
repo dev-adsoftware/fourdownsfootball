@@ -1,10 +1,11 @@
 import React from 'react';
 import {Animated} from 'react-native';
-import {Icon} from '../primitives/icon';
-import {Pressable, PressableProps} from '../primitives/pressable';
+import {TAB_BAR_NEW_GAME_BUTTON_SIZE} from '../../constants';
+import {Icon} from '../../primitives/icon';
+import {View} from '../../primitives/view';
+import {PressableProps} from '../../types';
 
-export interface NewGameButtonProperties {
-  size: number;
+export interface NewGameButtonProperties extends PressableProps {
   rotated: boolean;
   wrapped: boolean;
   onPress: PressableProps['onPress'];
@@ -13,14 +14,12 @@ export interface NewGameButtonProperties {
 const BORDER_WIDTH = 10;
 
 export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
-  const {rotated, wrapped, onPress} = props;
-
   const {current: rotationAnimationValue} = React.useRef<Animated.Value>(
     new Animated.Value(0),
   );
 
   React.useEffect(() => {
-    if (rotated) {
+    if (props.rotated) {
       Animated.timing(rotationAnimationValue, {
         toValue: 1,
         duration: 200,
@@ -33,36 +32,40 @@ export const NewGameButton: React.FC<NewGameButtonProperties> = props => {
         useNativeDriver: true,
       }).start();
     }
-  }, [rotated, rotationAnimationValue]);
+  }, [props.rotated, rotationAnimationValue]);
 
   return (
-    <Pressable
-      onPress={e => {
-        if (onPress) {
-          onPress(e);
-        }
-      }}
+    <View
+      onPress={props.onPress}
       flex="none"
-      h={wrapped ? props.size : props.size - BORDER_WIDTH * 2}
-      w={wrapped ? props.size : props.size - BORDER_WIDTH * 2}
-      m={wrapped ? 0 : BORDER_WIDTH}
+      h={
+        props.wrapped
+          ? TAB_BAR_NEW_GAME_BUTTON_SIZE
+          : TAB_BAR_NEW_GAME_BUTTON_SIZE - BORDER_WIDTH * 2
+      }
+      w={
+        props.wrapped
+          ? TAB_BAR_NEW_GAME_BUTTON_SIZE
+          : TAB_BAR_NEW_GAME_BUTTON_SIZE - BORDER_WIDTH * 2
+      }
+      m={props.wrapped ? 0 : BORDER_WIDTH}
       alignItems="center"
       justifyContent="center"
       bg="primary"
       overflow="hidden"
-      borderWidth={wrapped ? BORDER_WIDTH : 0}
+      borderWidth={props.wrapped ? BORDER_WIDTH : 0}
       borderColor="navSurface"
       borderRadius="circle">
       <Icon
         animated
-        name="plus"
-        size="xl"
+        icon="plus"
+        size={14}
         color="white"
         animatedRotate={{
           animatedValue: rotationAnimationValue,
           range: ['0deg', '225deg'],
         }}
       />
-    </Pressable>
+    </View>
   );
 };

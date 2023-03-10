@@ -3,11 +3,10 @@ import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleAbbrAvatar} from '../components/avatars/circle-abbr-avatar';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../components/primitives/icon';
-import {Pressable} from '../components/primitives/pressable';
-import {ScrollView} from '../components/primitives/scroll-view';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {Icon} from '../primitives/icon';
+import {ScrollView} from '../primitives/scroll-view';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import {useData} from '../providers/data';
 import {GamesByOwnerQueryArgsDto} from '../services/dtos';
 import {
@@ -27,7 +26,7 @@ export const FriendliesGamesScreen: React.FC<
     (GamesByOwnerExtendedGameRequestDto | GamesByOwnerExtendedGameDto)[]
   >([]);
   const data = useData();
-  const {push} = useFadeInScreen();
+  const {push: pushFadeInScreen} = useFadeInScreen();
 
   const fetchGameRequestsByOwner = React.useCallback(
     async (showLoadingIndicator?: boolean) => {
@@ -63,12 +62,12 @@ export const FriendliesGamesScreen: React.FC<
         ) : games.length === 0 ? (
           <>
             <View w="full" py={20} alignItems="center">
-              <Icon name="exclamation-triangle" color="error" size="3xl" />
+              <Icon icon="exclamation-triangle" color="error" size={20} />
               <Text
                 py={20}
                 text="Oops! No friendly games were found."
                 typeFace="sourceSansProRegular"
-                fontSize="body"
+                fontSize={17}
               />
             </View>
           </>
@@ -77,9 +76,9 @@ export const FriendliesGamesScreen: React.FC<
             {games.map((game, index) => {
               return (
                 <View key={`${game.id}-${index}`} w="full" mt={-1}>
-                  <Pressable
+                  <View
                     onPress={() => {
-                      push({
+                      pushFadeInScreen({
                         component: <GameDetailScreen gameId={game.id} />,
                       });
                     }}>
@@ -97,7 +96,11 @@ export const FriendliesGamesScreen: React.FC<
                           '?'
                         }
                       />
-                      <View flex={1} px={20}>
+                      <View
+                        flex={1}
+                        px={20}
+                        borderRightWidth={1}
+                        borderRightColor="separator">
                         <View
                           flex={1}
                           row
@@ -111,13 +114,13 @@ export const FriendliesGamesScreen: React.FC<
                                   : 'TBD'
                               }
                               typeFace="klavikaCondensedMedium"
-                              fontSize="headline"
+                              fontSize={18}
                             />
                             <Text
                               mt={-5}
                               text={`${game.awayOwner.firstName} ${game.awayOwner.lastName}`}
                               typeFace="sourceSansProRegular"
-                              fontSize="footnote"
+                              fontSize={14}
                             />
                           </View>
                           {!GameEngine.isHomeTeamOnOffense(
@@ -125,9 +128,9 @@ export const FriendliesGamesScreen: React.FC<
                           ) ? (
                             <View flex={1} pl={10}>
                               <Icon
-                                name="football-ball"
+                                icon="football-ball"
                                 color="football"
-                                size="xs"
+                                size={10}
                               />
                             </View>
                           ) : (
@@ -139,7 +142,7 @@ export const FriendliesGamesScreen: React.FC<
                                 .awayTeamScore
                             }
                             typeFace="klavikaCondensedMedium"
-                            fontSize="title2"
+                            fontSize={22}
                           />
                         </View>
                         <View
@@ -156,13 +159,13 @@ export const FriendliesGamesScreen: React.FC<
                                   : 'N/A'
                               }
                               typeFace="klavikaCondensedMedium"
-                              fontSize="headline"
+                              fontSize={18}
                             />
                             <Text
                               mt={-5}
                               text={`${game.homeOwner.firstName} ${game.homeOwner.lastName}`}
                               typeFace="sourceSansProRegular"
-                              fontSize="footnote"
+                              fontSize={14}
                             />
                           </View>
                           {GameEngine.isHomeTeamOnOffense(
@@ -170,9 +173,9 @@ export const FriendliesGamesScreen: React.FC<
                           ) ? (
                             <View flex={1} pl={10}>
                               <Icon
-                                name="football-ball"
+                                icon="football-ball"
                                 color="football"
-                                size="xs"
+                                size={10}
                               />
                             </View>
                           ) : (
@@ -184,15 +187,11 @@ export const FriendliesGamesScreen: React.FC<
                                 .homeTeamScore
                             }
                             typeFace="klavikaCondensedMedium"
-                            fontSize="title2"
+                            fontSize={22}
                           />
                         </View>
                       </View>
-                      <View
-                        alignItems="center"
-                        w={70}
-                        borderLeftWidth={1}
-                        borderLeftColor="separator">
+                      <View alignItems="center" w={70}>
                         <CircleIconButton
                           icon={
                             GameEngine.canNudgeOrWithdraw(
@@ -215,7 +214,7 @@ export const FriendliesGamesScreen: React.FC<
                           onPress={() => {}}
                           bg="white"
                           color="primary"
-                          // borderColor="primary"
+                          size={10}
                         />
                         {GameEngine.isInProgress(game) ? (
                           <Text
@@ -227,14 +226,14 @@ export const FriendliesGamesScreen: React.FC<
                                 .timeRemaining,
                             )}`}
                             typeFace="klavikaCondensedRegular"
-                            fontSize="caption2"
+                            fontSize={12}
                           />
                         ) : (
                           <></>
                         )}
                       </View>
                     </View>
-                  </Pressable>
+                  </View>
                 </View>
               );
             })}

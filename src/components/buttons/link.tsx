@@ -1,23 +1,20 @@
 import React from 'react';
-import {ThemeColorKey} from '../../providers/theme';
-import {Pressable, PressableProps} from '../primitives/pressable';
-import {Text} from '../primitives/text';
+import {Text} from '../../primitives/text';
+import {PressableProps} from '../../types';
+import {ColorProps} from '../../utilities/style-builder';
 
-export interface LinkProps {
-  text: string;
-  color?: ThemeColorKey;
-  onPress: PressableProps['onPress'];
+export interface LinkProps extends PressableProps, ColorProps {
+  text: string | number;
 }
 
 export const Link: React.FC<LinkProps> = props => {
   return (
-    <Pressable onPress={props.onPress}>
-      <Text
-        typeFace="klavikaCondensedBoldItalic"
-        fontSize="title2"
-        color={props.color || 'grayLink'}
-        text={props.text}
-      />
-    </Pressable>
+    <Text
+      onPress={props.onPress}
+      typeFace="klavikaCondensedBoldItalic"
+      fontSize={22}
+      color={props.color || 'grayLink'}
+      text={props.text}
+    />
   );
 };

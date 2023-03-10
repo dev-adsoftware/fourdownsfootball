@@ -1,7 +1,7 @@
 import React from 'react';
 import {CurvedTabBar} from '../svg/curved-tab-bar-svg';
-import {View} from '../primitives/view';
-import {TAB_BAR_BUTTON_BOTTOM} from '../../constants/tab-bar';
+import {View} from '../../primitives/view';
+import {TAB_BAR_BUTTON_BOTTOM} from '../../constants';
 import {IconButton} from '../buttons/icon-button';
 
 export interface MainTabBarProps {
@@ -23,7 +23,8 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
         <IconButton
           icon="home"
           color={props.activeIcon === 'home' ? 'primary' : 'disabled'}
-          size="md"
+          size={12}
+          pressableAreaPadding={10}
           onPress={() => {
             props.onPressHome();
           }}
@@ -31,7 +32,8 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
         <IconButton
           icon="users"
           color={props.activeIcon === 'friends' ? 'primary' : 'disabled'}
-          size="md"
+          size={12}
+          pressableAreaPadding={10}
           onPress={() => {
             props.onPressFriends();
           }}

@@ -1,10 +1,8 @@
 import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
-import {IconButton} from '../components/buttons/icon-button';
-import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 import {NavPager} from '../components/navigation/nav-pager';
-import {SafeBar} from '../components/primitives/safe-bar';
-import {View} from '../components/primitives/view';
+import {SafeBar} from '../primitives/safe-bar';
+import {View} from '../primitives/view';
 import {useData} from '../providers/data';
 import {
   GameDetailQueryArgsDto,
@@ -13,6 +11,7 @@ import {
 import {GamePlayScreen} from './game-play';
 import {GamePlayByPlayScreen} from './game-play-by-play';
 import {GameScoreboardHeader} from '../components/headers/game-scoreboard';
+import {GameDetailFooter} from '../components/footers/game-detail-footer';
 
 interface GameDetailScreenProps {
   gameId: string;
@@ -22,7 +21,6 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [game, setGame] = React.useState<GameDetailQueryResponseDto>();
   const data = useData();
-  const fadeInScreen = useFadeInScreen();
 
   const fetchGameDetail = React.useCallback(
     async (showLoadingIndicator?: boolean) => {
@@ -47,7 +45,7 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
       <SafeBar bg="white" />
       {isLoading ? (
         <>
-          <View flex={1} py={20} alignItems="center">
+          <View flex={1} py={20} alignItems="center" justifyContent="center">
             <Spinner />
           </View>
         </>
@@ -75,30 +73,7 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
                 },
               ]}
             />
-            <View row justifyContent="space-between" bg="white" px={10} pb={15}>
-              <View>
-                <IconButton
-                  icon="cogs"
-                  color="primary"
-                  size="xl"
-                  pressableAreaPadding={20}
-                  onPress={() => {
-                    fadeInScreen.pop();
-                  }}
-                />
-              </View>
-              <View>
-                <IconButton
-                  icon="times"
-                  color="primary"
-                  size="3xl"
-                  pressableAreaPadding={20}
-                  onPress={() => {
-                    fadeInScreen.pop();
-                  }}
-                />
-              </View>
-            </View>
+            <GameDetailFooter />
           </>
         )
       )}

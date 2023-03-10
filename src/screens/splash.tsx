@@ -1,7 +1,7 @@
 import React from 'react';
-import {SafeBar} from '../components/primitives/safe-bar';
+import {SafeBar} from '../primitives/safe-bar';
 import {LogoSvg} from '../components/svg/logo-svg';
-import {View} from '../components/primitives/view';
+import {View} from '../primitives/view';
 
 interface SplashScreenProps {}
 

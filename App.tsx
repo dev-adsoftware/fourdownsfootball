@@ -9,15 +9,14 @@ import {SplashScreen} from './src/screens/splash';
 import {MainScreen} from './src/screens/main';
 import {NotificationProvider} from './src/providers/notification';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-// import {OnboardingStack} from './src/stacks/onboarding';
 import {
   AppState,
   GlobalStateProvider,
   useGlobalState,
 } from './src/providers/global-state';
-import {AuthStack} from './src/screens/auth-stack';
-import {OnboardingStack} from './src/screens/onboarding-stack';
 import {FadeInScreenProvider} from './src/components/navigation/fade-in-screen';
+import {AuthScreen} from './src/screens/auth-stack';
+import {CreateNameScreen} from './src/screens/create-name';
 
 Amplify.configure({
   Auth: {
@@ -37,11 +36,11 @@ const Main = () => {
     case AppState.LOADING:
       return <SplashScreen />;
     case AppState.UNAUTHENTICATED:
-      return <AuthStack />;
+      return <AuthScreen />;
+    case AppState.ONBOARDING:
+      return <CreateNameScreen />;
     case AppState.AUTHENTICATED:
       return <SplashScreen />;
-    case AppState.ONBOARDING:
-      return <OnboardingStack />;
     default:
       return <MainScreen />;
   }

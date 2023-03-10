@@ -1,15 +1,16 @@
 import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../components/primitives/icon';
-import {Pressable} from '../components/primitives/pressable';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
-import {SELECT_OPTION_DELAY} from '../constants/timers';
+import {Icon} from '../primitives/icon';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
+import {SELECT_OPTION_DELAY} from '../constants';
 import {useData} from '../providers/data';
 import {TeamDto} from '../services/dtos';
 import {ConfirmActionScreen} from './confirm-action';
 import {useNewGame} from './new-game';
+import {SelectListItem} from '../components/lists/select-list-item';
+import {StackHeader} from '../components/navigation/stack-pager';
 
 interface SelectTeamScreenProps {}
 
@@ -21,7 +22,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
 
   const data = useData();
   const {isCreatingGame, createGame, team: newGameTeam} = useNewGame();
-  const {push, pop} = useFadeInScreen();
+  const {push: pushFadeInScreen, pop: popFadeInScreen} = useFadeInScreen();
 
   const fetchTeams = React.useCallback(async () => {
     setIsLoading(true);
@@ -35,9 +36,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
   }, [fetchTeams]);
 
   React.useEffect(() => {
-    console.log('use effect for game creation');
     if (isNewGameCreationConfirmed) {
-      console.log('creating game');
       setIsNewGameCreationConfirmed(false);
       createGame();
     }
@@ -45,7 +44,7 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
 
   React.useEffect(() => {
     if (isCreatingGame) {
-      push({
+      pushFadeInScreen({
         component: (
           <View flex={1} alignItems="center" justifyContent="center">
             <View>
@@ -56,20 +55,17 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
       });
 
       return () => {
-        pop();
+        popFadeInScreen();
       };
     }
-  }, [isCreatingGame, push, pop]);
+  }, [isCreatingGame, pushFadeInScreen, popFadeInScreen]);
 
   return (
     <>
       <View flex={1} w="full" bg="white" px={15}>
-        <Text
-          text="SELECT TEAM"
-          typeFace="klavikaCondensedMediumItalic"
-          fontSize="title2"
-          py={20}
-        />
+        <View pb={10}>
+          <StackHeader headerText="SELECT TEAM" />
+        </View>
         <View>
           {isLoading ? (
             <>
@@ -80,15 +76,14 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
           ) : (
             teams.map(team => {
               return (
-                <Pressable
+                <SelectListItem
                   key={team.id}
-                  borderHorizontalColor="grayButton"
-                  borderHorizontalWidth={1}
-                  mt={-1}
+                  text={`${team.nickname}`}
+                  selected={newGameTeam.value?.id === team.id}
                   onPress={() => {
                     newGameTeam.set(team);
                     setTimeout(() => {
-                      push({
+                      pushFadeInScreen({
                         component: (
                           <ConfirmActionScreen
                             icon="check-double"
@@ -103,20 +98,8 @@ export const SelectTeamScreen: React.FC<SelectTeamScreenProps> = () => {
                         ),
                       });
                     }, SELECT_OPTION_DELAY);
-                  }}>
-                  <View row alignItems="center" justifyContent="space-between">
-                    <Text
-                      py={10}
-                      text={`${team.nickname}`}
-                      typeFace="sourceSansProRegular"
-                      fontSize="body"
-                      color="primaryText"
-                    />
-                    {newGameTeam.value?.id === team.id && (
-                      <Icon name="check" color="primary" size="2xs" />
-                    )}
-                  </View>
-                </Pressable>
+                  }}
+                />
               );
             })
           )}

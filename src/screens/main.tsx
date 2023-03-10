@@ -1,12 +1,9 @@
 import React from 'react';
 import {Animated, useWindowDimensions} from 'react-native';
-import {
-  TAB_BAR_NEW_GAME_BUTTON_SIZE,
-  TAB_BAR_HEIGHT,
-} from '../constants/tab-bar';
+import {TAB_BAR_NEW_GAME_BUTTON_SIZE, TAB_BAR_HEIGHT} from '../constants';
 import {MainTabBar} from '../components/navigation/main-tab-bar';
 import {HomeScreen} from './home';
-import {View} from '../components/primitives/view';
+import {View} from '../primitives/view';
 import {NewGameButton} from '../components/buttons/new-game-button';
 import {NewGameScreen} from './new-game';
 import {FriendliesScreen} from './friendlies';
@@ -54,8 +51,6 @@ export const MainScreen: React.FC<Properties> = ({}) => {
 
   return (
     <>
-      {/* <NewGameProvider>
-        <StackProvider> */}
       <View flex={1} justifyContent="space-between">
         {currentScreen === 'home' ? <HomeScreen /> : <FriendliesScreen />}
         <View
@@ -103,7 +98,6 @@ export const MainScreen: React.FC<Properties> = ({}) => {
           left={width / 2 - TAB_BAR_NEW_GAME_BUTTON_SIZE / 2}
           bottom={TAB_BAR_HEIGHT - TAB_BAR_NEW_GAME_BUTTON_SIZE}>
           <NewGameButton
-            size={TAB_BAR_NEW_GAME_BUTTON_SIZE}
             rotated={isNewGameButtonRotated}
             wrapped={isNewGameButtonWrapped}
             onPress={() => {

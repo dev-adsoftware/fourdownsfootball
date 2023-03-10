@@ -1,10 +1,9 @@
 import React from 'react';
-import {CircleIconButton} from '../components/buttons/circle-icon-button';
+import {CircleCloseButton} from '../components/buttons/circle-close-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../components/primitives/icon';
-import {Pressable} from '../components/primitives/pressable';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {Icon} from '../primitives/icon';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 
 interface ConfirmActionScreenProps {
   icon: string;
@@ -13,10 +12,12 @@ interface ConfirmActionScreenProps {
   onConfirm: () => void;
 }
 
+const TEXT_SIZE = 20;
+
 export const ConfirmActionScreen: React.FC<
   ConfirmActionScreenProps
 > = props => {
-  const {pop} = useFadeInScreen();
+  const {pop: popFadeInScreen} = useFadeInScreen();
   return (
     <View flex={1} alignItems="center" justifyContent="center">
       <View>
@@ -27,30 +28,26 @@ export const ConfirmActionScreen: React.FC<
           justifyContent="space-between">
           <View px={30} py={20} alignItems="center">
             <View position="absolute" top={10} right={10}>
-              <CircleIconButton
-                icon="times"
-                bg="lightGrayButton"
-                color="black"
-                size={30}
+              <CircleCloseButton
                 onPress={() => {
-                  pop();
+                  popFadeInScreen();
                 }}
               />
             </View>
-            <Icon name={props.icon} size="3xl" color="black" />
+            <Icon icon={props.icon} size={24} color="darkText" />
             <Text
               mt={10}
               text={props.questionText}
               textAlign="center"
-              color="black"
+              color="darkText"
               typeFace="sourceSansProSemibold"
-              fontSize="headline"
+              fontSize={TEXT_SIZE}
             />
           </View>
-          <Pressable
+          <View
             w="full"
             onPress={async () => {
-              pop();
+              popFadeInScreen();
               props.onConfirm();
             }}>
             <View
@@ -63,10 +60,10 @@ export const ConfirmActionScreen: React.FC<
                 text={props.buttonText}
                 color="white"
                 typeFace="sourceSansProSemibold"
-                fontSize="headline"
+                fontSize={TEXT_SIZE}
               />
             </View>
-          </Pressable>
+          </View>
         </View>
       </View>
     </View>

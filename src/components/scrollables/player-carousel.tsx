@@ -6,15 +6,18 @@ import {Alignment} from '../../services/dtos/types/alignment';
 import {AttributeKey} from '../../services/dtos/types/attribute-key';
 import {Position} from '../../services/dtos/types/position';
 import {GameEngine} from '../../utilities/game-engine';
-import {FlatList} from '../primitives/flatlist';
-import {Icon} from '../primitives/icon';
-import {Text} from '../primitives/text';
-import {View} from '../primitives/view';
+import {FlatList} from '../../primitives/flatlist';
+import {Icon} from '../../primitives/icon';
+import {Text} from '../../primitives/text';
+import {View} from '../../primitives/view';
 import {ProgressBar} from '../progress-indicators/progress-bar';
 
 interface PlayerCarouselProps {
   players: (PlayerSnapshotDto & {alignment?: Alignment})[];
 }
+
+const PORTRAIT_HEADER_FONT_SIZE = 14;
+const PORTRAIT_NAME_FONT_SIZE = 12;
 
 const _RenderCarouselItem = ({
   item,
@@ -35,7 +38,7 @@ const _RenderCarouselItem = ({
     <View
       w={item.width}
       bg="portraitSurface"
-      borderColor="primaryText"
+      borderColor="darkText"
       borderWidth={1}
       mr={2}
       borderRadius={4}>
@@ -47,23 +50,23 @@ const _RenderCarouselItem = ({
         customBg="primaryLight"
         alignItems="center"
         justifyContent="flex-end">
-        <Icon name="users" color="skinTone" size="4xl" />
+        <Icon icon="users" color="skinTone" size={20} />
         <View position="absolute" top={0} left={3}>
           <Text
             text={(
               GameEngine.getAlignmentAbbr(item.alignment) || item.position
             ).toUpperCase()}
             typeFace="klavikaCondensedBold"
-            fontSize="footnote"
-            color="primaryText"
+            fontSize={PORTRAIT_HEADER_FONT_SIZE}
+            color="darkText"
           />
         </View>
         <View position="absolute" top={0} right={3}>
           <Text
             text={`#${item.jerseyNumber}`}
             typeFace="klavikaCondensedBold"
-            fontSize="footnote"
-            color="primaryText"
+            fontSize={PORTRAIT_HEADER_FONT_SIZE}
+            color="darkText"
           />
         </View>
       </View>
@@ -73,15 +76,16 @@ const _RenderCarouselItem = ({
         w="full"
         bg="oddLayerSurface"
         borderTopWidth={1}
-        borderTopColor="primaryText"
+        borderTopColor="darkText"
         mt={-5}
         px={2}>
         <Text
           mt={-2}
+          numberOfLines={1}
           text={item.name}
           typeFace="klavikaCondensedMedium"
-          fontSize="caption1"
-          color="primaryText"
+          fontSize={PORTRAIT_NAME_FONT_SIZE}
+          color="darkText"
         />
       </View>
       <View
@@ -126,7 +130,7 @@ export const PlayerCarousel: React.FC<PlayerCarouselProps> = props => {
       bg="oddLayerSurface"
       pb={1}
       borderBottomWidth={1}
-      borderBottomColor="primaryText">
+      borderBottomColor="darkText">
       <View
         row
         w="full"
@@ -134,16 +138,16 @@ export const PlayerCarousel: React.FC<PlayerCarouselProps> = props => {
         alignItems="center"
         justifyContent="center"
         bg="white"
-        borderColor="primaryText"
+        borderColor="darkText"
         borderTopWidth={1}>
-        <View bg="primaryText" h={1} flex={1} mx={5} />
+        <View bg="darkText" h={1} flex={1} mx={5} />
         <Text
           text="PLAYERS IN THE HUDDLE"
           typeFace="sourceSansProBold"
-          fontSize="footnote"
-          color="primaryText"
+          fontSize={13}
+          color="darkText"
         />
-        <View bg="primaryText" h={1} flex={1} mx={5} />
+        <View bg="darkText" h={1} flex={1} mx={5} />
       </View>
       <View px={1} flex={1}>
         <FlatList

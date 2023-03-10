@@ -1,9 +1,5 @@
 import {BaseService} from './base-service';
-import {
-  TeamDetailQueryArgsDto,
-  TeamDetailQueryResponseDto,
-  TeamDto,
-} from './dtos';
+import {TeamDto} from './dtos';
 
 class Service extends BaseService {
   public async listTeams(
@@ -12,15 +8,6 @@ class Service extends BaseService {
     return await this.list<TeamDto>('/teams', {
       queryStringParameters,
     });
-  }
-
-  public async queryTeamDetail(
-    args: TeamDetailQueryArgsDto,
-  ): Promise<TeamDetailQueryResponseDto> {
-    return await this.get<TeamDetailQueryResponseDto>(
-      '/queries/team-detail/:execute',
-      {id: args.id},
-    );
   }
 }
 

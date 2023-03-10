@@ -1,17 +1,15 @@
 import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
-import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../components/primitives/icon';
-import {Pressable} from '../components/primitives/pressable';
-import {SafeBar} from '../components/primitives/safe-bar';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
-import {SAFE_AREA_PADDING_BOTTOM} from '../constants/safe-area';
-import {SELECT_OPTION_DELAY} from '../constants/timers';
+import {Icon} from '../primitives/icon';
+import {SafeBar} from '../primitives/safe-bar';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
+import {SELECT_OPTION_DELAY} from '../constants';
 import {useData} from '../providers/data';
 import {GameDetailQueryResponseDto, TeamDto} from '../services/dtos';
 import {ConfirmActionScreen} from './confirm-action';
+import {FloatingCircleCloseButton} from '../components/buttons/floating-circle-close-button';
 
 interface SelectRSVPTeamScreenProps {
   game: GameDetailQueryResponseDto;
@@ -26,7 +24,11 @@ export const SelectRSVPTeamScreen: React.FC<
   const [isRSVPing, setIsRSVPing] = React.useState(false);
 
   const data = useData();
-  const {push, pop, reset} = useFadeInScreen();
+  const {
+    push: pushFadeInScreen,
+    pop: popFadeInScreen,
+    reset: resetFadeInScreen,
+  } = useFadeInScreen();
 
   const fetchTeams = React.useCallback(async () => {
     setIsLoading(true);
@@ -45,13 +47,19 @@ export const SelectRSVPTeamScreen: React.FC<
       selectedTeam!.id,
       data.owner!.id,
     );
-    reset();
-  }, [data.services.games, props.game, selectedTeam, data.owner, reset]);
+    resetFadeInScreen();
+  }, [
+    data.services.games,
+    props.game,
+    selectedTeam,
+    data.owner,
+    resetFadeInScreen,
+  ]);
 
   React.useEffect(() => {
     if (isRSVPing) {
       sendRSVP();
-      push({
+      pushFadeInScreen({
         component: (
           <View flex={1} alignItems="center" justifyContent="center">
             <View>
@@ -61,7 +69,7 @@ export const SelectRSVPTeamScreen: React.FC<
         ),
       });
     }
-  }, [isRSVPing, sendRSVP, push]);
+  }, [isRSVPing, sendRSVP, pushFadeInScreen]);
 
   return (
     <>
@@ -70,7 +78,7 @@ export const SelectRSVPTeamScreen: React.FC<
         <Text
           text="SELECT TEAM"
           typeFace="klavikaCondensedMediumItalic"
-          fontSize="title2"
+          fontSize={22}
           py={20}
         />
         <View>
@@ -83,7 +91,7 @@ export const SelectRSVPTeamScreen: React.FC<
           ) : (
             teams.map(team => {
               return (
-                <Pressable
+                <View
                   key={team.id}
                   borderHorizontalColor="grayButton"
                   borderHorizontalWidth={1}
@@ -91,7 +99,7 @@ export const SelectRSVPTeamScreen: React.FC<
                   onPress={() => {
                     setSelectedTeam(team);
                     setTimeout(() => {
-                      push({
+                      pushFadeInScreen({
                         component: (
                           <ConfirmActionScreen
                             icon="check-double"
@@ -112,35 +120,24 @@ export const SelectRSVPTeamScreen: React.FC<
                       py={10}
                       text={`${team.nickname}`}
                       typeFace="sourceSansProRegular"
-                      fontSize="body"
-                      color="primaryText"
+                      fontSize={17}
+                      color="darkText"
                     />
                     {selectedTeam?.id === team.id && (
-                      <Icon name="check" color="primary" size="2xs" />
+                      <Icon icon="check" color="primary" size={10} />
                     )}
                   </View>
-                </Pressable>
+                </View>
               );
             })
           )}
         </View>
       </View>
-      <View
-        position="absolute"
-        bottom={SAFE_AREA_PADDING_BOTTOM}
-        right={20}
-        w={75}
-        h={75}
-        alignItems="center"
-        justifyContent="center">
-        <CircleIconButton
-          icon="times"
-          onPress={() => {
-            pop();
-          }}
-          size={60}
-        />
-      </View>
+      <FloatingCircleCloseButton
+        onPress={() => {
+          popFadeInScreen();
+        }}
+      />
     </>
   );
 };

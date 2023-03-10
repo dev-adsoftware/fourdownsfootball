@@ -1,8 +1,8 @@
 import React from 'react';
 import {Animated} from 'react-native';
 import {IconButton} from '../components/buttons/icon-button';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import {LogoSvg} from '../components/svg/logo-svg';
 import {GameDetailQueryResponseDto} from '../services/dtos';
 import {GameDetailExtendedPossessionDto} from '../services/dtos/queries/game-detail/game-detail-query-response.dto';
@@ -73,11 +73,11 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
             animatedValue: animationValue,
             range: ['0deg', '180deg'],
           }}
-          mt={-10}>
+          mt={0}>
           <IconButton
             icon={'chevron-down'}
             color="primaryDark"
-            size="xs"
+            size={12}
             pressableAreaPadding={10}
             onPress={() => {
               props.onPress();
@@ -92,14 +92,14 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
             mt={-5}
             text={props.possession.headline.toUpperCase()}
             typeFace="klavikaCondensedMedium"
-            fontSize="body"
+            fontSize={18}
           />
           <Text
             mt={-5}
             text={props.possession.summary.toUpperCase()}
             typeFace="sourceSansProRegular"
-            fontSize="caption1"
-            color="disabled"
+            fontSize={11}
+            color="placeholderText"
           />
         </View>
         <View alignItems="center">
@@ -107,14 +107,14 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
             mt={-5}
             text={props.awayTeamAbbr}
             typeFace="sourceSansProRegular"
-            fontSize="footnote"
-            color="disabled"
+            fontSize={12}
+            color="placeholderText"
           />
           <Text
             mt={-5}
             text={String(props.awayTeamScore)}
             typeFace="klavikaCondensedMedium"
-            fontSize="body"
+            fontSize={17}
           />
         </View>
         <View alignItems="center" ml={30}>
@@ -122,14 +122,14 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
             mt={-5}
             text={props.homeTeamAbbr}
             typeFace="sourceSansProRegular"
-            fontSize="footnote"
-            color="disabled"
+            fontSize={12}
+            color="placeholderText"
           />
           <Text
             mt={-5}
             text={String(props.homeTeamScore)}
             typeFace="klavikaCondensedMedium"
-            fontSize="body"
+            fontSize={17}
           />
         </View>
       </View>
@@ -159,7 +159,7 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
                   playResult.description
                 }`}
                 typeFace="sourceSansProRegular"
-                fontSize="footnote"
+                fontSize={12}
                 onLayout={e => {
                   detailHeightsRef.current[index] = e.nativeEvent.layout.height;
                   if (
@@ -239,17 +239,3 @@ export const GamePlayByPlayScreen: React.FC<
     </>
   );
 };
-
-// games/id/possessions
-// games/id/play-results
-// games/id/play-calls
-// game: { currentPossession }
-// possesion: { number, result }
-// play-result: { }
-// play-call: { id: game-offense/defense-play#, formation, personnel, play, options }
-
-// id format:  gameId-playResultsNumber(do not reset to 0 on new possession)-offense/defense
-// example: uuid-0-offense would be the play-call ids
-//          uuid-0-defense
-//          uuid-0 would be the play-result id
-//          uuid-0 would be the possession id

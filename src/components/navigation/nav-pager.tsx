@@ -5,10 +5,9 @@ import {
   useWindowDimensions,
   Animated,
 } from 'react-native';
-import {Pressable} from '../primitives/pressable';
-import {ScrollView} from '../primitives/scroll-view';
-import {Text} from '../primitives/text';
-import {View} from '../primitives/view';
+import {ScrollView} from '../../primitives/scroll-view';
+import {Text} from '../../primitives/text';
+import {View} from '../../primitives/view';
 
 export interface NavPage {
   name: string;
@@ -22,6 +21,7 @@ interface NavPagerProps {
 
 const DISTANCE_BETWEEN_LABELS = 30;
 const DEFAULT_SCROLLBAR_WIDTH = 1000;
+const SCROLL_OVERFLOW = 50;
 
 const _Label: React.FC<{
   name: string;
@@ -32,24 +32,19 @@ const _Label: React.FC<{
   const [width, setWidth] = React.useState(0);
   return (
     <View alignItems="center" px={DISTANCE_BETWEEN_LABELS / 2}>
-      <Pressable onPress={props.onPress}>
-        <Text
-          text={props.name}
-          color="primaryText"
-          fontSize="body"
-          typeFace={
-            props.selected
-              ? 'klavikaCondensedMedium'
-              : 'klavikaCondensedRegular'
-          }
-          opacity={props.selected ? 1.0 : 0.5}
-          onLayout={(e: LayoutChangeEvent) => {
-            setWidth(e.nativeEvent.layout.width);
-            props.onLayout(e);
-          }}
-        />
-      </Pressable>
-      <View h={3} w={width} bg={props.selected ? 'primaryText' : undefined} />
+      <Text
+        onPress={props.onPress}
+        text={props.name}
+        color="darkText"
+        fontSize={20}
+        typeFace="klavikaCondensedMedium"
+        opacity={props.selected ? 1.0 : 0.3}
+        onLayout={(e: LayoutChangeEvent) => {
+          setWidth(e.nativeEvent.layout.width);
+          props.onLayout(e);
+        }}
+      />
+      <View h={3} w={width} bg={props.selected ? 'darkText' : undefined} />
     </View>
   );
 };
@@ -88,7 +83,10 @@ export const NavPager: React.FC<NavPagerProps> = props => {
         return prev + (tabWidthsRef.current[i] || 0);
       }, 0);
     scrollViewRef.current?.scrollTo({
-      x: accumulatedWidth > width ? accumulatedWidth - width : 0,
+      x:
+        accumulatedWidth > width - SCROLL_OVERFLOW
+          ? accumulatedWidth - width + SCROLL_OVERFLOW
+          : 0,
     });
   }, [props.pages, currentScreenIndex, width]);
 
@@ -147,23 +145,6 @@ export const NavPager: React.FC<NavPagerProps> = props => {
             );
           })}
         </View>
-
-        {/* <FlatList
-          myRef={flatListRef}
-          horizontal
-          data={props.pages}
-          renderItem={({item}) => {
-            return (
-              <View w={width} alignItems="center">
-                {item.component}
-              </View>
-            );
-          }}
-          getItemLayout={getItemLayout}
-          showsHorizontalScrollIndicator={false}
-          initialScrollIndex={0}
-          scrollEnabled={false}
-        /> */}
       </View>
     </>
   );

@@ -2,9 +2,9 @@ import React from 'react';
 import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 import {SignInScreen} from './signin';
 
-interface AuthStackProps {}
+interface AuthScreenProps {}
 
-export const AuthStack: React.FC<AuthStackProps> = _props => {
+export const AuthScreen: React.FC<AuthScreenProps> = _props => {
   return (
     <>
       <StackProvider>

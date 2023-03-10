@@ -1,5 +1,5 @@
 import React from 'react';
-import {StateProp} from '../types/types';
+import {StateProp} from '../types';
 
 const GlobalStateContext = React.createContext<GlobalState | undefined>(
   undefined,

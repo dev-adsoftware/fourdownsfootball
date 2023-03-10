@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text} from '../primitives/text';
-import {View} from '../primitives/view';
+import {Text} from '../../primitives/text';
+import {View} from '../../primitives/view';
 
 export interface CircleAbbrAvatarProps {
   text: string;
@@ -16,7 +16,11 @@ export const CircleAbbrAvatar: React.FC<CircleAbbrAvatarProps> = props => {
       w={props.size || 50}
       borderRadius="circle"
       bg="primary">
-      <Text text={props.text} color="white" fontSize="title1" />
+      <Text
+        text={props.text}
+        color="white"
+        fontSize={props.text.length === 1 ? 34 : 30}
+      />
     </View>
   );
 };

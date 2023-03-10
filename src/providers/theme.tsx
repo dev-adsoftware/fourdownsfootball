@@ -1,8 +1,12 @@
 import React from 'react';
-import {ColorSchemeName, useColorScheme} from 'react-native';
-import {noop} from 'lodash';
+import {ColorSchemeName, Dimensions, useColorScheme} from 'react-native';
+import {noop, times} from 'lodash';
 import TinyColor from 'tinycolor2';
-import {ColorPalette} from '../constants/color-palette';
+import {BASE_SCREEN_WIDTH, ColorPalette} from '../constants';
+import {RangeObject} from '../types';
+
+const {width} = Dimensions.get('window');
+const fontScale = width / BASE_SCREEN_WIDTH;
 
 export type ThemeColorKey = keyof Theme['colors'];
 export type ThemeIconSizeKey = keyof Theme['iconSizes'];
@@ -20,18 +24,26 @@ export class Theme {
     warning: ColorPalette.ORANGE_700,
     success: ColorPalette.GREEN_700,
     disabled: ColorPalette.GRAY_500,
-    navSurface: ColorPalette.WHITE,
-    separator: ColorPalette.GRAY_300,
+
     white: ColorPalette.WHITE,
     black: ColorPalette.BLACK,
-    primaryText: ColorPalette.GRAY_800,
-    placeholder: ColorPalette.GRAY_700,
+
+    darkText: ColorPalette.GRAY_800,
+    placeholderText: ColorPalette.GRAY_700,
+
     inputBorder: ColorPalette.GRAY_700,
+    separator: ColorPalette.GRAY_300,
+
     grayLink: ColorPalette.GRAY_700,
+
     grayButton: ColorPalette.GRAY_400,
     lightGrayButton: ColorPalette.GRAY_300,
+
+    navSurface: ColorPalette.WHITE,
     oddLayerSurface: ColorPalette.GRAY_100,
     evenLayerSurface: ColorPalette.GRAY_300,
+    darkSurface: ColorPalette.GRAY_800,
+
     transparentVeryDark: ColorPalette.TRANSPARENT_800,
     transparentDark: ColorPalette.TRANSPARENT_700,
     transparentMedium: ColorPalette.TRANSPARENT_500,
@@ -53,18 +65,26 @@ export class Theme {
     black: ColorPalette.BLACK,
   };
 
-  public fontSizes = {
-    caption2: 11,
-    caption1: 12,
-    footnote: 13,
-    subhead: 15,
-    callout: 16,
-    body: 17,
-    headline: 18,
-    title3: 20,
-    title2: 22,
-    title1: 28,
-    largeTitle: 34,
+  public fontSizes: RangeObject<35, number> = {
+    ...times(35, index => {
+      return index * fontScale;
+    }).reduce((prev, curr, index) => {
+      return {
+        ...prev,
+        [index]: curr,
+      };
+    }, {} as RangeObject<35, number>),
+    // caption2: 11 * fontScale,
+    // caption1: 12 * fontScale,
+    // footnote: 13 * fontScale,
+    // subhead: 15 * fontScale,
+    // callout: 16 * fontScale,
+    // body: 17 * fontScale,
+    // headline: 18 * fontScale,
+    // title3: 20 * fontScale,
+    // title2: 22 * fontScale,
+    // title1: 28 * fontScale,
+    // largeTitle: 34 * fontScale,
   };
 
   public typeFaces = {
@@ -115,17 +135,15 @@ export class Theme {
     // SourceSansPro-BlackIt
   };
 
-  public iconSizes = {
-    '3xs': 14,
-    '2xs': 16,
-    xs: 18,
-    sm: 20,
-    md: 22,
-    lg: 24,
-    xl: 26,
-    '2xl': 28,
-    '3xl': 30,
-    '4xl': 50,
+  public iconSizes: RangeObject<25, number> = {
+    ...times(25, index => {
+      return index * 2;
+    }).reduce((prev, curr, index) => {
+      return {
+        ...prev,
+        [index]: curr,
+      };
+    }, {} as RangeObject<25, number>),
   };
 
   constructor(colorScheme: ColorSchemeName) {
@@ -179,6 +197,15 @@ export class Theme {
       return `rgba(255,${0 + ((percent * 2) / 100) * 255},0,1)`;
     }
     return `rgba(${255 - (((percent - 50) * 2) / 100) * 255},255,0,1)`;
+  };
+
+  public getColor = (
+    themeColor: ThemeColorKey | undefined,
+  ): string | undefined => {
+    if (themeColor) {
+      return this.colors[themeColor];
+    }
+    return undefined;
   };
 }
 

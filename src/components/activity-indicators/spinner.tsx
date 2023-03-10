@@ -1,7 +1,7 @@
 import React from 'react';
 import {Animated} from 'react-native';
-import {Icon} from '../primitives/icon';
-import {View} from '../primitives/view';
+import {Icon} from '../../primitives/icon';
+import {View} from '../../primitives/view';
 
 export interface SpinnerProps {}
 
@@ -42,9 +42,9 @@ export const Spinner: React.FC<SpinnerProps> = () => {
     <View flex="none" alignItems="center" justifyContent="center" h={40} w={40}>
       <Icon
         animated
-        name="spinner"
+        icon="spinner"
         color="primary"
-        size="2xl"
+        size={20}
         animatedScale={{animatedValue: scaleAnimationValue, range: [0.4, 1.2]}}
         animatedRotate={{
           animatedValue: rotationAnimationValue,

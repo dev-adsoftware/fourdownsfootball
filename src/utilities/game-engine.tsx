@@ -269,6 +269,12 @@ export class GameEngine {
     }${seconds}`;
   }
 
+  public static formatTime(seconds: number): string {
+    return `${seconds / (24 * 3600)} days, ${
+      (seconds % (24 * 3600)) / 3600
+    } hours, ${((seconds % (24 * 3600)) % 3600) / 60} min, ${seconds % 60} sec`;
+  }
+
   public static reducePlayChances(chances: PlayChanceSnapshotDto[]): {
     darkRedSlice: number;
     redSlice: number;

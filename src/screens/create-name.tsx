@@ -2,13 +2,13 @@ import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Input} from '../components/inputs/input';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import validate from 'validate.js';
 import {useAuth} from '../providers/auth';
 import {useData} from '../providers/data';
 import {OwnerDto} from '../services/dtos';
-import {SafeBar} from '../components/primitives/safe-bar';
+import {SafeBar} from '../primitives/safe-bar';
 import {AppState, useGlobalState} from '../providers/global-state';
 
 interface CreateNameScreenProps {}
@@ -29,7 +29,7 @@ export const CreateNameScreen: React.FC<CreateNameScreenProps> = _props => {
         <Text
           text="PROFILE NAME"
           typeFace="klavikaCondensedMediumItalic"
-          fontSize="title2"
+          fontSize={20}
           py={20}
         />
         <Input
@@ -57,11 +57,7 @@ export const CreateNameScreen: React.FC<CreateNameScreenProps> = _props => {
           }}
         />
         <View flex="none" pl={3} pt={3} h={20}>
-          {error ? (
-            <Text fontSize="footnote" text={error} color="error" />
-          ) : (
-            <></>
-          )}
+          {error ? <Text fontSize={14} text={error} color="error" /> : <></>}
         </View>
         <View>
           <View row justifyContent="flex-end">
@@ -70,6 +66,8 @@ export const CreateNameScreen: React.FC<CreateNameScreenProps> = _props => {
             ) : (
               <CircleIconButton
                 icon="arrow-right"
+                color="white"
+                size={12}
                 onPress={async () => {
                   if (
                     validate(

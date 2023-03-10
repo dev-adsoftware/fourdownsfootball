@@ -1,9 +1,5 @@
 import {BaseService} from './base-service';
-import {
-  OwnerDashboardQueryArgsDto,
-  OwnerDashboardQueryResponseDto,
-  OwnerDto,
-} from './dtos';
+import {OwnerDto} from './dtos';
 
 class Service extends BaseService {
   public async ownerExists(id: string): Promise<boolean> {
@@ -20,17 +16,6 @@ class Service extends BaseService {
 
   public async getOwner(id: string): Promise<OwnerDto> {
     return await this.get<OwnerDto>(`/owners/${id}`, {});
-  }
-
-  public async queryOwnerDashboard(
-    args: OwnerDashboardQueryArgsDto,
-  ): Promise<OwnerDashboardQueryResponseDto> {
-    return await this.get<OwnerDashboardQueryResponseDto>(
-      '/queries/owner-dashboard/:execute',
-      {
-        id: args.id,
-      },
-    );
   }
 
   public async listOwners(

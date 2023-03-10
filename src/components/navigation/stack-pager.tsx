@@ -1,9 +1,10 @@
 import React from 'react';
 import {useWindowDimensions, Animated} from 'react-native';
-import {ChildrenProps} from '../../types/types';
+import {ChildrenProps} from '../../types';
 import {IconButton} from '../buttons/icon-button';
-import {SafeBar} from '../primitives/safe-bar';
-import {View} from '../primitives/view';
+import {SafeBar} from '../../primitives/safe-bar';
+import {View} from '../../primitives/view';
+import {Text} from '../../primitives/text';
 
 interface StackPage {
   component: React.ReactNode;
@@ -206,17 +207,31 @@ export const StackToolbar: React.FC<{}> = _props => {
     <>
       <SafeBar bg="white" />
       <View row w="full" bg="white" alignItems="center">
-        <IconButton
-          icon="chevron-left"
-          color="primaryText"
-          size="sm"
-          pressableAreaPadding={10}
-          onPress={() => {
-            stack.pop();
-          }}
-        />
+        <View p={10}>
+          <IconButton
+            icon="chevron-left"
+            color="darkText"
+            size={14}
+            pressableAreaPadding={10}
+            onPress={() => {
+              stack.pop();
+            }}
+          />
+        </View>
       </View>
     </>
+  );
+};
+
+const STACK_HEADER_FONT_SIZE = 26;
+export const StackHeader: React.FC<{headerText: string}> = _props => {
+  return (
+    <Text
+      text={_props.headerText}
+      typeFace="klavikaCondensedMediumItalic"
+      fontSize={STACK_HEADER_FONT_SIZE}
+      py={10}
+    />
   );
 };
 

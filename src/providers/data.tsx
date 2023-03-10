@@ -84,7 +84,9 @@ const DataProvider: React.FC<Properties> = ({children}) => {
     );
   }, []);
 
-  const clearAll = React.useCallback(() => {}, []);
+  const clearAll = React.useCallback(() => {
+    setOwner(undefined);
+  }, []);
 
   const fetchOwner = React.useCallback(
     async (id: string) => {
@@ -95,6 +97,7 @@ const DataProvider: React.FC<Properties> = ({children}) => {
           env.apiEndpoint,
         );
         if (!(await ownersService.ownerExists(id))) {
+          console.log('owner does not exist');
           globalState.appState.set(AppState.ONBOARDING);
         } else {
           const fetchedOwner = await ownersService.getOwner(id);
@@ -109,8 +112,10 @@ const DataProvider: React.FC<Properties> = ({children}) => {
   React.useEffect(() => {
     if (auth.user) {
       fetchOwner(auth.user.username);
+    } else {
+      clearAll();
     }
-  }, [auth.user, fetchOwner]);
+  }, [auth.user, fetchOwner, clearAll]);
 
   React.useEffect(() => {
     // addListener({

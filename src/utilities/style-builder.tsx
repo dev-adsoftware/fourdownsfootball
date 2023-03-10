@@ -1,4 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle, Animated} from 'react-native';
+import {DEFAULT_FONT_SIZE} from '../constants';
 import {
   Theme,
   ThemeColorKey,
@@ -491,7 +492,7 @@ export class StyleBuilder {
       textTransform: props.textTransform,
       fontSize: props.fontSize
         ? this.theme.fontSizes[props.fontSize]
-        : this.theme.fontSizes.body,
+        : DEFAULT_FONT_SIZE,
       ...(props.typeFace ? this.theme.typeFaces[props.typeFace] : {}),
     };
 

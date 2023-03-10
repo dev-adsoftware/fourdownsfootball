@@ -1,7 +1,7 @@
 import React from 'react';
-import {SafeBar} from '../components/primitives/safe-bar';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {SafeBar} from '../primitives/safe-bar';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import {NavPager} from '../components/navigation/nav-pager';
 import {FriendliesGamesScreen} from './friendlies-games';
 
@@ -32,7 +32,7 @@ export const FriendliesScreen: React.FC<FriendliesScreenProps> = ({}) => {
           <Text
             text="FRIENDLIES"
             typeFace="klavikaCondensedBoldItalic"
-            fontSize="title1"
+            fontSize={26}
           />
         </View>
         <NavPager

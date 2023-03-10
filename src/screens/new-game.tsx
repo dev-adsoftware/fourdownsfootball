@@ -4,7 +4,7 @@ import {StackPager, StackProvider} from '../components/navigation/stack-pager';
 import {useData} from '../providers/data';
 import {GameRequestDto, OwnerDto, TeamDto} from '../services/dtos';
 import {GameState} from '../services/dtos/types/game-state';
-import {ChildrenProps, StateProp} from '../types/types';
+import {ChildrenProps, StateProp} from '../types';
 import {SelectGameTypeScreen} from './select-game-type';
 
 interface NewGameScreenProps {

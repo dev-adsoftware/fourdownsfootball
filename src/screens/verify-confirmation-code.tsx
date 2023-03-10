@@ -2,8 +2,8 @@ import React from 'react';
 import {Spinner} from '../components/activity-indicators/spinner';
 import {CircleIconButton} from '../components/buttons/circle-icon-button';
 import {Input} from '../components/inputs/input';
-import {Text} from '../components/primitives/text';
-import {View} from '../components/primitives/view';
+import {Text} from '../primitives/text';
+import {View} from '../primitives/view';
 import validate from 'validate.js';
 import {useAuth} from '../providers/auth';
 
@@ -25,7 +25,7 @@ export const VerifyConfirmationCodeScreen: React.FC<
         <Text
           text="VERIFY CONFIRMATION CODE"
           typeFace="klavikaCondensedMediumItalic"
-          fontSize="title2"
+          fontSize={24}
           py={20}
         />
         <Input
@@ -41,11 +41,7 @@ export const VerifyConfirmationCodeScreen: React.FC<
           }}
         />
         <View flex="none" pl={3} pt={3} h={20}>
-          {error ? (
-            <Text fontSize="footnote" text={error} color="error" />
-          ) : (
-            <></>
-          )}
+          {error ? <Text fontSize={14} text={error} color="error" /> : <></>}
         </View>
         <View>
           <View row justifyContent="flex-end">
