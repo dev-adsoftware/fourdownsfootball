@@ -17,6 +17,18 @@ import {SequencedDto} from '../sequenced-dto';
 import {SpecialSkill} from '../types/special-skill';
 import {Dto} from '../dto';
 import {AttributeKey} from '../types/attribute-key';
+import {HeadType} from '../../../components/svg/faces/head';
+import {HairBackgroundType} from '../../../components/svg/faces/hair-background';
+import {EarType} from '../../../components/svg/faces/ear';
+import {EyeLineType} from '../../../components/svg/faces/eye-line';
+import {SmileLineType} from '../../../components/svg/faces/smile-line';
+import {MiscLineType} from '../../../components/svg/faces/misc-line';
+import {FacialHairType} from '../../../components/svg/faces/facial-hair';
+import {EyeType} from '../../../components/svg/faces/eye';
+import {EyebrowType} from '../../../components/svg/faces/eyebrow';
+import {MouthType} from '../../../components/svg/faces/mouth';
+import {NoseType} from '../../../components/svg/faces/nose';
+import {HairType} from '../../../components/svg/faces/hair';
 
 export class AttributeDto extends Dto {
   @IsEnum(AttributeKey)
@@ -74,197 +86,72 @@ export class PlayerDto extends SequencedDto {
   @Max(400)
   weight: number;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // speed: number;
+  @IsString()
+  head: HeadType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // strength: number;
+  @IsString()
+  @IsOptional()
+  hairBackground?: HairBackgroundType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // agility: number;
+  @IsString()
+  ear: EarType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // shortPassing: number;
+  @IsString()
+  @IsOptional()
+  eyeLine?: EyeLineType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // mediumPassing: number;
+  @IsString()
+  @IsOptional()
+  smileLine?: SmileLineType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // longPassing: number;
+  @IsString()
+  @IsOptional()
+  miscLine?: MiscLineType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // ballHandling: number;
+  @IsString()
+  @IsOptional()
+  facialHair?: FacialHairType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // rushing: number;
+  @IsString()
+  eye: EyeType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // routeRunning: number;
+  @IsString()
+  eyebrow: EyebrowType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // catching: number;
+  @IsString()
+  mouth: MouthType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // passBlocking: number;
+  @IsString()
+  nose: NoseType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // runBlocking: number;
+  @IsString()
+  hair: HairType;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // runStuffing: number;
+  @IsString()
+  skinColor: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // passRushing: number;
+  @IsString()
+  primaryColor: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // zoneCovering: number;
+  @IsString()
+  @IsOptional()
+  secondaryColor?: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // manCovering: number;
+  @IsString()
+  @IsOptional()
+  accentColor?: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // awareness: number;
+  @IsString()
+  headShaveColor: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // clutch: number;
+  @IsString()
+  faceShaveColor: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // endurance: number;
+  @IsString()
+  hairColor: string;
 
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // stamina: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // fragility: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // returning: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // kickingPower: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // kickingAccuracy: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // puntingPower: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // puntingAccuracy: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // aggressiveness: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // sportsmanship: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // coachability: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // leadership: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // luck: number;
-
-  // @IsNumber()
-  // @IsDivisibleBy(1)
-  // @Min(0)
-  // @Max(100)
-  // prestige: number;
+  @IsBoolean()
+  isFlipped: boolean;
 
   @IsOptional()
   @IsEnum(SpecialSkill)

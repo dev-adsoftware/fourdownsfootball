@@ -40,14 +40,14 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
     if (props.expanded) {
       Animated.timing(animationValue, {
         toValue: 1,
-        duration: 300,
-        useNativeDriver: false,
+        duration: 100,
+        useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(animationValue, {
         toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
+        duration: 100,
+        useNativeDriver: true,
       }).start();
     }
   }, [props.expanded, animationValue]);
@@ -134,11 +134,12 @@ const _PossessionListItemComponent: React.FC<_PossessionListItem> = props => {
         </View>
       </View>
       <View
-        animated
-        animatedHeight={{
-          animatedValue: animationValue,
-          range: [0, detailHeight],
-        }}
+        // animated
+        // animatedHeight={{
+        //   animatedValue: animationValue,
+        //   range: [0, detailHeight],
+        // }}
+        h={props.expanded ? detailHeight : 0}
         bg="white"
         w="full"
         overflow="hidden">

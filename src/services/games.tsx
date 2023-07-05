@@ -1,3 +1,4 @@
+import delay from 'delay';
 import {BaseService} from './base-service';
 import {
   GameDetailQueryArgsDto,
@@ -6,6 +7,7 @@ import {
   GameRequestDto,
   GamesByOwnerQueryArgsDto,
   GamesByOwnerQueryResponseDto,
+  PlayCallDto,
 } from './dtos';
 import {
   GamesByOwnerExtendedGameDto,
@@ -82,6 +84,27 @@ class Service extends BaseService {
       },
       ['invitedTeamId', 'acceptingOwnerId'],
     );
+  }
+
+  public async postPlayCall(playCall: PlayCallDto): Promise<void> {
+    await this.create<PlayCallDto>('/play-calls', playCall);
+  }
+
+  public async waitForGameSequenceUpdate(
+    gameId: string,
+    sequence: string,
+  ): Promise<void> {
+    const MAX_LOOPS = 10;
+    let gameDto = await this.get<GameDto>(`/games/${gameId}`, {});
+    let loops = 0;
+    while (gameDto.sequence !== sequence && loops < MAX_LOOPS) {
+      loops += 1;
+      delay(1000);
+      gameDto = await this.get<GameDto>(`/games/${gameId}`, {});
+    }
+    if (loops === MAX_LOOPS) {
+      throw Error('WaitForGameSequenceUpdateMaxLoopsExceeded');
+    }
   }
 }
 

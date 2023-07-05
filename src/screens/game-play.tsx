@@ -1,35 +1,36 @@
 import React from 'react';
-import {Link} from '../components/buttons/link';
 import {useFadeInScreen} from '../components/navigation/fade-in-screen';
-import {Icon} from '../primitives/icon';
 import {Text} from '../primitives/text';
 import {View} from '../primitives/view';
-import {PlayerCarousel} from '../components/scrollables/player-carousel';
 import {useData} from '../providers/data';
 import {
   GameDetailQueryResponseDto,
   PlayCallDto,
-  PlayerSnapshotDto,
+  PlaySnapshotDto,
 } from '../services/dtos';
 import {GameState} from '../services/dtos/types/game-state';
 import {GameEngine} from '../utilities/game-engine';
 import {GameField} from '../components/game-play/game-field';
-import {SelectRSVPTeamScreen} from './select-rsvp-team';
-import {GameControlPanel} from '../components/game-play/game-control-panel';
-import {Alignment} from '../services/dtos/types/alignment';
-import {OpponentToolbar} from '../components/game-play/opponent-toolbar';
-import {OwnerToolbar} from '../components/game-play/owner-toolbar';
+import {SAFE_AREA_PADDING_BOTTOM} from '../constants';
+import {CircleIconButton} from '../components/buttons/circle-icon-button';
+import {useWindowDimensions} from 'react-native';
+import {ModalScreen} from './modal-screen';
+import {GameNudgeScreen} from './game-nudge';
+import {GameRsvpScreen} from './game-rsvp';
+import {LoadingScreen} from './loading';
+import {GamePlayButton} from '../components/buttons/game-play-button';
+import {PlayCallScreen} from './play-call';
+import {last, tail} from 'lodash';
 
 interface GamePlayScreenProps {
   game: GameDetailQueryResponseDto;
 }
 
 export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
-  const [isOpposingTeamCarouselVisible, setIsOpposingTeamCarouselVisible] =
-    React.useState(false);
-
-  const {push} = useFadeInScreen();
+  const {push: pushFadeInScreen, pop: popFadeInScreen} = useFadeInScreen();
   const data = useData();
+
+  const {width} = useWindowDimensions();
 
   const gameFieldAnimateFuncRef =
     React.useRef<(onAnimationFinished: () => void) => void>();
@@ -40,15 +41,17 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
     }
   }, [props.game]);
 
+  const modalWindowCloseFuncRef = React.useRef<() => void>();
+
   const ownerTeam = React.useMemo(
     () => GameEngine.getOwnerTeam(props.game, data.owner!.id),
     [props.game, data.owner],
   );
 
-  const opposingTeam = React.useMemo(
-    () => GameEngine.getOpposingTeam(props.game, data.owner!.id),
-    [props.game, data.owner],
-  );
+  // const opposingTeam = React.useMemo(
+  //   () => GameEngine.getOpposingTeam(props.game, data.owner!.id),
+  //   [props.game, data.owner],
+  // );
 
   // const actingTeam = React.useMemo(
   //   () => GameEngine.getActingTeam(props.game),
@@ -70,123 +73,46 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
     [props.game, data.owner],
   );
 
+  const canNudgeOrWithdraw = React.useMemo(
+    () => GameEngine.canNudgeOrWithdraw(props.game, data.owner?.id as string),
+    [props.game, data.owner],
+  );
+
+  const canRSVP = React.useMemo(
+    () => GameEngine.canRSVP(props.game, data.owner?.id as string),
+    [props.game, data.owner],
+  );
+
   const isOnOffense = React.useMemo(
     () => GameEngine.isOnOffense(props.game, data.owner?.id),
     [props.game, data.owner],
   );
 
+  const [backdropHeight, setBackdropHeight] = React.useState(0);
+  const [selectedPlay, setSelectedPlay] = React.useState<
+    PlaySnapshotDto | undefined
+  >(ownerTeam ? ownerTeam.plays[0] : undefined);
+
   return (
     <>
-      <View w="full" flex={1} bg="oddLayerSurface" pt={0} alignItems="center">
-        {GameEngine.canNudgeOrWithdraw(props.game, data.owner?.id as string) ? (
-          <View flex={1} alignItems="center" justifyContent="space-between">
-            <View alignItems="center">
-              <View py={20}>
-                <Icon icon="hourglass-half" color="primary" size={20} />
-              </View>
-              <Text
-                text={`Awaiting RSVP from ${
-                  props.game.awayTeamId === undefined
-                    ? props.game.awayOwner.firstName
-                    : props.game.homeOwner.firstName
-                }`}
-                fontSize={17}
-                typeFace="sourceSansProRegular"
-              />
-              <View
-                row
-                alignItems="center"
-                bg="primary"
-                borderRadius="circle"
-                px={20}
-                py={5}
-                m={20}>
-                <Text
-                  text="NUDGE"
-                  typeFace="klavikaCondensedBoldItalic"
-                  fontSize={20}
-                  color="white"
-                  mr={10}
-                />
-                <Icon icon="hand-point-right" color="white" size={20} />
-              </View>
-            </View>
-            <View pb={30}>
-              <Link text="REVOKE INVITATION" onPress={() => {}} />
-            </View>
-          </View>
-        ) : GameEngine.canRSVP(props.game, data.owner?.id as string) ? (
-          <>
-            <View flex={1} alignItems="center" justifyContent="space-between">
-              <View alignItems="center">
-                <View py={20}>
-                  <Icon icon="envelope" color="primary" size={24} />
-                </View>
-                <Text
-                  textAlign="center"
-                  text={`${
-                    props.game.awayTeamId === undefined
-                      ? props.game.homeOwner.firstName
-                      : props.game.awayOwner.firstName
-                  } invited you to play a game.\nRSVP to start the game.`}
-                  fontSize={17}
-                  typeFace="sourceSansProRegular"
-                />
-                <View
-                  onPress={() => {
-                    push({
-                      component: <SelectRSVPTeamScreen game={props.game} />,
-                    });
-                  }}>
-                  <View
-                    row
-                    alignItems="center"
-                    bg="primary"
-                    borderRadius="circle"
-                    px={20}
-                    py={5}
-                    m={20}>
-                    <Text
-                      text="RSVP"
-                      typeFace="klavikaCondensedBoldItalic"
-                      fontSize={20}
-                      color="white"
-                      mr={10}
-                    />
-                    <Icon icon="reply" color="white" size={12} />
-                  </View>
-                </View>
-              </View>
-              <View pb={30}>
-                <Link text="REJECT INVITATION" onPress={() => {}} />
-              </View>
-            </View>
-          </>
+      <View
+        w="full"
+        flex={1}
+        bg="oddLayerSurface"
+        pt={0}
+        alignItems="center"
+        onLayout={e => {
+          setBackdropHeight(e.nativeEvent.layout.height);
+        }}>
+        {canNudgeOrWithdraw ? (
+          <GameNudgeScreen game={props.game} />
+        ) : canRSVP ? (
+          <GameRsvpScreen game={props.game} />
         ) : props.game.state === GameState.Loading ? (
-          <>
-            <Text
-              text="loading screen"
-              typeFace="sourceSansProRegular"
-              fontSize={17}
-            />
-          </>
+          <LoadingScreen />
         ) : (
           <>
-            <OpponentToolbar
-              timeRemaining={props.game.homeTeamTimeRemaining}
-              onPressHuddleButton={() => {
-                setIsOpposingTeamCarouselVisible(
-                  !isOpposingTeamCarouselVisible,
-                );
-              }}
-            />
             <View flex={1} w="full" bg="grass">
-              <View
-                position="absolute"
-                zIndex={1000}
-                opacity={isOpposingTeamCarouselVisible ? 1 : 0}>
-                <PlayerCarousel players={opposingTeam.players} />
-              </View>
               <GameField
                 ballOn={{
                   previous: GameEngine.flipBallOn(props.game, data.owner?.id),
@@ -211,7 +137,316 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 defendingView={!isOnOffense}
               />
             </View>
-            <GameControlPanel
+
+            <GamePlayButton
+              top={10}
+              left={20}
+              icon="user-friends"
+              onPress={() => {
+                console.log('opening opponent roster');
+              }}
+            />
+
+            <GamePlayButton
+              top={10}
+              right={20}
+              icon="user-clock"
+              onPress={() => {
+                console.log('showing opponent clock');
+              }}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM + 90}
+              left={20}
+              icon="stopwatch"
+              onPress={() => {
+                console.log('showing owner clock');
+              }}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM + 45}
+              left={20}
+              icon="comment-alt"
+              onPress={() => {
+                console.log('showing chat');
+              }}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM}
+              left={20}
+              icon="cogs"
+              onPress={() => {
+                console.log('opening game settings');
+              }}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM + 100}
+              left={width / 2 - 40 - 30}
+              icon="bullseye"
+              onPress={() => {
+                console.log('showing targets');
+              }}
+              disabled={!canAct || props.game.state === GameState.Kickoff}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM + 100}
+              left={width / 2 - 20}
+              icon="sync-alt"
+              onPress={() => {
+                console.log('flipping');
+              }}
+              disabled={!canAct || props.game.state === GameState.Kickoff}
+            />
+
+            <GamePlayButton
+              bottom={SAFE_AREA_PADDING_BOTTOM + 100}
+              left={width / 2 + 30}
+              icon="clock"
+              onPress={() => {
+                console.log('showing time management config');
+              }}
+              disabled={!canAct || props.game.state === GameState.Kickoff}
+            />
+
+            <View
+              position="absolute"
+              bottom={SAFE_AREA_PADDING_BOTTOM + 44 - 26}
+              left={width / 2 - 30 - 60}
+              w={60}
+              h={52}
+              pl={5}
+              borderColor="black"
+              borderWidth={1}
+              borderLeftRadius="circle"
+              bg="darkSurface"
+              alignItems="flex-start"
+              justifyContent="center">
+              <CircleIconButton
+                disabled={!canAct}
+                opaque
+                icon="book"
+                onPress={() => {
+                  pushFadeInScreen({
+                    component: (
+                      <ModalScreen
+                        h={backdropHeight}
+                        icon="book"
+                        iconColor="playbook"
+                        title="PLAY CALL"
+                        closeFuncRef={modalWindowCloseFuncRef}
+                        onClose={() => {
+                          popFadeInScreen();
+                        }}>
+                        <PlayCallScreen
+                          plays={ownerTeam.plays}
+                          onSelect={play => {
+                            setSelectedPlay(play);
+                            if (modalWindowCloseFuncRef.current) {
+                              modalWindowCloseFuncRef.current();
+                            }
+                          }}
+                        />
+                      </ModalScreen>
+                    ),
+                  });
+                }}
+                size={10}
+                borderColor="black"
+                borderWidth={1}
+                bg="oddLayerSurface"
+                color={!canAct ? 'disabled' : 'playbook'}
+              />
+            </View>
+            <View
+              position="absolute"
+              bottom={SAFE_AREA_PADDING_BOTTOM}
+              right={width / 2 - 44}
+              w={88}
+              h={88}
+              bg="white"
+              borderRadius="circle"
+              borderWidth={2}
+              borderColor="black"
+              alignItems="center"
+              justifyContent="center"
+              zIndex={9999}>
+              <CircleIconButton
+                disabled={!canAct}
+                opaque
+                icon="play"
+                onPress={async () => {
+                  const currentPossession = last(props.game.possessions);
+                  const currentPossessionNumber = props.game.possessions.length;
+                  const currentPlayResult = last(
+                    currentPossession!.playResults,
+                  );
+                  const playResultNumber =
+                    currentPlayResult!.playResultNumber + (isOnOffense ? 1 : 0);
+                  await data.services.games.postPlayCall(
+                    new PlayCallDto().init({
+                      id: `${props.game.id}-${String(playResultNumber)}-${
+                        isOnOffense ? 'offense' : 'defense'
+                      }`,
+                      sequence: '0',
+                      lastUpdateDate: new Date().toISOString(),
+                      lastUpdatedBy: data.owner!.id,
+                      gameId: props.game.id,
+                      possessionNumber: currentPossessionNumber,
+                      playResultNumber: playResultNumber,
+                      playSnapshotId: selectedPlay?.id, //ownerTeam.plays[0].id,
+                      assignments: selectedPlay?.assignments, // ownerTeam.plays[0].assignments,
+                    }),
+                  );
+                  await data.services.games.waitForGameSequenceUpdate(
+                    props.game.id,
+                    String(Number(props.game.sequence) + 1),
+                  );
+                }}
+                size={20}
+                offsetPadding={5}
+                bg="white"
+                color={!canAct ? 'disabled' : 'primary'}
+              />
+            </View>
+            <View
+              position="absolute"
+              bottom={SAFE_AREA_PADDING_BOTTOM + 44 - 26}
+              left={width / 2 + 30}
+              w={60}
+              h={52}
+              pr={5}
+              bg="darkSurface"
+              borderColor="black"
+              borderWidth={1}
+              borderRightRadius="circle"
+              alignItems="flex-end"
+              justifyContent="center">
+              <CircleIconButton
+                opaque
+                icon="users-cog"
+                onPress={() => {
+                  pushFadeInScreen({
+                    component: (
+                      <ModalScreen
+                        h={backdropHeight}
+                        icon="users-cog"
+                        iconColor="primary"
+                        title="SUBSTITUTIONS"
+                        closeFuncRef={modalWindowCloseFuncRef}
+                        onClose={() => {
+                          popFadeInScreen();
+                        }}>
+                        <></>
+                      </ModalScreen>
+                    ),
+                  });
+                }}
+                size={10}
+                borderColor="black"
+                borderWidth={1}
+                bg="oddLayerSurface"
+                color="darkText"
+              />
+            </View>
+            <View
+              position="absolute"
+              bottom={SAFE_AREA_PADDING_BOTTOM + 48}
+              left={width / 2 + 30 + 36}
+              w={16}
+              h={16}
+              alignItems="center"
+              justifyContent="center">
+              <CircleIconButton
+                icon="exclamation"
+                onPress={() => {
+                  pushFadeInScreen({
+                    component: (
+                      <ModalScreen
+                        h={backdropHeight}
+                        icon="users-cog"
+                        iconColor="primary"
+                        title="SUBSTITUTIONS"
+                        closeFuncRef={modalWindowCloseFuncRef}
+                        onClose={() => {
+                          popFadeInScreen();
+                        }}>
+                        <></>
+                      </ModalScreen>
+                    ),
+                  });
+                }}
+                size={4}
+                bg="error"
+              />
+            </View>
+            {canAct ? (
+              <View
+                position="absolute"
+                bottom={SAFE_AREA_PADDING_BOTTOM + 145}
+                left={0}
+                w={width}
+                row
+                bg="transparent"
+                alignItems="center"
+                justifyContent="center">
+                <Text
+                  ml={10}
+                  // flex={1}
+                  bg="transparentVeryDark"
+                  borderRadius={12}
+                  borderWidth={1}
+                  numberOfLines={1}
+                  color="white"
+                  typeFace="klavikaCondensedBoldItalic"
+                  fontSize={24}
+                  text={selectedPlay.name.toUpperCase()}
+                  textShadowColor="black"
+                  textShadowOffset={{width: 1, height: 1}}
+                  textShadowRadius={2}
+                  px={10}
+                />
+              </View>
+            ) : (
+              <></>
+            )}
+            {!canAct ? (
+              <View
+                position="absolute"
+                top={50}
+                left={0}
+                w={width}
+                row
+                bg="transparent"
+                alignItems="center"
+                justifyContent="center">
+                {/* <Icon icon="clock" color="white" size={14} /> */}
+                <Text
+                  ml={10}
+                  // flex={1}
+                  bg="transparentVeryDark"
+                  borderRadius={8}
+                  borderWidth={1}
+                  numberOfLines={1}
+                  color="white"
+                  typeFace="klavikaCondensedBoldItalic"
+                  fontSize={24}
+                  text={'Waiting for Opponent'.toUpperCase()}
+                  textShadowColor="black"
+                  textShadowOffset={{width: 1, height: 1}}
+                  textShadowRadius={2}
+                  px={10}
+                />
+              </View>
+            ) : (
+              <></>
+            )}
+
+            {/* <GameControlPanel
               isWaitingForOpponent={!canAct}
               plays={ownerTeam.plays}
               currentPlayCall={new PlayCallDto().init({
@@ -245,11 +480,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                     })
                   : ownerTeam.players
               }
-            />
-            <OwnerToolbar
-              timeRemaining={props.game.awayTeamTimeRemaining}
-              momentum={props.game.momentum}
-            />
+            /> */}
           </>
         )}
       </View>

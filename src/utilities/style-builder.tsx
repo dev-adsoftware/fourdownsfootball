@@ -142,7 +142,13 @@ export interface ViewProps
 export interface TextProps
   extends Pick<
     TextStyle,
-    'lineHeight' | 'textAlign' | 'textAlignVertical' | 'textTransform'
+    | 'lineHeight'
+    | 'textAlign'
+    | 'textAlignVertical'
+    | 'textTransform'
+    | 'textShadowColor'
+    | 'textShadowOffset'
+    | 'textShadowRadius'
   > {
   fontSize?: ThemeFontSizeKey;
   typeFace?: ThemeTypeFacesKey;
@@ -494,6 +500,9 @@ export class StyleBuilder {
         ? this.theme.fontSizes[props.fontSize]
         : DEFAULT_FONT_SIZE,
       ...(props.typeFace ? this.theme.typeFaces[props.typeFace] : {}),
+      textShadowColor: props.textShadowColor,
+      textShadowOffset: props.textShadowOffset,
+      textShadowRadius: props.textShadowRadius,
     };
 
     return this;

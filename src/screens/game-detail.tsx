@@ -11,7 +11,9 @@ import {
 import {GamePlayScreen} from './game-play';
 import {GamePlayByPlayScreen} from './game-play-by-play';
 import {GameScoreboardHeader} from '../components/headers/game-scoreboard';
-import {GameDetailFooter} from '../components/footers/game-detail-footer';
+import {CircleIconButton} from '../components/buttons/circle-icon-button';
+import {SAFE_AREA_PADDING_BOTTOM} from '../constants';
+import {useFadeInScreen} from '../components/navigation/fade-in-screen';
 
 interface GameDetailScreenProps {
   gameId: string;
@@ -20,7 +22,10 @@ interface GameDetailScreenProps {
 export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [game, setGame] = React.useState<GameDetailQueryResponseDto>();
+  const [selectedTab, setSelectedTab] = React.useState(0);
   const data = useData();
+
+  const {pop: popFadeInScreen} = useFadeInScreen();
 
   const fetchGameDetail = React.useCallback(
     async (showLoadingIndicator?: boolean) => {
@@ -72,8 +77,34 @@ export const GameDetailScreen: React.FC<GameDetailScreenProps> = props => {
                   component: <></>,
                 },
               ]}
+              onSelect={index => {
+                console.log('selected tab', index);
+                setSelectedTab(index);
+              }}
             />
-            <GameDetailFooter />
+            {selectedTab >= 0 ? (
+              <View
+                position="absolute"
+                bottom={SAFE_AREA_PADDING_BOTTOM}
+                right={20}
+                w={48}
+                h={48}
+                alignItems="center"
+                justifyContent="center">
+                <CircleIconButton
+                  icon="times"
+                  onPress={() => {
+                    popFadeInScreen();
+                  }}
+                  size={12}
+                  bg="transparentDark"
+                  borderColor="black"
+                  color="white"
+                />
+              </View>
+            ) : (
+              <></>
+            )}
           </>
         )
       )}

@@ -54,6 +54,7 @@ const AuthProvider: React.FC<Properties> = ({children}) => {
     const init = async () => {
       if (globalState.appState.value === AppState.LOADING) {
         try {
+          // const session = await AWSAuth.currentSession();
           const {username, attributes} =
             await AWSAuth.currentAuthenticatedUser();
           setUser({username, email: attributes.email});

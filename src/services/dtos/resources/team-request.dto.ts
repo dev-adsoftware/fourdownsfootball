@@ -1,4 +1,5 @@
 import {IsEnum, IsOptional, IsString} from 'class-validator';
+import {JerseyType} from '../../../components/svg/faces/jersey';
 import {SequencedDto} from '../sequenced-dto';
 import {DefenseStyle} from '../types/defense-style';
 import {OffenseStyle} from '../types/offense-style';
@@ -16,6 +17,9 @@ class Dto extends SequencedDto {
   nickname: string;
 
   @IsString()
+  jerseyStyle: JerseyType;
+
+  @IsString()
   primaryColor: string;
 
   @IsOptional()
@@ -24,7 +28,7 @@ class Dto extends SequencedDto {
 
   @IsOptional()
   @IsString()
-  stripeColor?: string;
+  accentColor?: string;
 
   @IsEnum(TeamEmphasis)
   teamEmphasis: string;

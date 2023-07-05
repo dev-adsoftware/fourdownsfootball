@@ -12,6 +12,7 @@ export type ThemeColorKey = keyof Theme['colors'];
 export type ThemeIconSizeKey = keyof Theme['iconSizes'];
 export type ThemeFontSizeKey = keyof Theme['fontSizes'];
 export type ThemeTypeFacesKey = keyof Theme['typeFaces'];
+export type ThemeTeamColorKey = keyof Theme['teamColors'];
 export class Theme {
   public colors = {
     primary: ColorPalette.BLUE_800,
@@ -24,6 +25,7 @@ export class Theme {
     warning: ColorPalette.ORANGE_700,
     success: ColorPalette.GREEN_700,
     disabled: ColorPalette.GRAY_500,
+    disabledDark: ColorPalette.GRAY_700,
 
     white: ColorPalette.WHITE,
     black: ColorPalette.BLACK,
@@ -52,6 +54,9 @@ export class Theme {
 
     football: ColorPalette.BROWN_500,
     grass: '#71A92C',
+    offense: ColorPalette.BLUE_500,
+    defense: ColorPalette.WHITE,
+    chalk: 'rgba(255,255,255,0.9)',
 
     playbook: ColorPalette.BROWN_700,
     actionButton: ColorPalette.AMBER_500,
@@ -200,12 +205,14 @@ export class Theme {
   };
 
   public getColor = (
-    themeColor: ThemeColorKey | undefined,
+    themeColor: ThemeColorKey | ThemeTeamColorKey | undefined,
   ): string | undefined => {
     if (themeColor) {
-      return this.colors[themeColor];
+      return (
+        this.colors[themeColor as ThemeColorKey] ||
+        this.teamColors[themeColor as ThemeTeamColorKey]
+      );
     }
-    return undefined;
   };
 }
 

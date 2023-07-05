@@ -2,29 +2,21 @@ import React from 'react';
 import {ViewProps as StyleViewProps} from '../../utilities/style-builder';
 import {Icon, IconProps} from '../../primitives/icon';
 import {View} from '../../primitives/view';
-import {PressableProps} from '../../types';
 
-export interface CircleIconButtonProps
+export interface CircleIconBadgeProps
   extends IconProps,
-    PressableProps,
-    Pick<StyleViewProps, 'bg' | 'borderColor' | 'borderWidth'> {
-  offsetPadding?: number;
-  disabled?: boolean;
-}
+    Pick<StyleViewProps, 'bg' | 'borderColor' | 'borderWidth'> {}
 
-export const CircleIconButton: React.FC<CircleIconButtonProps> = props => {
+export const CircleIconBadge: React.FC<CircleIconBadgeProps> = props => {
   const circleSize = (props.size || 0) * 4;
 
   return (
     <View
-      onPress={props.disabled ? undefined : props.onPress}
-      opaque={props.disabled ? undefined : props.opaque}
       flex="none"
       alignItems="center"
       justifyContent="center"
       h={circleSize}
       w={circleSize}
-      pl={props.offsetPadding || 0}
       borderRadius="circle"
       borderWidth={props.borderColor && (props.borderWidth || 1)}
       borderColor={props.borderColor}

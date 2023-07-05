@@ -40,6 +40,11 @@ export enum Assignment {
   Drag = 'drag',
   Slant = 'slant',
 
+  // Special Teams
+  Kickoff = 'kickoff',
+  KickoffStreak = 'kickoff-streak',
+  KickoffBlock = 'kickoff-block',
+
   // Not Involved
   None = 'none',
 }

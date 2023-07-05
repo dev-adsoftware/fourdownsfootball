@@ -167,7 +167,7 @@ const _RenderCarouselItem: React.FC<{item: _CarouselItem}> = props => {
           <View alignItems="center" mt={5}>
             <Svg
               w={250}
-              h={175}
+              h={155}
               defs={[svgTriangleMarker]}
               elements={[
                 calcOffensePlayerElement(Alignment.KickoffStreaker1),
@@ -245,6 +245,7 @@ const getItemLayout = (_data: any, index: number) => ({
 });
 
 export const PlayCarousel: React.FC<PlayCarouselProps> = props => {
+  const [isInitialized, setIsInitialized] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState<number>(
     props.plays.findIndex(play => {
       return play === props.initialPlay;
@@ -263,11 +264,14 @@ export const PlayCarousel: React.FC<PlayCarouselProps> = props => {
   const flatListRef = React.useRef<RNFlatList<_CarouselItem>>(null);
 
   React.useEffect(() => {
-    flatListRef.current?.scrollToIndex({
-      animated: false,
-      index: currentIndex,
-    });
-  }, [currentIndex]);
+    if (!isInitialized) {
+      flatListRef.current?.scrollToIndex({
+        animated: false,
+        index: currentIndex,
+      });
+      setIsInitialized(true);
+    }
+  }, [currentIndex, isInitialized]);
 
   return (
     <>

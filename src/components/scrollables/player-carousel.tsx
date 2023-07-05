@@ -7,16 +7,16 @@ import {AttributeKey} from '../../services/dtos/types/attribute-key';
 import {Position} from '../../services/dtos/types/position';
 import {GameEngine} from '../../utilities/game-engine';
 import {FlatList} from '../../primitives/flatlist';
-import {Icon} from '../../primitives/icon';
 import {Text} from '../../primitives/text';
 import {View} from '../../primitives/view';
 import {ProgressBar} from '../progress-indicators/progress-bar';
+import {FaceSvg} from '../svg/faces/face-svg';
 
 interface PlayerCarouselProps {
   players: (PlayerSnapshotDto & {alignment?: Alignment})[];
 }
 
-const PORTRAIT_HEADER_FONT_SIZE = 14;
+const PORTRAIT_HEADER_FONT_SIZE = 12;
 const PORTRAIT_NAME_FONT_SIZE = 12;
 
 const _RenderCarouselItem = ({
@@ -37,33 +37,63 @@ const _RenderCarouselItem = ({
   return (
     <View
       w={item.width}
-      bg="portraitSurface"
+      // bg="portraitSurface"
+      customBg="skyblue"
       borderColor="darkText"
-      borderWidth={1}
+      borderWidth={2}
       mr={2}
       borderRadius={4}>
       <View
         flex={1}
         w="full"
         borderTopRadius={4}
+        // p={0}
         // bg="oddLayerSurface"
-        customBg="primaryLight"
+        // customBg="primaryLight"
         alignItems="center"
         justifyContent="flex-end">
-        <Icon icon="users" color="skinTone" size={20} />
-        <View position="absolute" top={0} left={3}>
+        {/* <Icon icon="users" color="skinTone" size={20} /> */}
+        <View ml={20}>
+          <FaceSvg
+            w={item.width * 0.62}
+            h={item.width * 0.68 * 1.5}
+            body="body3"
+            jersey="jersey5"
+            head="head1"
+            hairBackground="longHairBackground"
+            ear="ear2"
+            eyeLine="eyeLine4"
+            smileLine="smileLine4"
+            miscLine="freckles1"
+            facialHair="beard1"
+            eye="eye19"
+            eyebrow="eyebrow20"
+            mouth="straight"
+            nose="nose1"
+            hair="afro2"
+            skinColor="#bb876f"
+            primaryColor="yellow"
+            secondaryColor="red"
+            accentColor="blue"
+            headShaveColor="rgba(0,0,0,0)"
+            faceShaveColor="rgba(0,0,0,0)"
+            hairColor="#57330f"
+          />
+        </View>
+        <View position="absolute" top={0} left={2}>
           <Text
             text={(
               GameEngine.getAlignmentAbbr(item.alignment) || item.position
             ).toUpperCase()}
+            // text="OLB"
             typeFace="klavikaCondensedBold"
             fontSize={PORTRAIT_HEADER_FONT_SIZE}
             color="darkText"
           />
         </View>
-        <View position="absolute" top={0} right={3}>
+        <View position="absolute" top={12} left={3}>
           <Text
-            text={`#${item.jerseyNumber}`}
+            text={`${item.jerseyNumber}`}
             typeFace="klavikaCondensedBold"
             fontSize={PORTRAIT_HEADER_FONT_SIZE}
             color="darkText"
@@ -80,17 +110,17 @@ const _RenderCarouselItem = ({
         mt={-5}
         px={2}>
         <Text
-          mt={-2}
+          mt={-1}
           numberOfLines={1}
           text={item.name}
-          typeFace="klavikaCondensedMedium"
+          typeFace="sourceSansProSemibold"
           fontSize={PORTRAIT_NAME_FONT_SIZE}
           color="darkText"
         />
       </View>
       <View
         alignItems="center"
-        pb={4}
+        pb={2}
         bg="oddLayerSurface"
         borderBottomRadius={4}>
         <ProgressBar

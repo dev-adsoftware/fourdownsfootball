@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  ScrollView as RNScrollView,
-  LayoutChangeEvent,
-  useWindowDimensions,
-  Animated,
-} from 'react-native';
-import {ScrollView} from '../../primitives/scroll-view';
-import {Text} from '../../primitives/text';
+import {useWindowDimensions, Animated} from 'react-native';
 import {View} from '../../primitives/view';
+import {TabItemsScrollView} from '../scrollables/tab-items-scroll-view';
 
 export interface NavPage {
   name: string;
@@ -17,46 +11,11 @@ export interface NavPage {
 interface NavPagerProps {
   pages: NavPage[];
   width?: number;
+  onSelect?: (index: number) => void;
 }
-
-const DISTANCE_BETWEEN_LABELS = 30;
-const DEFAULT_SCROLLBAR_WIDTH = 1000;
-const SCROLL_OVERFLOW = 50;
-
-const _Label: React.FC<{
-  name: string;
-  selected?: boolean;
-  onPress: () => void;
-  onLayout: (e: LayoutChangeEvent) => void;
-}> = props => {
-  const [width, setWidth] = React.useState(0);
-  return (
-    <View alignItems="center" px={DISTANCE_BETWEEN_LABELS / 2}>
-      <Text
-        onPress={props.onPress}
-        text={props.name}
-        color="darkText"
-        fontSize={20}
-        typeFace="klavikaCondensedMedium"
-        opacity={props.selected ? 1.0 : 0.3}
-        onLayout={(e: LayoutChangeEvent) => {
-          setWidth(e.nativeEvent.layout.width);
-          props.onLayout(e);
-        }}
-      />
-      <View h={3} w={width} bg={props.selected ? 'darkText' : undefined} />
-    </View>
-  );
-};
 
 export const NavPager: React.FC<NavPagerProps> = props => {
   const [currentScreenIndex, setCurrentScreenIndex] = React.useState(0);
-  const [isLayoutComplete, setIsLayoutComplete] = React.useState(false);
-  const [scrollBarWidth, setScrollBarWidth] = React.useState<number>(
-    DEFAULT_SCROLLBAR_WIDTH,
-  );
-  const tabWidthsRef = React.useRef<(number | undefined)[]>([]);
-  const scrollViewRef = React.useRef<RNScrollView>(null);
   const {current: scrollValue} = React.useRef<Animated.Value>(
     new Animated.Value(0),
   );
@@ -66,29 +25,6 @@ export const NavPager: React.FC<NavPagerProps> = props => {
     () => props.width || windowWidth,
     [props.width, windowWidth],
   );
-
-  React.useEffect(() => {
-    if (isLayoutComplete && scrollBarWidth === DEFAULT_SCROLLBAR_WIDTH) {
-      const accumulatedWidth = props.pages.reduce((prev, _, i) => {
-        return prev + (tabWidthsRef.current[i] || 0);
-      }, 0);
-      setScrollBarWidth(Math.max(accumulatedWidth, width));
-    }
-  }, [props.pages, isLayoutComplete, scrollBarWidth, width]);
-
-  React.useEffect(() => {
-    const accumulatedWidth = props.pages
-      .slice(0, currentScreenIndex + 1)
-      .reduce((prev, _, i) => {
-        return prev + (tabWidthsRef.current[i] || 0);
-      }, 0);
-    scrollViewRef.current?.scrollTo({
-      x:
-        accumulatedWidth > width - SCROLL_OVERFLOW
-          ? accumulatedWidth - width + SCROLL_OVERFLOW
-          : 0,
-    });
-  }, [props.pages, currentScreenIndex, width]);
 
   React.useEffect(() => {
     Animated.timing(scrollValue, {
@@ -101,32 +37,17 @@ export const NavPager: React.FC<NavPagerProps> = props => {
   return (
     <>
       <View row bg="white">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentProps={{w: scrollBarWidth}}
-          ref={scrollViewRef}>
-          {props.pages.map((page, index) => {
-            return (
-              <_Label
-                key={page.name}
-                name={page.name}
-                selected={currentScreenIndex === index}
-                onPress={() => {
-                  setCurrentScreenIndex(index);
-                }}
-                onLayout={(event: LayoutChangeEvent) => {
-                  const {width: layoutWidth} = event.nativeEvent.layout;
-                  tabWidthsRef.current[index] =
-                    layoutWidth + DISTANCE_BETWEEN_LABELS;
-                  if (!tabWidthsRef.current.includes(undefined)) {
-                    setIsLayoutComplete(true);
-                  }
-                }}
-              />
-            );
+        <TabItemsScrollView
+          labels={props.pages.map(page => {
+            return page.name;
           })}
-        </ScrollView>
+          onSelect={index => {
+            setCurrentScreenIndex(index);
+            if (props.onSelect) {
+              props.onSelect(index);
+            }
+          }}
+        />
       </View>
       <View
         animated

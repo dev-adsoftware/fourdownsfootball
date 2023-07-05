@@ -109,9 +109,10 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = props => {
 
   return (
     <View
-      h={400}
-      w={300}
-      mb={5}
+      h={380}
+      w="full"
+      // w={300}
+      // mb={5}
       justifyContent="center"
       alignItems="center"
       overflow="hidden">
@@ -131,8 +132,43 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = props => {
       ) : (
         <></>
       )}
-      <View row position="absolute" bottom={0} left={0}>
-        <View
+      <View row position="absolute" bottom={0} left={0} borderTopWidth={1}>
+        <View flex={1} h={50} bg="oddLayerSurface">
+          <View
+            bg="oddLayerSurface"
+            w={50}
+            h={50}
+            borderRightWidth={1}
+            borderColor="black"
+            alignItems="center"
+            justifyContent="center"
+            onPress={() => {
+              setIsOpeningPlaybook(true);
+            }}
+            opaque>
+            <Icon icon="book" size={18} color="playbook" />
+          </View>
+        </View>
+        <View flex={1} h={50} bg="oddLayerSurface" alignItems="flex-end">
+          <View
+            bg="actionButton"
+            w={50}
+            h={50}
+            borderLeftWidth={1}
+            borderColor="black"
+            alignItems="center"
+            justifyContent="center">
+            <IconButton
+              icon="arrow-right"
+              size={18}
+              color="darkText"
+              onPress={() => {
+                setDidPressSubmit(true);
+              }}
+            />
+          </View>
+        </View>
+        {/* <View
           bg="evenLayerSurface"
           w={70}
           h={80}
@@ -239,9 +275,9 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = props => {
               setDidPressSubmit(true);
             }}
           />
-        </View>
+        </View> */}
       </View>
-      <View
+      {/* <View
         animated
         animatedOpacity={{
           animatedValue: slideInOpacity,
@@ -283,7 +319,7 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = props => {
             />
           </View>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
