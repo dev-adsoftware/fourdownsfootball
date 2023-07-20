@@ -23,7 +23,7 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
         <IconButton
           icon="home"
           color={props.activeIcon === 'home' ? 'primary' : 'disabled'}
-          size={12}
+          size={props.activeIcon === 'home' ? 13 : 12}
           pressableAreaPadding={10}
           onPress={() => {
             props.onPressHome();
@@ -32,7 +32,7 @@ export const MainTabBar: React.FC<MainTabBarProps> = props => {
         <IconButton
           icon="users"
           color={props.activeIcon === 'friends' ? 'primary' : 'disabled'}
-          size={12}
+          size={props.activeIcon === 'friends' ? 13 : 12}
           pressableAreaPadding={10}
           onPress={() => {
             props.onPressFriends();

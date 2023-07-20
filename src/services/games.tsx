@@ -34,7 +34,7 @@ class Service extends BaseService {
     )[] = [];
 
     let fetchResult = await this.get<GamesByOwnerQueryResponseDto>(
-      '/queries/games-by-owner/:execute',
+      '/queries/games-by-owner:execute',
       {
         id: args.id,
       },
@@ -44,7 +44,7 @@ class Service extends BaseService {
     inProgressGames.push(...fetchResult.inProgressGames);
     while (fetchResult.lastKey) {
       fetchResult = await this.get<GamesByOwnerQueryResponseDto>(
-        '/queries/games-by-owner/:execute',
+        '/queries/games-by-owner:execute',
         {
           id: args.id,
           afterKey: fetchResult.lastKey,
@@ -60,7 +60,7 @@ class Service extends BaseService {
     args: GameDetailQueryArgsDto,
   ): Promise<GameDetailQueryResponseDto> {
     return await this.get<GameDetailQueryResponseDto>(
-      '/queries/game-detail/:execute',
+      '/queries/game-detail:execute',
       {id: args.id},
     );
   }

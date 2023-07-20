@@ -1,5 +1,11 @@
 import {Type} from 'class-transformer';
-import {IsArray, IsNumber, IsString, ValidateNested} from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import {SequencedDto} from '../sequenced-dto';
 import {AssignmentDto} from './play.dto';
 
@@ -20,6 +26,9 @@ class Dto extends SequencedDto {
   @ValidateNested({each: true})
   @Type(() => AssignmentDto)
   assignments: AssignmentDto[];
+
+  @IsBoolean()
+  isDeferred = false;
 }
 
 export {Dto as PlayCallDto};

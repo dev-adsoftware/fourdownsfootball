@@ -20,7 +20,7 @@ import {GameRsvpScreen} from './game-rsvp';
 import {LoadingScreen} from './loading';
 import {GamePlayButton} from '../components/buttons/game-play-button';
 import {PlayCallScreen} from './play-call';
-import {last, tail} from 'lodash';
+import {last} from 'lodash';
 
 interface GamePlayScreenProps {
   game: GameDetailQueryResponseDto;
@@ -300,6 +300,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                       playResultNumber: playResultNumber,
                       playSnapshotId: selectedPlay?.id, //ownerTeam.plays[0].id,
                       assignments: selectedPlay?.assignments, // ownerTeam.plays[0].assignments,
+                      isDeferred: isOnOffense,
                     }),
                   );
                   await data.services.games.waitForGameSequenceUpdate(
@@ -384,7 +385,7 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 bg="error"
               />
             </View>
-            {canAct ? (
+            {canAct && selectedPlay ? (
               <View
                 position="absolute"
                 bottom={SAFE_AREA_PADDING_BOTTOM + 145}
@@ -394,22 +395,23 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 bg="transparent"
                 alignItems="center"
                 justifyContent="center">
-                <Text
-                  ml={10}
-                  // flex={1}
+                <View
                   bg="transparentVeryDark"
                   borderRadius={12}
                   borderWidth={1}
-                  numberOfLines={1}
-                  color="white"
-                  typeFace="klavikaCondensedBoldItalic"
-                  fontSize={24}
-                  text={selectedPlay.name.toUpperCase()}
-                  textShadowColor="black"
-                  textShadowOffset={{width: 1, height: 1}}
-                  textShadowRadius={2}
-                  px={10}
-                />
+                  px={10}>
+                  <Text
+                    // bg="primary"
+                    numberOfLines={1}
+                    color="white"
+                    typeFace="klavikaCondensedBoldItalic"
+                    fontSize={24}
+                    text={selectedPlay.name.toUpperCase()}
+                    textShadowColor="black"
+                    textShadowOffset={{width: 1, height: 1}}
+                    textShadowRadius={2}
+                  />
+                </View>
               </View>
             ) : (
               <></>
@@ -425,22 +427,22 @@ export const GamePlayScreen: React.FC<GamePlayScreenProps> = props => {
                 alignItems="center"
                 justifyContent="center">
                 {/* <Icon icon="clock" color="white" size={14} /> */}
-                <Text
-                  ml={10}
-                  // flex={1}
+                <View
                   bg="transparentVeryDark"
                   borderRadius={8}
                   borderWidth={1}
-                  numberOfLines={1}
-                  color="white"
-                  typeFace="klavikaCondensedBoldItalic"
-                  fontSize={24}
-                  text={'Waiting for Opponent'.toUpperCase()}
-                  textShadowColor="black"
-                  textShadowOffset={{width: 1, height: 1}}
-                  textShadowRadius={2}
-                  px={10}
-                />
+                  px={10}>
+                  <Text
+                    numberOfLines={1}
+                    color="white"
+                    typeFace="klavikaCondensedBoldItalic"
+                    fontSize={24}
+                    text={'Waiting for Opponent'.toUpperCase()}
+                    textShadowColor="black"
+                    textShadowOffset={{width: 1, height: 1}}
+                    textShadowRadius={2}
+                  />
+                </View>
               </View>
             ) : (
               <></>

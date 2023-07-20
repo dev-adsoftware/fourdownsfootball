@@ -17,7 +17,7 @@ export interface PositionProps {
 }
 export interface DimensionProps {
   h?: ViewStyle['height'];
-  w?: ViewStyle['width'];
+  w?: ViewStyle['width'] | 'full';
 }
 
 export interface MarginProps {
